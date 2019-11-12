@@ -1,10 +1,15 @@
+1. Install Docker, either on your native OS or on a VM. Make sure it runs. Type "docker -v" to check if it's installed.
+
 master $ docker -v
 Docker version 18.09.7, build 2d0083d
 master $
+
+2. Find a image from dockerhub of your choice(recommeded: nginx), don't use browser, pull the official image from dockerhub
 master $ docker image ls docker
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 docker              latest              9a38a85b1e4e        2 months ago        216MB
 master $
+
 master $ docker image pull nginx
 Using default tag: latest
 latest: Pulling from library/nginx
@@ -14,12 +19,14 @@ abc291867bca: Pull complete
 Digest: sha256:922c815aa4df050d4df476e92daed4231f466acc8ee90e0e774951b0fd7195a4
 Status: Downloaded newer image for nginx:latest
 master $
+
+3. List all the available images in your machine/vm, make sure you see recently pulled image in the list.
 master $ docker image ls nginx
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 nginx               latest              540a289bab6c        7 days ago          126MB
 master $
 
-master $
+4. Find out the "Full" ImageId of the image that you pulled and write it below.
 master $ docker image ls
 REPOSITORY                                            TAG                 IMAGE ID            CREATED             SIZE
 nginx                                                 latest              540a289bab6c        7 days ago          126MB
@@ -63,15 +70,19 @@ gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b
 master $
 Find out the "Full" ImageId of the image that you pulled and write it below :- 540a289bab6c
 
+5. Create a container of your image 
 master $ docker container create nginx
 d66754c7638772ed29abef8c03fa1e2752c330a2f9020b38673da2a2aa214d7b
 master $
+
+6. List all the running containers
 
 master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
 bede6b1128ce        nginx               "nginx -g 'daemon of…"   9 minutes ago       Created                                 mystifying_archimedes
 master $
 
+7. List all the running and stopped containers
 master $ docker container ls -a
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                   PORTS               NAMES
 bede6b1128ce        nginx                  "nginx -g 'daemon of…"   10 minutes ago      Created                                      mystifying_archimedes
@@ -93,8 +104,10 @@ b9416f6fde3e        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago 
 e916102a6700        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
 master $
 
+
 8. Find out the "Full" containerId of the container and write it below. :- bede6b1128ce
 
+9. Find out how many image layers are used to build this image.
 master $ docker history 540a289bab6c
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
 540a289bab6c        2 weeks ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
@@ -110,6 +123,7 @@ IMAGE               CREATED             CREATED BY                              
 <missing>           3 weeks ago         /bin/sh -c #(nop) ADD file:74b2987cacab5a6b0…   69.2MB
 master $
 
+10. Get the Apache Tomcat 7 server image from the docker hub.
 master $ docker image pull tomcat
 Using default tag: latest
 latest: Pulling from library/tomcat
@@ -171,6 +185,7 @@ gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701
 gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago         142MB
 master $
 
+11. Run the Apache Tomcat 7, I mean create a container of Apache Tomcat.
 master $ docker container create tomcat
 e7428e6285adeabce1a150c2ae020fcacdde6a0476c3c560ce6ff36367bfd247
 master $ docker container ls -l
@@ -178,7 +193,7 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 e7428e6285ad        tomcat              "catalina.sh run"   14 seconds ago      Created                                 goofy_wing
 master $
 
-
+12. Find out what is the IP Address of the Apache Tomcat Container that it is running on
 master $ docker container start -a e7428e6285ad
 12-Nov-2019 06:33:49.644 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/8.5.47
 12-Nov-2019 06:33:49.679 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Oct 7 2019 13:30:46 UTC
@@ -227,20 +242,37 @@ master $ docker container start -a e7428e6285ad
 12-Nov-2019 06:33:59.665 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 7408 ms
 
 
-
+13. Which Port it is using?
 master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 e7428e6285ad        tomcat              "catalina.sh run"   9 minutes ago       Up 2 minutes        8080/tcp            goofy_wing
 master $
 
+
+14. Try to access the Tomcat's home page from your machine/vm.
+Pending, need to discuss
+
+15. What is the disk size of Apache Tomcat image? -- 507MB
 master $ docker image ls tomcat
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 tomcat              latest              882487b8be1d        3 weeks ago         507MB
 master $
 size  507MB
 
+16. Find out list of all environment variables that is configured for tomcat image, can you see JAVA_HOME and CATALINA_HOME? What did you notice about it?
 
+Java Home:             /usr/local/openjdk-8/jre  
+JVM Version:           1.8.0_232-b09             
+JVM Vendor:            Oracle Corporation        
+CATALINA_BASE:         /usr/local/tomcat         
+CATALINA_HOME:         /usr/local/tomcat    
 
+17. Find out which port is exposed for tomcat?  8080/tcp
+
+18. Run multiple conntainers of tomcat on different port and access it's home page. 
+Pending, need to discuss
+
+19. Pull ubuntu os from dockerhub, try to pull 2 images of ubuntu, Except the latest one.
 
 master $ docker image ls ubuntu
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
@@ -267,7 +299,6 @@ master $ docker image pull ubuntu-new
 Using default tag: latest
 Error response from daemon: pull access denied for ubuntu-new, repository does not exist or may require 'docker login'
 master $
-
 master $ docker image ls ubuntu
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 ubuntu              latest              775349758637        11 days ago         64.2MB
@@ -280,6 +311,9 @@ master $ docker container create 775349758637
 master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 2c1c1a4dfc37        775349758637        "/bin/bash"         14 seconds ago      Created                                 affectionate_gauss
+
+20. Run the container of ubuntu in attached mode.
+
 master $ docker container attach 2c1c1a4dfc37
 You cannot attach to a stopped container, start it first
 master $ docker container start 2c1c1a4dfc37
@@ -296,12 +330,16 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 2c1c1a4dfc37        775349758637        "/bin/bash"         About a minute ago   Exited (0) 3 seconds ago                       affectionate_gauss
 master $ docker container ls -l
 
+
+
 master $ docker container create 3556258649b2
 c7766f02738bd0964439b98d153a2875ab446ac20fb1c04f8637e7e6ed0b492b
 master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 c7766f02738b        3556258649b2        "/bin/bash"         3 seconds ago       Created                                 jovial_goldwasser
 
+
+22. Check how many ubuntu containers are running and stopped
 master $ docker container ls -a
 CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                      PORTS               NAMES
 c7766f02738b        3556258649b2           "/bin/bash"              4 minutes ago       Exited (0) 45 seconds ago                       jovial_goldwasser
@@ -322,6 +360,9 @@ c1266278c972        ecf910f40d6e           "kube-apiserver --ad…"   About an hou
 b712b1c9fe36        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-apiserver-master_kube-system_75e23e57b9e3fe4fe9a36ecaf98ee8f4_0
 cc767f9bfb3d        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_etcd-master_kube-system_fb55eefcff80d166704e99b63b4c8fdc_0
 
+23. Is the tomcat container running? If no, start one.  its running
+
+24. Check the logs, generated by tomcat container(don't forget to make request to tomcat's home page to see the log).
 
 master $ docker container logs 3325eb6170ff
 12-Nov-2019 06:50:49.553 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/8.5.47
@@ -368,9 +409,6 @@ master $ docker container logs 3325eb6170ff
 12-Nov-2019 06:50:50.836 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
 12-Nov-2019 06:50:50.854 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
 12-Nov-2019 06:50:50.868 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 1120 ms
-
-
-
 master $
 
 
