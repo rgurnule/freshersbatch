@@ -1,0 +1,376 @@
+master $ docker -v
+Docker version 18.09.7, build 2d0083d
+master $
+master $ docker image ls docker
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker              latest              9a38a85b1e4e        2 months ago        216MB
+master $
+master $ docker image pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+8d691f585fa8: Pull complete
+5b07f4e08ad0: Pull complete
+abc291867bca: Pull complete
+Digest: sha256:922c815aa4df050d4df476e92daed4231f466acc8ee90e0e774951b0fd7195a4
+Status: Downloaded newer image for nginx:latest
+master $
+master $ docker image ls nginx
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              540a289bab6c        7 days ago          126MB
+master $
+
+master $
+master $ docker image ls
+REPOSITORY                                            TAG                 IMAGE ID            CREATED             SIZE
+nginx                                                 latest              540a289bab6c        7 days ago          126MB
+k8s.gcr.io/kube-proxy                                 v1.14.5             468c6baf864b        2 months ago        82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.5             3129b0ba0920        2 months ago        210MB
+k8s.gcr.io/kube-scheduler                             v1.14.5             ed5a937cb6f8        2 months ago        81.6MB
+k8s.gcr.io/kube-controller-manager                    v1.14.5             b8ab6b6b42c9        2 months ago        158MB
+redis                                                 latest              857c4ab5f029        2 months ago        98.2MB
+docker                                                latest              9a38a85b1e4e        2 months ago        216MB
+weaveworks/scope                                      1.11.4              a082d48f0b39        2 months ago        78.5MB
+ubuntu                                                latest              3556258649b2        3 months ago        64.2MB
+alpine                                                latest              b7b28af77ffe        3 months ago        5.58MB
+katacoda/katacoda-cloud-provider                      0.0.1               74188596f8cb        4 months ago        116MB
+weaveworks/flux                                       1.12.0              8bb853f52985        6 months ago        165MB
+k8s.gcr.io/kube-proxy                                 v1.14.0             5cd54e388aba        7 months ago        82.1MB
+k8s.gcr.io/kube-controller-manager                    v1.14.0             b95b1efa0436        7 months ago        158MB
+k8s.gcr.io/kube-apiserver                             v1.14.0             ecf910f40d6e        7 months ago        210MB
+k8s.gcr.io/kube-scheduler                             v1.14.0             00638a24688b        7 months ago        81.6MB
+gcr.io/kubernetes-helm/tiller                         v2.13.1             cb5aea7d0466        7 months ago        82.1MB
+alpine                                                3.7                 6d1ef012b567        7 months ago        4.2MB
+alpine                                                3.8                 dac705114996        7 months ago        4.41MB
+ruby                                                  2.5-alpine3.7       d1851fcb9251        9 months ago        43.7MB
+python                                                3.6-alpine3.7       28f54a6b0f1a        9 months ago        74.2MB
+weaveworks/weave-npc                                  2.5.1               789b7f496034        9 months ago        49.6MB
+weaveworks/weave-kube                                 2.5.1               1f394ae9e226        9 months ago        148MB
+k8s.gcr.io/coredns                                    1.3.1               eb516548c180        9 months ago        40.3MB
+k8s.gcr.io/etcd                                       3.3.10              2c4adeb21b4f        11 months ago       258MB
+weaveworks/scope                                      1.10.1              b0d8090d0e91        11 months ago       75.7MB
+k8s.gcr.io/kubernetes-dashboard-amd64                 v1.10.0             0dab2435c100        14 months ago       122MB
+weaveworks/scope                                      1.9.1               4b07159e407b        15 months ago       68MB
+quay.io/coreos/etcd                                   latest              61ad63875109        16 months ago       39.4MB
+prom/prometheus                                       v2.2.1              cc866859f8df        19 months ago       113MB
+node                                                  9.4-alpine          b5f94997f35f        21 months ago       68MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                     1.14.8              80cc5ea4b547        22 months ago       50.5MB
+k8s.gcr.io/pause                                      3.1                 da86e6ba6ca1        22 months ago       742kB
+prom/node-exporter                                    v0.15.2             ff5ecdcfc4a2        23 months ago       22.8MB
+prom/prometheus                                       v1.7.1              4da113bb6ae3        2 years ago         74.5MB
+prom/node-exporter                                    v0.14.0             bb4a6b774658        2 years ago         18.9MB
+gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        2 years ago         109MB
+gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago         142MB
+master $
+Find out the "Full" ImageId of the image that you pulled and write it below :- 540a289bab6c
+
+master $ docker container create nginx
+d66754c7638772ed29abef8c03fa1e2752c330a2f9020b38673da2a2aa214d7b
+master $
+
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
+bede6b1128ce        nginx               "nginx -g 'daemon of…"   9 minutes ago       Created                                 mystifying_archimedes
+master $
+
+master $ docker container ls -a
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                   PORTS               NAMES
+bede6b1128ce        nginx                  "nginx -g 'daemon of…"   10 minutes ago      Created                                      mystifying_archimedes
+d66754c76387        nginx                  "nginx -g 'daemon of…"   19 minutes ago      Created                                      hopeful_mclean
+21fcdf1d2633        nginx                  "nginx -g 'daemon of…"   20 minutes ago      Created                                      determined_ardinghelli
+39dffb6aebf0        1f394ae9e226           "/home/weave/launch.…"   2 hours ago         Up 2 hours                                   k8s_weave_weave-net-6nx9d_kube-system_82a9ea47-0501-11ea-ab1e-0242ac110030_1
+81547f23d98f        789b7f496034           "/usr/bin/weave-npc"     2 hours ago         Up 2 hours                                   k8s_weave-npc_weave-net-6nx9d_kube-system_82a9ea47-0501-11ea-ab1e-0242ac110030_0
+d6df85f854d2        5cd54e388aba           "/usr/local/bin/kube…"   2 hours ago         Up 2 hours                                   k8s_kube-proxy_kube-proxy-ltzcx_kube-system_82aa0c8c-0501-11ea-ab1e-0242ac110030_0
+33c5cb34af1d        1f394ae9e226           "/home/weave/launch.…"   2 hours ago         Exited (1) 2 hours ago                       k8s_weave_weave-net-6nx9d_kube-system_82a9ea47-0501-11ea-ab1e-0242ac110030_0
+ef83f7c83bd7        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_kube-proxy-ltzcx_kube-system_82aa0c8c-0501-11ea-ab1e-0242ac110030_0
+f331c9773c71        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_weave-net-6nx9d_kube-system_82a9ea47-0501-11ea-ab1e-0242ac110030_0
+9d1cf77635fa        b95b1efa0436           "kube-controller-man…"   2 hours ago         Up 2 hours                                   k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+f1b626be0917        ecf910f40d6e           "kube-apiserver --ad…"   2 hours ago         Up 2 hours                                   k8s_kube-apiserver_kube-apiserver-master_kube-system_d21f2d71baca845e350089cbb0873f63_0
+aefc3d06b880        2c4adeb21b4f           "etcd --advertise-cl…"   2 hours ago         Up 2 hours                                   k8s_etcd_etcd-master_kube-system_df69cb18804d7cf370cf32b7f8cf749a_0
+ebd8dd6593af        00638a24688b           "kube-scheduler --bi…"   2 hours ago         Up 2 hours                                   k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+b9416f6fde3e        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_kube-apiserver-master_kube-system_d21f2d71baca845e350089cbb0873f63_0
+2c448051453f        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_etcd-master_kube-system_df69cb18804d7cf370cf32b7f8cf749a_0
+49b0e33379e4        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+e916102a6700        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours                                   k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+master $
+
+8. Find out the "Full" containerId of the container and write it below. :- bede6b1128ce
+
+master $ docker history 540a289bab6c
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+540a289bab6c        2 weeks ago         /bin/sh -c #(nop)  CMD ["nginx" "-g" "daemon…   0B
+<missing>           2 weeks ago         /bin/sh -c #(nop)  STOPSIGNAL SIGTERM           0B
+<missing>           2 weeks ago         /bin/sh -c #(nop)  EXPOSE 80                    0B
+<missing>           2 weeks ago         /bin/sh -c ln -sf /dev/stdout /var/log/nginx…   0B
+<missing>           2 weeks ago         /bin/sh -c set -x     && addgroup --system -…   57MB
+<missing>           2 weeks ago         /bin/sh -c #(nop)  ENV PKG_RELEASE=1~buster     0B
+<missing>           2 weeks ago         /bin/sh -c #(nop)  ENV NJS_VERSION=0.3.6        0B
+<missing>           2 weeks ago         /bin/sh -c #(nop)  ENV NGINX_VERSION=1.17.5     0B
+<missing>           3 weeks ago         /bin/sh -c #(nop)  LABEL maintainer=NGINX Do…   0B
+<missing>           3 weeks ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
+<missing>           3 weeks ago         /bin/sh -c #(nop) ADD file:74b2987cacab5a6b0…   69.2MB
+master $
+
+master $ docker image pull tomcat
+Using default tag: latest
+latest: Pulling from library/tomcat
+9a0b0ce99936: Pull complete
+db3b6004c61a: Pull complete
+f8f075920295: Pull complete
+6ef14aff1139: Pull complete
+962785d3b7f9: Pull complete
+631589572f9b: Pull complete
+c55a0c6f4c7b: Pull complete
+379605d88e88: Pull complete
+e056aa10ded8: Pull complete
+6349a1c98d85: Pull complete
+Digest: sha256:77e41dbdf7854f03b9a933510e8852c99d836d42ae85cba4b3bc04e8710dc0f7
+Status: Downloaded newer image for tomcat:latest
+master $
+
+
+master $ docker image ls
+REPOSITORY                                            TAG                 IMAGE ID            CREATED             SIZE
+nginx                                                 latest              540a289bab6c        2 weeks ago         126MB
+tomcat                                                latest              882487b8be1d        3 weeks ago         507MB
+k8s.gcr.io/kube-proxy                                 v1.14.5             468c6baf864b        3 months ago        82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.5             3129b0ba0920        3 months ago        210MB
+k8s.gcr.io/kube-controller-manager                    v1.14.5             b8ab6b6b42c9        3 months ago        158MB
+k8s.gcr.io/kube-scheduler                             v1.14.5             ed5a937cb6f8        3 months ago        81.6MB
+redis                                                 latest              857c4ab5f029        3 months ago        98.2MB
+docker                                                latest              9a38a85b1e4e        3 months ago        216MB
+weaveworks/scope                                      1.11.4              a082d48f0b39        3 months ago        78.5MB
+ubuntu                                                latest              3556258649b2        3 months ago        64.2MB
+alpine                                                latest              b7b28af77ffe        4 months ago        5.58MB
+katacoda/katacoda-cloud-provider                      0.0.1               74188596f8cb        4 months ago        116MB
+weaveworks/flux                                       1.12.0              8bb853f52985        7 months ago        165MB
+k8s.gcr.io/kube-proxy                                 v1.14.0             5cd54e388aba        7 months ago        82.1MB
+k8s.gcr.io/kube-scheduler                             v1.14.0             00638a24688b        7 months ago        81.6MB
+k8s.gcr.io/kube-apiserver                             v1.14.0             ecf910f40d6e        7 months ago        210MB
+k8s.gcr.io/kube-controller-manager                    v1.14.0             b95b1efa0436        7 months ago        158MB
+gcr.io/kubernetes-helm/tiller                         v2.13.1             cb5aea7d0466        7 months ago        82.1MB
+alpine                                                3.7                 6d1ef012b567        8 months ago        4.2MB
+alpine                                                3.8                 dac705114996        8 months ago        4.41MB
+ruby                                                  2.5-alpine3.7       d1851fcb9251        9 months ago        43.7MB
+python                                                3.6-alpine3.7       28f54a6b0f1a        9 months ago        74.2MB
+weaveworks/weave-npc                                  2.5.1               789b7f496034        9 months ago        49.6MB
+weaveworks/weave-kube                                 2.5.1               1f394ae9e226        9 months ago        148MB
+k8s.gcr.io/coredns                                    1.3.1               eb516548c180        10 months ago       40.3MB
+k8s.gcr.io/etcd                                       3.3.10              2c4adeb21b4f        11 months ago       258MB
+weaveworks/scope                                      1.10.1              b0d8090d0e91        11 months ago       75.7MB
+k8s.gcr.io/kubernetes-dashboard-amd64                 v1.10.0             0dab2435c100        14 months ago       122MB
+weaveworks/scope                                      1.9.1               4b07159e407b        15 months ago       68MB
+quay.io/coreos/etcd                                   latest              61ad63875109        17 months ago       39.4MB
+prom/prometheus                                       v2.2.1              cc866859f8df        20 months ago       113MB
+node                                                  9.4-alpine          b5f94997f35f        22 months ago       68MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                     1.14.8              80cc5ea4b547        22 months ago       50.5MB
+k8s.gcr.io/pause                                      3.1                 da86e6ba6ca1        23 months ago       742kB
+prom/node-exporter                                    v0.15.2             ff5ecdcfc4a2        23 months ago       22.8MB
+prom/prometheus                                       v1.7.1              4da113bb6ae3        2 years ago         74.5MB
+prom/node-exporter                                    v0.14.0             bb4a6b774658        2 years ago         18.9MB
+gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        2 years ago         109MB
+gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago         142MB
+master $
+
+master $ docker container create tomcat
+e7428e6285adeabce1a150c2ae020fcacdde6a0476c3c560ce6ff36367bfd247
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+e7428e6285ad        tomcat              "catalina.sh run"   14 seconds ago      Created                                 goofy_wing
+master $
+
+
+master $ docker container start -a e7428e6285ad
+12-Nov-2019 06:33:49.644 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/8.5.47
+12-Nov-2019 06:33:49.679 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Oct 7 2019 13:30:46 UTC
+12-Nov-2019 06:33:49.679 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 8.5.47.0
+12-Nov-2019 06:33:49.679 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            4.4.0-157-generic
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          amd64
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /usr/local/openjdk-8/jre
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           1.8.0_232-b09
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /usr/local/tomcat
+12-Nov-2019 06:33:49.695 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /usr/local/tomcat
+12-Nov-2019 06:33:49.696 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/usr/local/tomcat/conf/logging.properties
+12-Nov-2019 06:33:49.696 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+12-Nov-2019 06:33:49.696 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dignore.endorsed.dirs=
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/usr/local/tomcat
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/usr/local/tomcat
+12-Nov-2019 06:33:49.698 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/usr/local/tomcat/temp
+12-Nov-2019 06:33:49.699 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Loaded APR based Apache Tomcat Native library [1.2.23] using APR version [1.5.2].
+12-Nov-2019 06:33:49.699 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+12-Nov-2019 06:33:49.699 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+12-Nov-2019 06:33:49.851 INFO [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL successfully initialized [OpenSSL 1.1.0l  10 Sep 2019]
+12-Nov-2019 06:33:51.578 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+12-Nov-2019 06:33:51.920 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+12-Nov-2019 06:33:52.192 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["ajp-nio-8009"]
+12-Nov-2019 06:33:52.231 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+12-Nov-2019 06:33:52.256 INFO [main] org.apache.catalina.startup.Catalina.load Initialization processed in 7103 ms
+12-Nov-2019 06:33:52.757 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+12-Nov-2019 06:33:52.757 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet Engine: Apache Tomcat/8.5.47
+12-Nov-2019 06:33:53.190 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/examples]
+12-Nov-2019 06:33:58.486 WARNING [localhost-startStop-1] org.apache.catalina.util.SessionIdGeneratorBase.createSecureRandom Creation of SecureRandom instance for session ID generation using [SHA1PRNG] took [701] milliseconds.
+12-Nov-2019 06:33:58.800 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/examples] has finished in [5,610] ms
+12-Nov-2019 06:33:58.800 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/manager]
+12-Nov-2019 06:33:58.965 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/manager] has finished in [165] ms
+12-Nov-2019 06:33:58.965 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/ROOT]
+12-Nov-2019 06:33:59.021 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/ROOT] has finished in [56] ms
+12-Nov-2019 06:33:59.021 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/docs]
+12-Nov-2019 06:33:59.085 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/docs] has finished in [64] ms
+12-Nov-2019 06:33:59.085 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/host-manager]
+12-Nov-2019 06:33:59.158 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/host-manager] has finished in [73] ms
+12-Nov-2019 06:33:59.359 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+12-Nov-2019 06:33:59.656 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
+12-Nov-2019 06:33:59.665 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 7408 ms
+
+
+
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+e7428e6285ad        tomcat              "catalina.sh run"   9 minutes ago       Up 2 minutes        8080/tcp            goofy_wing
+master $
+
+master $ docker image ls tomcat
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+master $
+size  507MB
+
+
+
+
+master $ docker image ls ubuntu
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              3556258649b2        3 months ago        64.2MB
+master $ docker image pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+7ddbc47eeb70: Pull complete
+c1bbdc448b72: Pull complete
+8c3b70e39044: Pull complete
+45d437916d57: Pull complete
+Digest: sha256:6e9f67fa63b0323e9a1e587fd71c561ba48a034504fb804fd26fd8800039835d
+Status: Downloaded newer image for ubuntu:latest
+master $ docker image ls ubuntu
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              775349758637        11 days ago         64.2MB
+ubuntu              <none>              3556258649b2        3 months ago        64.2MB
+master $ docker image pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+Digest: sha256:6e9f67fa63b0323e9a1e587fd71c561ba48a034504fb804fd26fd8800039835d
+Status: Image is up to date for ubuntu:latest
+master $ docker image pull ubuntu-new
+Using default tag: latest
+Error response from daemon: pull access denied for ubuntu-new, repository does not exist or may require 'docker login'
+master $
+
+master $ docker image ls ubuntu
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              775349758637        11 days ago         64.2MB
+ubuntu              <none>              3556258649b2        3 months ago        64.2MB
+master $ docker container create ^C
+master $ docker image ls 775349758637
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+master $ docker container create 775349758637
+2c1c1a4dfc3728668db97367ca65fdee9677d64d56fae3a1f74383d8e2d78d6d
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+2c1c1a4dfc37        775349758637        "/bin/bash"         14 seconds ago      Created                                 affectionate_gauss
+master $ docker container attach 2c1c1a4dfc37
+You cannot attach to a stopped container, start it first
+master $ docker container start 2c1c1a4dfc37
+2c1c1a4dfc37
+master $ docker container attach 2c1c1a4dfc37
+You cannot attach to a stopped container, start it first
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                      PORTS               NAMES
+2c1c1a4dfc37        775349758637        "/bin/bash"         About a minute ago   Exited (0) 12 seconds ago                       affectionate_gauss
+master $ docker container start 2c1c1a4dfc37
+2c1c1a4dfc37
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                     PORTS               NAMES
+2c1c1a4dfc37        775349758637        "/bin/bash"         About a minute ago   Exited (0) 3 seconds ago                       affectionate_gauss
+master $ docker container ls -l
+
+master $ docker container create 3556258649b2
+c7766f02738bd0964439b98d153a2875ab446ac20fb1c04f8637e7e6ed0b492b
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+c7766f02738b        3556258649b2        "/bin/bash"         3 seconds ago       Created                                 jovial_goldwasser
+
+master $ docker container ls -a
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                      PORTS               NAMES
+c7766f02738b        3556258649b2           "/bin/bash"              4 minutes ago       Exited (0) 45 seconds ago                       jovial_goldwasser
+2c1c1a4dfc37        775349758637           "/bin/bash"              7 minutes ago       Exited (0) 5 minutes ago                        affectionate_gauss
+cf42847d86e0        ubuntu                 "/bin/bash"              8 minutes ago       Created                                         jovial_heyrovsky
+3325eb6170ff        tomcat                 "catalina.sh run"        18 minutes ago      Up 18 minutes               8080/tcp            competent_dijkstra
+0f7966c2a337        789b7f496034           "/usr/bin/weave-npc"     About an hour ago   Up About an hour                                k8s_weave-npc_weave-net-c95k4_kube-system_f13bbff3-0512-11ea-9cb6-0242ac11004a_0
+a04ced5c9b2d        1f394ae9e226           "/home/weave/launch.…"   About an hour ago   Up About an hour                                k8s_weave_weave-net-c95k4_kube-system_f13bbff3-0512-11ea-9cb6-0242ac11004a_0
+2b21bd281e17        5cd54e388aba           "/usr/local/bin/kube…"   About an hour ago   Up About an hour                                k8s_kube-proxy_kube-proxy-wmkzh_kube-system_f0381c22-0512-11ea-9cb6-0242ac11004a_0
+ce05c95b0631        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_weave-net-c95k4_kube-system_f13bbff3-0512-11ea-9cb6-0242ac11004a_0
+206293c958ab        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-proxy-wmkzh_kube-system_f0381c22-0512-11ea-9cb6-0242ac11004a_0
+3ea4773a5ee0        2c4adeb21b4f           "etcd --advertise-cl…"   About an hour ago   Up About an hour                                k8s_etcd_etcd-master_kube-system_fb55eefcff80d166704e99b63b4c8fdc_0
+e09ac0834003        b95b1efa0436           "kube-controller-man…"   About an hour ago   Up About an hour                                k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+151848924b16        00638a24688b           "kube-scheduler --bi…"   About an hour ago   Up About an hour                                k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+c1266278c972        ecf910f40d6e           "kube-apiserver --ad…"   About an hour ago   Up About an hour                                k8s_kube-apiserver_kube-apiserver-master_kube-system_75e23e57b9e3fe4fe9a36ecaf98ee8f4_0
+246cfcfdadf4        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+2e667aca9265        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+b712b1c9fe36        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-apiserver-master_kube-system_75e23e57b9e3fe4fe9a36ecaf98ee8f4_0
+cc767f9bfb3d        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_etcd-master_kube-system_fb55eefcff80d166704e99b63b4c8fdc_0
+
+
+master $ docker container logs 3325eb6170ff
+12-Nov-2019 06:50:49.553 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/8.5.47
+12-Nov-2019 06:50:49.558 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server built:          Oct 7 2019 13:30:46 UTC
+12-Nov-2019 06:50:49.558 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version number: 8.5.47.0
+12-Nov-2019 06:50:49.559 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Name:               Linux
+12-Nov-2019 06:50:49.559 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log OS Version:            4.4.0-157-generic
+12-Nov-2019 06:50:49.560 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Architecture:          amd64
+12-Nov-2019 06:50:49.561 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Java Home:             /usr/local/openjdk-8/jre
+12-Nov-2019 06:50:49.561 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Version:           1.8.0_232-b09
+12-Nov-2019 06:50:49.562 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log JVM Vendor:            Oracle Corporation
+12-Nov-2019 06:50:49.563 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_BASE:         /usr/local/tomcat
+12-Nov-2019 06:50:49.563 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log CATALINA_HOME:         /usr/local/tomcat
+12-Nov-2019 06:50:49.564 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.config.file=/usr/local/tomcat/conf/logging.properties
+12-Nov-2019 06:50:49.565 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager
+12-Nov-2019 06:50:49.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djdk.tls.ephemeralDHKeySize=2048
+12-Nov-2019 06:50:49.566 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.protocol.handler.pkgs=org.apache.catalina.webresources
+12-Nov-2019 06:50:49.567 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dorg.apache.catalina.security.SecurityListener.UMASK=0027
+12-Nov-2019 06:50:49.567 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dignore.endorsed.dirs=
+12-Nov-2019 06:50:49.568 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.base=/usr/local/tomcat
+12-Nov-2019 06:50:49.569 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Dcatalina.home=/usr/local/tomcat
+12-Nov-2019 06:50:49.570 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Command line argument: -Djava.io.tmpdir=/usr/local/tomcat/temp
+12-Nov-2019 06:50:49.570 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent Loaded APR based Apache Tomcat Native library[1.2.23] using APR version [1.5.2].
+12-Nov-2019 06:50:49.571 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR capabilities: IPv6 [true], sendfile [true], accept filters [false], random [true].
+12-Nov-2019 06:50:49.573 INFO [main] org.apache.catalina.core.AprLifecycleListener.lifecycleEvent APR/OpenSSL configuration: useAprConnector [false], useOpenSSL [true]
+12-Nov-2019 06:50:49.590 INFO [main] org.apache.catalina.core.AprLifecycleListener.initializeSSL OpenSSL successfully initialized [OpenSSL 1.1.0l  10 Sep 2019]
+12-Nov-2019 06:50:49.709 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["http-nio-8080"]
+12-Nov-2019 06:50:49.722 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+12-Nov-2019 06:50:49.743 INFO [main] org.apache.coyote.AbstractProtocol.init Initializing ProtocolHandler ["ajp-nio-8009"]
+12-Nov-2019 06:50:49.746 INFO [main] org.apache.tomcat.util.net.NioSelectorPool.getSharedSelector Using a shared selector for servlet write/read
+12-Nov-2019 06:50:49.746 INFO [main] org.apache.catalina.startup.Catalina.load Initialization processed in 799 ms
+12-Nov-2019 06:50:49.775 INFO [main] org.apache.catalina.core.StandardService.startInternal Starting service [Catalina]
+12-Nov-2019 06:50:49.776 INFO [main] org.apache.catalina.core.StandardEngine.startInternal Starting Servlet Engine: Apache Tomcat/8.5.47
+12-Nov-2019 06:50:49.790 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/examples]
+12-Nov-2019 06:50:50.708 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/examples] has finished in [917] ms
+12-Nov-2019 06:50:50.710 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/manager]
+12-Nov-2019 06:50:50.746 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/manager] has finished in [36] ms
+12-Nov-2019 06:50:50.747 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/ROOT]
+12-Nov-2019 06:50:50.770 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/ROOT] has finished in [23] ms
+12-Nov-2019 06:50:50.771 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/docs]
+12-Nov-2019 06:50:50.794 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/docs] has finished in [23] ms
+12-Nov-2019 06:50:50.795 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deploying web application directory [/usr/local/tomcat/webapps/host-manager]
+12-Nov-2019 06:50:50.823 INFO [localhost-startStop-1] org.apache.catalina.startup.HostConfig.deployDirectory Deployment of web application directory [/usr/local/tomcat/webapps/host-manager] has finished in [28] ms
+12-Nov-2019 06:50:50.836 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["http-nio-8080"]
+12-Nov-2019 06:50:50.854 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
+12-Nov-2019 06:50:50.868 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 1120 ms
+
+
+
+master $
+
+
