@@ -70,6 +70,12 @@ gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b
 master $
 Find out the "Full" ImageId of the image that you pulled and write it below :- 540a289bab6c
 
+
+master $ docker inspect nginx
+ "Id": "sha256:540a289bab6cb1bf880086a9b803cf0c4cefe38cbb5cdefa199b69614525199f",
+master $
+
+
 5. Create a container of your image 
 master $ docker container create nginx
 d66754c7638772ed29abef8c03fa1e2752c330a2f9020b38673da2a2aa214d7b
@@ -107,6 +113,10 @@ master $
 
 8. Find out the "Full" containerId of the container and write it below. :- bede6b1128ce
 
+master $ docker inspect --format="{{.Id}}"  d7ffc203383a
+d7ffc203383a30c3c23e37a91a2b69ea3b207949959b9e98cc0ee1b4a92b0fd9
+master $
+
 9. Find out how many image layers are used to build this image.
 master $ docker history 540a289bab6c
 IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
@@ -121,6 +131,226 @@ IMAGE               CREATED             CREATED BY                              
 <missing>           3 weeks ago         /bin/sh -c #(nop)  LABEL maintainer=NGINX Do…   0B
 <missing>           3 weeks ago         /bin/sh -c #(nop)  CMD ["bash"]                 0B
 <missing>           3 weeks ago         /bin/sh -c #(nop) ADD file:74b2987cacab5a6b0…   69.2MB
+master $
+
+OR
+
+master $ docker inspect f41752d4e59d
+[
+    {
+        "Id": "f41752d4e59d9f159c33a09a94021de68db16009f77ac217c7d88cb9bd7d10a4",
+        "Created": "2019-11-13T07:56:39.203267512Z",
+        "Path": "catalina.sh",
+        "Args": [
+            "run"
+        ],
+        "State": {
+            "Status": "created",
+            "Running": false,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 0,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "0001-01-01T00:00:00Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:882487b8be1d58ec8471a74344492b3ec013aa5867b095e6efee26bc1d6c6a71",
+        "ResolvConfPath": "",
+        "HostnamePath": "",
+        "HostsPath": "",
+        "LogPath": "",
+        "Name": "/mystifying_murdock",
+        "RestartCount": 0,
+        "Driver": "overlay",
+        "Platform": "linux",
+        "MountLabel": "",
+        "ProcessLabel": "",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "json-file",
+                "Config": {
+                    "max-size": "100m"
+                }
+            },
+            "NetworkMode": "default",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "shareable",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": [],
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DeviceCgroupRules": null,
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": null,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0,
+            "MaskedPaths": [
+                "/proc/asound",
+                "/proc/acpi",
+                "/proc/kcore",
+                "/proc/keys",
+                "/proc/latency_stats",
+                "/proc/timer_list",
+                "/proc/timer_stats",
+                "/proc/sched_debug",
+                "/proc/scsi",
+                "/sys/firmware"
+            ],
+            "ReadonlyPaths": [
+                "/proc/bus",
+                "/proc/fs",
+                "/proc/irq",
+                "/proc/sys",
+                "/proc/sysrq-trigger"
+            ]
+        },
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay/0b41b80f269684fe43209a31f057b48d2191964c425639cf250c9ffea42d11ff/root",
+                "MergedDir": "/var/lib/docker/overlay/f4d26e38baffb841557689a72fdb9c078883bba21b49c435143794a46350a9b8/merged",
+                "UpperDir": "/var/lib/docker/overlay/f4d26e38baffb841557689a72fdb9c078883bba21b49c435143794a46350a9b8/upper",
+                "WorkDir": "/var/lib/docker/overlay/f4d26e38baffb841557689a72fdb9c078883bba21b49c435143794a46350a9b8/work"
+            },
+            "Name": "overlay"
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "f41752d4e59d",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/tomcat/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "JAVA_VERSION=8u232",
+                "JAVA_BASE_URL=https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_",
+                "JAVA_URL_VERSION=8u232b09",
+                "CATALINA_HOME=/usr/local/tomcat",
+                "TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib",
+                "LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib",
+                "GPG_KEYS=05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23",
+                "TOMCAT_MAJOR=8",
+                "TOMCAT_VERSION=8.5.47",
+                "TOMCAT_SHA512=079b85f3dfca2b137634859208fae6012860201d720d12ff0add3473f1e267d332cb12803958754e1f922599e0d42b7e97f00bcd62584d9148a6f45fde091716"
+            ],
+            "Cmd": [
+                "catalina.sh",
+                "run"
+            ],
+            "ArgsEscaped": true,
+            "Image": "tomcat",
+            "Volumes": null,
+            "WorkingDir": "/usr/local/tomcat",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "bridge": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "",
+                    "EndpointID": "",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": "",
+                    "DriverOpts": null
+                }
+            }
+        }
+    }
+]
 master $
 
 10. Get the Apache Tomcat 7 server image from the docker hub.
@@ -193,6 +423,10 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 e7428e6285ad        tomcat              "catalina.sh run"   14 seconds ago      Created                                 goofy_wing
 master $
 
+OR
+
+master $ docker container run tomcat
+
 12. Find out what is the IP Address of the Apache Tomcat Container that it is running on
 master $ docker container start -a e7428e6285ad
 12-Nov-2019 06:33:49.644 INFO [main] org.apache.catalina.startup.VersionLoggerListener.log Server version name:   Apache Tomcat/8.5.47
@@ -249,8 +483,214 @@ e7428e6285ad        tomcat              "catalina.sh run"   9 minutes ago       
 master $
 
 
+
 14. Try to access the Tomcat's home page from your machine/vm.
-Pending, need to discuss
+type ifconfig and go to ens3 to get IP
+
+master $ docker run -d -p 8081:8080 tomcat
+40985307afc03027fb7c8ccfd191e11f1a55abd374d3385c8c914ef05747be69
+master $ curl 172.17.0.28:8080
+curl: (7) Failed to connect to 172.17.0.28 port 8080: Connection refused
+master $ curl 172.17.0.28:8081
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.5.47</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="https://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></span>
+                <span id="nav-lists"><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></span>
+                <span id="nav-help"><a href="https://tomcat.apache.org/findhelp.html">Find Help</a></span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.5.47</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulations!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations How-To</a></h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application How-To</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication How-To</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</span></a>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="https://wiki.apache.org/tomcat/Specifications">Servlet Specifications</a></p>
+                        <p><a href="https://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> is restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.5 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...</a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="https://tomcat.apache.org/migration.html">Migration Guide</a></h4>
+                        <h4><a href="https://tomcat.apache.org/security.html">Security Notices</a></h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.5 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.5 Configuration</a></h4>
+                        <h4><a href="https://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/bugreport.html">Tomcat 8.5 Bug Database</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.5 JavaDocs</a></li>
+                            <li><a href="https://github.com/apache/tomcat/tree/8.5.x">Tomcat 8.5 Git Repository at GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="https://tomcat.apache.org/faq/">FAQ</a> and <a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="https://tomcat.apache.org/lists.html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notifications. (Low volume).</strong>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-users">tomcat-users</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#taglibs-user">taglibs-user</a><br />
+                                User support and discussion for <a href="https://tomcat.apache.org/taglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev</a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/download-connectors.cgi">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/download-native.cgi">Tomcat Native</a></li>
+                            <li><a href="https://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">mod_jk Documentation</a></li>
+                            <li><a href="https://tomcat.apache.org/native-doc/">Tomcat Native</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/getinvolved.html">Overview</a></li>
+                            <li><a href="https://tomcat.apache.org/source.html">Source Repositories</a></li>
+                            <li><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></li>
+                            <li><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="https://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a></li>
+                            <li><a href="https://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/whoweare.html">Who We Are</a></li>
+                            <li><a href="https://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="https://www.apache.org">Apache Home</a></li>
+                            <li><a href="https://tomcat.apache.org/resources.html">Resources</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2019 Apache Software Foundation.  All Rights Reserved</p>
+        </div>
+    </body>
+
+</html>
+master $
 
 15. What is the disk size of Apache Tomcat image? -- 507MB
 master $ docker image ls tomcat
@@ -261,16 +701,568 @@ size  507MB
 
 16. Find out list of all environment variables that is configured for tomcat image, can you see JAVA_HOME and CATALINA_HOME? What did you notice about it?
 
-Java Home:             /usr/local/openjdk-8/jre  
-JVM Version:           1.8.0_232-b09             
-JVM Vendor:            Oracle Corporation        
-CATALINA_BASE:         /usr/local/tomcat         
-CATALINA_HOME:         /usr/local/tomcat    
+master $ docker inspect tomcat
+[
+    {
+        "Id": "sha256:882487b8be1d58ec8471a74344492b3ec013aa5867b095e6efee26bc1d6c6a71",
+        "RepoTags": [
+            "tomcat:latest"
+        ],
+        "RepoDigests": [
+            "tomcat@sha256:77e41dbdf7854f03b9a933510e8852c99d836d42ae85cba4b3bc04e8710dc0f7"
+        ],
+        "Parent": "",
+        "Comment": "",
+        "Created": "2019-10-19T02:26:07.016458705Z",
+        "Container": "97ec4db7558e28b8af0054f4765f62bc14cab8f8b09e283591cffd7b30514681",
+        "ContainerConfig": {
+            "Hostname": "97ec4db7558e",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/tomcat/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "JAVA_VERSION=8u232",
+                "JAVA_BASE_URL=https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_",
+                "JAVA_URL_VERSION=8u232b09",
+                "CATALINA_HOME=/usr/local/tomcat",
+                "TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib",
+                "LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib",
+                "GPG_KEYS=05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23",
+                "TOMCAT_MAJOR=8",
+                "TOMCAT_VERSION=8.5.47",
+                "TOMCAT_SHA512=079b85f3dfca2b137634859208fae6012860201d720d12ff0add3473f1e267d332cb12803958754e1f922599e0d42b7e97f00bcd62584d9148a6f45fde091716"
+            ],
+            "Cmd": [
+                "/bin/sh",
+                "-c",
+                "#(nop) ",
+                "CMD [\"catalina.sh\" \"run\"]"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:7ba2e40d851ce0e312aa9297c61e1b8b37df77c7151439149339fe5270d8b360",
+            "Volumes": null,
+            "WorkingDir": "/usr/local/tomcat",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "DockerVersion": "18.06.1-ce",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/tomcat/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LANG=C.UTF-8",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "JAVA_VERSION=8u232",
+                "JAVA_BASE_URL=https://github.com/AdoptOpenJDK/openjdk8-upstream-binaries/releases/download/jdk8u232-b09/OpenJDK8U-jdk_",
+                "JAVA_URL_VERSION=8u232b09",
+                "CATALINA_HOME=/usr/local/tomcat",
+                "TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib",
+                "LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib",
+                "GPG_KEYS=05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 61B832AC2F1C5A90F0F9B00A1C506407564C17A3 713DA88BE50911535FE716F5208B0AB1D63011C7 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23",
+                "TOMCAT_MAJOR=8",
+                "TOMCAT_VERSION=8.5.47",
+                "TOMCAT_SHA512=079b85f3dfca2b137634859208fae6012860201d720d12ff0add3473f1e267d332cb12803958754e1f922599e0d42b7e97f00bcd62584d9148a6f45fde091716"
+            ],
+            "Cmd": [
+                "catalina.sh",
+                "run"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:7ba2e40d851ce0e312aa9297c61e1b8b37df77c7151439149339fe5270d8b360",
+            "Volumes": null,
+            "WorkingDir": "/usr/local/tomcat",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 506742591,
+        "VirtualSize": 506742591,
+        "GraphDriver": {
+            "Data": {
+                "RootDir": "/var/lib/docker/overlay/0b41b80f269684fe43209a31f057b48d2191964c425639cf250c9ffea42d11ff/root"
+            },
+            "Name": "overlay"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:97041f29baff775daa9b4f608c11db724fbe406c6478f69721a85df4006ef7c0",
+                "sha256:2f77733e9824e18b358f20bd33ad569f21e3136c2a22ef502c15b627be3c9f5e",
+                "sha256:687890749166493fb9958058143592c3aadf73b6f914f1b15093e8108d47dcd8",
+                "sha256:b8f8aeff56a83bdb007111d2a746c5819d592c6c0a0ddbd4d2e60f5ed5d71dea",
+                "sha256:7e3c900343d08f51118c48e0a7ca914c5532681e345078ef4a222ff2898f7a3a",
+                "sha256:99557920a7c54f7f15f397a839132ef74fcf6e60e5659d6f14f4f10dbef2060f",
+                "sha256:a8902d6047fea645ed2d9e425a947c9f6ffa6ffce6c1df9860a243813a7830ed",
+                "sha256:08579474bb30b0a954f88b0b38ab1ba35f23336d263831ec03abec2fa126b0d1",
+                "sha256:38d8d468142ff79377f2c73224ee4326ebc2563c87ba1f6f7ee4a4cd8563e84f",
+                "sha256:65e5e74a1404f2ee7ddf07d48b51544ec38c8e2bb8094e346b48b0ab71522ad7"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "0001-01-01T00:00:00Z"
+        }
+    }
+]
+master $
 
 17. Find out which port is exposed for tomcat?  8080/tcp
-
+"ExposedPorts": {
+                "8080/tcp": {}
+            },
 18. Run multiple conntainers of tomcat on different port and access it's home page. 
-Pending, need to discuss
+master $ docker run -d -p 8082:8080 tomcat
+7b4a695c5b9313cbb4eb680faa2627a13551fde9918baf04489095fcdba7dc20
+master $ docker run -d -p 8083:8080 tomcat
+2d48759147eb6fec996f79eb902cab66b19b1f59459a7284a52bedd51f9b0771
+
+master $ docker container ps
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS                    NAMES
+2d48759147eb        tomcat                 "catalina.sh run"        16 seconds ago      Up 15 seconds       0.0.0.0:8083->8080/tcp   objective_booth
+7b4a695c5b93        tomcat                 "catalina.sh run"        26 seconds ago      Up 24 seconds       0.0.0.0:8082->8080/tcp   inspiring_merkle
+40985307afc0        tomcat                 "catalina.sh run"        6 minutes ago       Up 6 minutes        0.0.0.0:8081->8080/tcp   clever_fermi
+027b580829e0        tomcat                 "catalina.sh run"        11 minutes ago      Up 11 minutes       8080/tcp                 vigilant_dubinsky
+7d5bec75edce        1f394ae9e226           "/home/weave/launch.…"   About an hour ago   Up About an hour                             k8s_weave_weave-net-72wvg_kube-system_57fbb6eb-05e6-11ea-9ddc-0242ac11001c_1
+58bdbcc28e81        5cd54e388aba           "/usr/local/bin/kube…"   About an hour ago   Up About an hour                             k8s_kube-proxy_kube-proxy-gbnjg_kube-system_57fbb729-05e6-11ea-9ddc-0242ac11001c_0
+3644ca0b0934        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_kube-proxy-gbnjg_kube-system_57fbb729-05e6-11ea-9ddc-0242ac11001c_0
+3733e1aae1b5        789b7f496034           "/usr/bin/weave-npc"     About an hour ago   Up About an hour                             k8s_weave-npc_weave-net-72wvg_kube-system_57fbb6eb-05e6-11ea-9ddc-0242ac11001c_0
+0f5b9b08055e        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_weave-net-72wvg_kube-system_57fbb6eb-05e6-11ea-9ddc-0242ac11001c_0
+a7ee51bb21fd        ecf910f40d6e           "kube-apiserver --ad…"   About an hour ago   Up About an hour                             k8s_kube-apiserver_kube-apiserver-master_kube-system_8ef623a5d638079ee8b8c11e81f129c9_0
+2017ba2db016        2c4adeb21b4f           "etcd --advertise-cl…"   About an hour ago   Up About an hour                             k8s_etcd_etcd-master_kube-system_a2af1beeca41ff878a71b2709b299989_0
+aa781db4afe2        00638a24688b           "kube-scheduler --bi…"   About an hour ago   Up About an hour                             k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+ad9060305bb3        b95b1efa0436           "kube-controller-man…"   About an hour ago   Up About an hour                             k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+9ae018e702f3        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+e0a65189d2a1        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+1e237c56bb68        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_kube-apiserver-master_kube-system_8ef623a5d638079ee8b8c11e81f129c9_0
+8b03a64d2ead        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                             k8s_POD_etcd-master_kube-system_a2af1beeca41ff878a71b2709b299989_0
+master $
+
+master $ curl 172.17.0.28:8082
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.5.47</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="https://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></span>
+                <span id="nav-lists"><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></span>
+                <span id="nav-help"><a href="https://tomcat.apache.org/findhelp.html">Find Help</a></span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.5.47</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulations!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations How-To</a></h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application How-To</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication How-To</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</span></a>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="https://wiki.apache.org/tomcat/Specifications">Servlet Specifications</a></p>
+                        <p><a href="https://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> is restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.5 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...</a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="https://tomcat.apache.org/migration.html">Migration Guide</a></h4>
+                        <h4><a href="https://tomcat.apache.org/security.html">Security Notices</a></h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.5 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.5 Configuration</a></h4>
+                        <h4><a href="https://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/bugreport.html">Tomcat 8.5 Bug Database</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.5 JavaDocs</a></li>
+                            <li><a href="https://github.com/apache/tomcat/tree/8.5.x">Tomcat 8.5 Git Repository at GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="https://tomcat.apache.org/faq/">FAQ</a> and <a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="https://tomcat.apache.org/lists.html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notifications. (Low volume).</strong>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-users">tomcat-users</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#taglibs-user">taglibs-user</a><br />
+                                User support and discussion for <a href="https://tomcat.apache.org/taglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev</a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/download-connectors.cgi">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/download-native.cgi">Tomcat Native</a></li>
+                            <li><a href="https://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">mod_jk Documentation</a></li>
+                            <li><a href="https://tomcat.apache.org/native-doc/">Tomcat Native</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/getinvolved.html">Overview</a></li>
+                            <li><a href="https://tomcat.apache.org/source.html">Source Repositories</a></li>
+                            <li><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></li>
+                            <li><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="https://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a></li>
+                            <li><a href="https://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/whoweare.html">Who We Are</a></li>
+                            <li><a href="https://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="https://www.apache.org">Apache Home</a></li>
+                            <li><a href="https://tomcat.apache.org/resources.html">Resources</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2019 Apache Software Foundation.  All Rights Reserved</p>
+        </div>
+    </body>
+
+</html>
+master $ curl 172.17.0.28:8083
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Apache Tomcat/8.5.47</title>
+        <link href="favicon.ico" rel="icon" type="image/x-icon" />
+        <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <link href="tomcat.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <body>
+        <div id="wrapper">
+            <div id="navigation" class="curved container">
+                <span id="nav-home"><a href="https://tomcat.apache.org/">Home</a></span>
+                <span id="nav-hosts"><a href="/docs/">Documentation</a></span>
+                <span id="nav-config"><a href="/docs/config/">Configuration</a></span>
+                <span id="nav-examples"><a href="/examples/">Examples</a></span>
+                <span id="nav-wiki"><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></span>
+                <span id="nav-lists"><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></span>
+                <span id="nav-help"><a href="https://tomcat.apache.org/findhelp.html">Find Help</a></span>
+                <br class="separator" />
+            </div>
+            <div id="asf-box">
+                <h1>Apache Tomcat/8.5.47</h1>
+            </div>
+            <div id="upper" class="curved container">
+                <div id="congrats" class="curved container">
+                    <h2>If you're seeing this, you've successfully installed Tomcat. Congratulations!</h2>
+                </div>
+                <div id="notice">
+                    <img src="tomcat.png" alt="[tomcat logo]" />
+                    <div id="tasks">
+                        <h3>Recommended Reading:</h3>
+                        <h4><a href="/docs/security-howto.html">Security Considerations How-To</a></h4>
+                        <h4><a href="/docs/manager-howto.html">Manager Application How-To</a></h4>
+                        <h4><a href="/docs/cluster-howto.html">Clustering/Session Replication How-To</a></h4>
+                    </div>
+                </div>
+                <div id="actions">
+                    <div class="button">
+                        <a class="container shadow" href="/manager/status"><span>Server Status</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/manager/html"><span>Manager App</span></a>
+                    </div>
+                    <div class="button">
+                        <a class="container shadow" href="/host-manager/html"><span>Host Manager</span></a>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="middle" class="curved container">
+                <h3>Developer Quick Start</h3>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/setup.html">Tomcat Setup</a></p>
+                        <p><a href="/docs/appdev/">First Web Application</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/docs/realm-howto.html">Realms &amp; AAA</a></p>
+                        <p><a href="/docs/jndi-datasource-examples-howto.html">JDBC DataSources</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="/examples/">Examples</a></p>
+                    </div>
+                </div>
+                <div class="col25">
+                    <div class="container">
+                        <p><a href="https://wiki.apache.org/tomcat/Specifications">Servlet Specifications</a></p>
+                        <p><a href="https://wiki.apache.org/tomcat/TomcatVersions">Tomcat Versions</a></p>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="lower">
+                <div id="low-manage" class="">
+                    <div class="curved container">
+                        <h3>Managing Tomcat</h3>
+                        <p>For security, access to the <a href="/manager/html">manager webapp</a> is restricted.
+                        Users are defined in:</p>
+                        <pre>$CATALINA_HOME/conf/tomcat-users.xml</pre>
+                        <p>In Tomcat 8.5 access to the manager application is split between
+                           different users. &nbsp; <a href="/docs/manager-howto.html">Read more...</a></p>
+                        <br />
+                        <h4><a href="/docs/RELEASE-NOTES.txt">Release Notes</a></h4>
+                        <h4><a href="/docs/changelog.html">Changelog</a></h4>
+                        <h4><a href="https://tomcat.apache.org/migration.html">Migration Guide</a></h4>
+                        <h4><a href="https://tomcat.apache.org/security.html">Security Notices</a></h4>
+                    </div>
+                </div>
+                <div id="low-docs" class="">
+                    <div class="curved container">
+                        <h3>Documentation</h3>
+                        <h4><a href="/docs/">Tomcat 8.5 Documentation</a></h4>
+                        <h4><a href="/docs/config/">Tomcat 8.5 Configuration</a></h4>
+                        <h4><a href="https://wiki.apache.org/tomcat/FrontPage">Tomcat Wiki</a></h4>
+                        <p>Find additional important configuration information in:</p>
+                        <pre>$CATALINA_HOME/RUNNING.txt</pre>
+                        <p>Developers may be interested in:</p>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/bugreport.html">Tomcat 8.5 Bug Database</a></li>
+                            <li><a href="/docs/api/index.html">Tomcat 8.5 JavaDocs</a></li>
+                            <li><a href="https://github.com/apache/tomcat/tree/8.5.x">Tomcat 8.5 Git Repository at GitHub</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="low-help" class="">
+                    <div class="curved container">
+                        <h3>Getting Help</h3>
+                        <h4><a href="https://tomcat.apache.org/faq/">FAQ</a> and <a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></h4>
+                        <p>The following mailing lists are available:</p>
+                        <ul>
+                            <li id="list-announce"><strong><a href="https://tomcat.apache.org/lists.html#tomcat-announce">tomcat-announce</a><br />
+                                Important announcements, releases, security vulnerability notifications. (Low volume).</strong>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-users">tomcat-users</a><br />
+                                User support and discussion
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#taglibs-user">taglibs-user</a><br />
+                                User support and discussion for <a href="https://tomcat.apache.org/taglibs/">Apache Taglibs</a>
+                            </li>
+                            <li><a href="https://tomcat.apache.org/lists.html#tomcat-dev">tomcat-dev</a><br />
+                                Development mailing list, including commit messages
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <div id="footer" class="curved container">
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Downloads</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/download-connectors.cgi">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/download-native.cgi">Tomcat Native</a></li>
+                            <li><a href="https://tomcat.apache.org/taglibs/">Taglibs</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Other Documentation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">Tomcat Connectors</a></li>
+                            <li><a href="https://tomcat.apache.org/connectors-doc/">mod_jk Documentation</a></li>
+                            <li><a href="https://tomcat.apache.org/native-doc/">Tomcat Native</a></li>
+                            <li><a href="/docs/deployer-howto.html">Deployer</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Get Involved</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/getinvolved.html">Overview</a></li>
+                            <li><a href="https://tomcat.apache.org/source.html">Source Repositories</a></li>
+                            <li><a href="https://tomcat.apache.org/lists.html">Mailing Lists</a></li>
+                            <li><a href="https://wiki.apache.org/tomcat/FrontPage">Wiki</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Miscellaneous</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/contact.html">Contact</a></li>
+                            <li><a href="https://tomcat.apache.org/legal.html">Legal</a></li>
+                            <li><a href="https://www.apache.org/foundation/sponsorship.html">Sponsorship</a></li>
+                            <li><a href="https://www.apache.org/foundation/thanks.html">Thanks</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col20">
+                    <div class="container">
+                        <h4>Apache Software Foundation</h4>
+                        <ul>
+                            <li><a href="https://tomcat.apache.org/whoweare.html">Who We Are</a></li>
+                            <li><a href="https://tomcat.apache.org/heritage.html">Heritage</a></li>
+                            <li><a href="https://www.apache.org">Apache Home</a></li>
+                            <li><a href="https://tomcat.apache.org/resources.html">Resources</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <br class="separator" />
+            </div>
+            <p class="copyright">Copyright &copy;1999-2019 Apache Software Foundation.  All Rights Reserved</p>
+        </div>
+    </body>
+
+</html>
+master $
 
 19. Pull ubuntu os from dockerhub, try to pull 2 images of ubuntu, Except the latest one.
 
@@ -298,12 +1290,35 @@ Status: Image is up to date for ubuntu:latest
 master $ docker image pull ubuntu-new
 Using default tag: latest
 Error response from daemon: pull access denied for ubuntu-new, repository does not exist or may require 'docker login'
-master $
+master $ docker image pull ubuntu
+ubuntu         ubuntu:latest
+
 master $ docker image ls ubuntu
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 ubuntu              latest              775349758637        11 days ago         64.2MB
 ubuntu              <none>              3556258649b2        3 months ago        64.2MB
-master $ docker container create ^C
+
+master $ docker image pull ubuntu:18.04
+18.04: Pulling from library/ubuntu
+Digest: sha256:6e9f67fa63b0323e9a1e587fd71c561ba48a034504fb804fd26fd8800039835d
+Status: Downloaded newer image for ubuntu:18.04
+master $ docker image pull ubuntu:14.04
+14.04: Pulling from library/ubuntu
+a7344f52cb74: Pull complete
+515c9bb51536: Pull complete
+e1eabe0537eb: Pull complete
+4701f1215c13: Pull complete
+Digest: sha256:2f7c79927b346e436cc14c92bd4e5bd778c3bd7037f35bc639ac1589a7acfa90
+Status: Downloaded newer image for ubuntu:14.04
+master $ docker image ls ubuntu
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              18.04               775349758637        12 days ago         64.2MB
+ubuntu              latest              775349758637        12 days ago         64.2MB
+ubuntu              <none>              3556258649b2        3 months ago        64.2MB
+ubuntu              14.04               2c5e00d77a67        6 months ago        188MB
+master $
+
+
 master $ docker image ls 775349758637
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 master $ docker container create 775349758637
@@ -329,15 +1344,19 @@ master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS                     PORTS               NAMES
 2c1c1a4dfc37        775349758637        "/bin/bash"         About a minute ago   Exited (0) 3 seconds ago                       affectionate_gauss
 master $ docker container ls -l
-
-
-
 master $ docker container create 3556258649b2
 c7766f02738bd0964439b98d153a2875ab446ac20fb1c04f8637e7e6ed0b492b
 master $ docker container ls -l
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 c7766f02738b        3556258649b2        "/bin/bash"         3 seconds ago       Created                                 jovial_goldwasser
+master $ docker run -it ubuntu
+root@b449b40ebc60:/#
 
+21. Run the container of another ubuntu in detached mode.
+
+master $ docker run -d ubuntu
+19bf8dc95f19aa9391e39df089b2bdeb248e383540bf7e2bc9520948a8fbc13b
+master $
 
 22. Check how many ubuntu containers are running and stopped
 master $ docker container ls -a
@@ -359,6 +1378,26 @@ c1266278c972        ecf910f40d6e           "kube-apiserver --ad…"   About an hou
 2e667aca9265        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
 b712b1c9fe36        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_kube-apiserver-master_kube-system_75e23e57b9e3fe4fe9a36ecaf98ee8f4_0
 cc767f9bfb3d        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                                k8s_POD_etcd-master_kube-system_fb55eefcff80d166704e99b63b4c8fdc_0
+
+master $ docker container ls -a
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                      PORTS               NAMES
+930ee39ac975        ubuntu:18.04           "/bin/bash"              13 seconds ago      Exited (0) 12 seconds ago                       recursing_heyrovsky
+ba9406e421f6        ubuntu                 "/bin/bash"              33 seconds ago      Exited (0) 28 seconds ago                       quizzical_chatterjee
+cc345cce5abc        1f394ae9e226           "/home/weave/launch.…"   24 minutes ago      Up 24 minutes                                   k8s_weave_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_1
+ee87a63804ee        789b7f496034           "/usr/bin/weave-npc"     25 minutes ago      Up 25 minutes                                   k8s_weave-npc_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+3ad42309f7cf        1f394ae9e226           "/home/weave/launch.…"   25 minutes ago      Exited (1) 24 minutes ago                       k8s_weave_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+1b16d53371a7        5cd54e388aba           "/usr/local/bin/kube…"   25 minutes ago      Up 25 minutes                                   k8s_kube-proxy_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+3722f693b261        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+eced743f8714        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+7f058c6a0729        ecf910f40d6e           "kube-apiserver --ad…"   25 minutes ago      Up 25 minutes                                   k8s_kube-apiserver_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+698889da74e4        00638a24688b           "kube-scheduler --bi…"   25 minutes ago      Up 25 minutes                                   k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+0245cd1ef79f        2c4adeb21b4f           "etcd --advertise-cl…"   25 minutes ago      Up 25 minutes                                   k8s_etcd_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+1e4d1263e360        b95b1efa0436           "kube-controller-man…"   25 minutes ago      Up 25 minutes                                   k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+59a5ddeebd71        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+bbe3bc2bf1eb        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+975b7d56f341        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+56d93fbafafc        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                                   k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+master $
 
 23. Is the tomcat container running? If no, start one.  its running
 
@@ -410,5 +1449,527 @@ master $ docker container logs 3325eb6170ff
 12-Nov-2019 06:50:50.854 INFO [main] org.apache.coyote.AbstractProtocol.start Starting ProtocolHandler ["ajp-nio-8009"]
 12-Nov-2019 06:50:50.868 INFO [main] org.apache.catalina.startup.Catalina.start Server startup in 1120 ms
 master $
+
+
+25. Check if ubuntu conatiner is running? If no, start one in attached mode to the terminal.
+yes running.
+master $ docker container ls -a
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                      PORTS               NAMES
+a5f28999c292        ubuntu                 "/bin/bash"              40 seconds ago      Up 39 seconds                                   happy_ride
+930ee39ac975        ubuntu:18.04           "/bin/bash"              2 minutes ago       Exited (0) 2 minutes ago                        recursing_heyrovsky
+ba9406e421f6        ubuntu                 "/bin/bash"              2 minutes ago       Exited (0) 2 minutes ago                        quizzical_chatterjee
+cc345cce5abc        1f394ae9e226           "/home/weave/launch.…"   26 minutes ago      Up 26 minutes                                   k8s_weave_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_1
+ee87a63804ee        789b7f496034           "/usr/bin/weave-npc"     27 minutes ago      Up 27 minutes                                   k8s_weave-npc_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+3ad42309f7cf        1f394ae9e226           "/home/weave/launch.…"   27 minutes ago      Exited (1) 26 minutes ago                       k8s_weave_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+1b16d53371a7        5cd54e388aba           "/usr/local/bin/kube…"   27 minutes ago      Up 27 minutes                                   k8s_kube-proxy_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+3722f693b261        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+eced743f8714        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+7f058c6a0729        ecf910f40d6e           "kube-apiserver --ad…"   27 minutes ago      Up 27 minutes                                   k8s_kube-apiserver_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+698889da74e4        00638a24688b           "kube-scheduler --bi…"   27 minutes ago      Up 27 minutes                                   k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+0245cd1ef79f        2c4adeb21b4f           "etcd --advertise-cl…"   27 minutes ago      Up 27 minutes                                   k8s_etcd_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+1e4d1263e360        b95b1efa0436           "kube-controller-man…"   27 minutes ago      Up 27 minutes                                   k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+59a5ddeebd71        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+bbe3bc2bf1eb        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+975b7d56f341        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+56d93fbafafc        k8s.gcr.io/pause:3.1   "/pause"                 27 minutes ago      Up 27 minutes                                   k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+master $
+
+26. Login as root user in ubuntu container
+master $ docker run -it ubuntu
+root@a5f28999c292:/#
+
+27. Create a file with any name in root directory
+root@a5f28999c292:/# touch testrahul.txt
+root@a5f28999c292:/# ls -ltr
+total 64
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x  10 root root 4096 Oct 29 21:25 usr
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 srv
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 opt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 mnt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 media
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 lib64
+drwxr-xr-x  11 root root 4096 Oct 29 21:25 var
+drwx------   2 root root 4096 Oct 29 21:25 root
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 bin
+drwxrwxrwt   2 root root 4096 Oct 29 21:25 tmp
+drwxr-xr-x   2 root root 4096 Oct 31 22:20 sbin
+drwxr-xr-x   5 root root 4096 Oct 31 22:20 run
+drwxr-xr-x   1 root root 4096 Nov 13 08:46 etc
+dr-xr-xr-x 144 root root    0 Nov 13 08:46 proc
+dr-xr-xr-x  13 root root    0 Nov 13 08:46 sys
+drwxr-xr-x   5 root root  360 Nov 13 08:46 dev
+-rw-r--r--   1 root root    0 Nov 13 08:49 testrahul.txt
+root@a5f28999c292:/#
+
+28. Install software of your choice in ubuntu container using "apt-get install"
+
+root@a5f28999c292:/# apt-get install tomcat
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: Unable to locate package tomcat
+root@a5f28999c292:/# apt-get install git
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: Unable to locate package git
+root@a5f28999c292:/# apt-get update git
+E: The update command takes no arguments
+
+
+
+29. Now exit the ubuntu shell, are you back to your host machine, if not, come back to the host machine.
+
+root@a5f28999c292:/bin# exit
+exit
+master $ 
+
+30. Check if the ubuntu container is running.
+
+master $ docker container ls -a | grep ubuntu
+a5f28999c292        ubuntu                 "/bin/bash"              8 minutes ago       Exited (100) 25 seconds ago                       happy_ride
+930ee39ac975        ubuntu:18.04           "/bin/bash"              9 minutes ago       Exited (0) 9 minutes ago                          recursing_heyrovsky
+ba9406e421f6        ubuntu                 "/bin/bash"              9 minutes ago       Exited (0) 9 minutes ago                          quizzical_chatterjee
+master $
+
+31. Create a new ubuntu container out of the same image as that previous container in attached mode.
+
+master $ docker run -d --name happy_ride ubuntu  /bin/bash/ -b
+docker: Error response from daemon: Conflict. The container name "/happy_ride" is already in use by container "a5f28999c29298c5a7021be2c6416282ea1b7379a1247061f287e9b02849b302". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+master $ docker run -d --name quizzical_chatte ubuntu  /bin/bash/ -b
+849d76c1ccfc9e63918da5152fd07dac3cdb0dfd649d0d9f0d67304994ca2185
+docker: Error response from daemon: OCI runtime create failed: container_linux.go:345: starting container process caused "exec: \"/bin/bash/\": stat /bin/bash/: not a directory": unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type.
+master $ docker run -d --name quizzical_chatte ubuntu  /usr/bin/top -b
+docker: Error response from daemon: Conflict. The container name "/quizzical_chatte" is already in use by container "849d76c1ccfc9e63918da5152fd07dac3cdb0dfd649d0d9f0d67304994ca2185". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+master $ docker run -d --name recursing_heyrovsky ubuntu  /usr/bin/top -b
+docker: Error response from daemon: Conflict. The container name "/recursing_heyrovsky" is already in use by container "930ee39ac975de72d0857109d812ca50ba58a81e3b246410d9cce1faea91142a". You have to remove (or rename) that container to be able to reuse that name.
+See 'docker run --help'.
+master $
+
+
+master $ docker container ls -a |grep ubuntu
+b63043ad1bc4        ubuntu                 "/bin/bash"              17 seconds ago      Up 16 seconds                                     keen_buck
+2589330f1a6b        ubuntu:14.04           "/bin/bash"              4 minutes ago       Exited (0) 4 minutes ago                          lucid_haibt
+849d76c1ccfc        ubuntu                 "/bin/bash/ -b"          6 minutes ago       Created                                           quizzical_chatte
+a5f28999c292        ubuntu                 "/bin/bash"              19 minutes ago      Exited (100) 12 minutes ago                       happy_ride
+930ee39ac975        ubuntu:18.04           "/bin/bash"              21 minutes ago      Exited (0) 21 minutes ago                         recursing_heyrovsky
+ba9406e421f6        ubuntu                 "/bin/bash"              21 minutes ago      Exited (0) 21 minutes ago                         quizzical_chatterjee
+master $ docker attach b63043ad1bc4
+root@b63043ad1bc4:/#
+
+
+32. Login as a root user:-
+root@b63043ad1bc4:/# 
+
+33. Check if you can see the file created in previous container, you will not see the file as well as software that you installed in the previous container. Now kill this Container.  NO
+
+root@b63043ad1bc4:/# ls -ltr
+total 64
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x  10 root root 4096 Oct 29 21:25 usr
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 srv
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 opt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 mnt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 media
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 lib64
+drwxr-xr-x  11 root root 4096 Oct 29 21:25 var
+drwx------   2 root root 4096 Oct 29 21:25 root
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 bin
+drwxrwxrwt   2 root root 4096 Oct 29 21:25 tmp
+drwxr-xr-x   2 root root 4096 Oct 31 22:20 sbin
+drwxr-xr-x   5 root root 4096 Oct 31 22:20 run
+dr-xr-xr-x  13 root root    0 Nov 13 08:49 sys
+drwxr-xr-x   1 root root 4096 Nov 13 09:06 etc
+dr-xr-xr-x 146 root root    0 Nov 13 09:06 proc
+drwxr-xr-x   5 root root  360 Nov 13 09:06 dev
+root@b63043ad1bc4:/# exit
+exit
+
+
+34. Do you have the previous ubuntu container where you created the file and installed the software? If no reapeat step 25 to 29.
+
+master $ docker container start a5f28999c292
+a5f28999c292
+master $ docker run -it a5f28999c292
+Unable to find image 'a5f28999c292:latest' locally
+docker: Error response from daemon: pull access denied for a5f28999c292, repository does not exist or may require 'docker login'.
+See 'docker run --help'.
+master $ docker exec -it a5f28999c292 /bin/bash
+root@a5f28999c292:/# touch newrahul.txt
+root@a5f28999c292:/# ls -lrt
+total 64
+drwxr-xr-x   8 root root 4096 May 23  2017 lib
+drwxr-xr-x   2 root root 4096 Apr 24  2018 home
+drwxr-xr-x   2 root root 4096 Apr 24  2018 boot
+drwxr-xr-x  10 root root 4096 Oct 29 21:25 usr
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 srv
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 opt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 mnt
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 media
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 lib64
+drwxr-xr-x   1 root root 4096 Oct 29 21:25 var
+drwxr-xr-x   2 root root 4096 Oct 29 21:25 bin
+drwxrwxrwt   2 root root 4096 Oct 29 21:25 tmp
+drwxr-xr-x   2 root root 4096 Oct 31 22:20 sbin
+drwxr-xr-x   5 root root 4096 Oct 31 22:20 run
+drwxr-xr-x   1 root root 4096 Nov 13 08:46 etc
+-rw-r--r--   1 root root    0 Nov 13 08:49 testrahul.txt
+dr-xr-xr-x  13 root root    0 Nov 13 08:49 sys
+drwx------   1 root root 4096 Nov 13 08:54 root
+dr-xr-xr-x 145 root root    0 Nov 13 09:13 proc
+drwxr-xr-x   5 root root  360 Nov 13 09:13 dev
+-rw-r--r--   1 root root    0 Nov 13 09:15 newrahul.txt
+root@a5f28999c292:/# apt-get install tomcat
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: Unable to locate package tomcat
+root@a5f28999c292:/# apt-get install git
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+E: Unable to locate package git
+root@a5f28999c292:/#
+
+
+
+35. Create an Image out of the existing container.
+
+master $ docker commit a5f28999c292 rahulimage:01
+sha256:5bd645084b3aaf54c266a5be2ac72c539c57c2c8c992a56f44a874d4d5fe7f7f
+
+master $ docker image ls
+REPOSITORY                                            TAG                 IMAGE ID            CREATED              SIZE
+rahulimage                                            01                  5bd645084b3a        About a minute ago   64.2MB
+ubuntu                                                18.04               775349758637        12 days ago          64.2MB
+ubuntu                                                latest              775349758637        12 days ago          64.2MB
+k8s.gcr.io/kube-proxy                                 v1.14.5             468c6baf864b        3 months ago         82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.5             3129b0ba0920        3 months ago         210MB
+k8s.gcr.io/kube-scheduler                             v1.14.5             ed5a937cb6f8        3 months ago         81.6MB
+k8s.gcr.io/kube-controller-manager                    v1.14.5             b8ab6b6b42c9        3 months ago         158MB
+redis                                                 latest              857c4ab5f029        3 months ago         98.2MB
+docker                                                latest              9a38a85b1e4e        3 months ago         216MB
+weaveworks/scope                                      1.11.4              a082d48f0b39        3 months ago         78.5MB
+ubuntu                                                <none>              3556258649b2        3 months ago         64.2MB
+alpine                                                latest              b7b28af77ffe        4 months ago         5.58MB
+katacoda/katacoda-cloud-provider                      0.0.1               74188596f8cb        4 months ago         116MB
+ubuntu                                                14.04               2c5e00d77a67        6 months ago         188MB
+weaveworks/flux                                       1.12.0              8bb853f52985        7 months ago         165MB
+k8s.gcr.io/kube-proxy                                 v1.14.0             5cd54e388aba        7 months ago         82.1MB
+k8s.gcr.io/kube-controller-manager                    v1.14.0             b95b1efa0436        7 months ago         158MB
+k8s.gcr.io/kube-scheduler                             v1.14.0             00638a24688b        7 months ago         81.6MB
+k8s.gcr.io/kube-apiserver                             v1.14.0             ecf910f40d6e        7 months ago         210MB
+gcr.io/kubernetes-helm/tiller                         v2.13.1             cb5aea7d0466        7 months ago         82.1MB
+alpine                                                3.7                 6d1ef012b567        8 months ago         4.2MB
+alpine                                                3.8                 dac705114996        8 months ago         4.41MB
+ruby                                                  2.5-alpine3.7       d1851fcb9251        9 months ago         43.7MB
+python                                                3.6-alpine3.7       28f54a6b0f1a        9 months ago         74.2MB
+weaveworks/weave-npc                                  2.5.1               789b7f496034        9 months ago         49.6MB
+weaveworks/weave-kube                                 2.5.1               1f394ae9e226        9 months ago         148MB
+k8s.gcr.io/coredns                                    1.3.1               eb516548c180        10 months ago        40.3MB
+k8s.gcr.io/etcd                                       3.3.10              2c4adeb21b4f        11 months ago        258MB
+weaveworks/scope                                      1.10.1              b0d8090d0e91        11 months ago        75.7MB
+k8s.gcr.io/kubernetes-dashboard-amd64                 v1.10.0             0dab2435c100        14 months ago        122MB
+weaveworks/scope                                      1.9.1               4b07159e407b        15 months ago        68MB
+quay.io/coreos/etcd                                   latest              61ad63875109        17 months ago        39.4MB
+prom/prometheus                                       v2.2.1              cc866859f8df        20 months ago        113MB
+node                                                  9.4-alpine          b5f94997f35f        22 months ago        68MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                     1.14.8              80cc5ea4b547        22 months ago        50.5MB
+k8s.gcr.io/pause                                      3.1                 da86e6ba6ca1        23 months ago        742kB
+prom/node-exporter                                    v0.15.2             ff5ecdcfc4a2        23 months ago        22.8MB
+prom/prometheus                                       v1.7.1              4da113bb6ae3        2 years ago          74.5MB
+prom/node-exporter                                    v0.14.0             bb4a6b774658        2 years ago          18.9MB
+gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        2 years ago          109MB
+gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago          142MB
+master $
+
+36. Now Create a Container out of this image and login into it to see if you can see the file and software installed by you in the previous container.
+
+master $ docker container create 5bd645084b3a
+d5906dfa7a7810638ec394e0cb4e3f7a5fa26e0e5797b5e80639f00b9d684643
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+d5906dfa7a78        5bd645084b3a        "/bin/bash"         23 seconds ago      Created                                 suspicious_elbakyan
+master $ docker exec -it d5906dfa7a78 /bin/bash
+Error response from daemon: Container d5906dfa7a7810638ec394e0cb4e3f7a5fa26e0e5797b5e80639f00b9d684643 is not running
+
+master $ docker start 3d087a0f72c4de54a8e8030645639c04088d1f7c18aef4bb16b95a59359d2b58
+3d087a0f72c4de54a8e8030645639c04088d1f7c18aef4bb16b95a59359d2b58
+master $ docker ps -a | grep 3d087a0f72c4
+3d087a0f72c4        5bd645084b3a           "/bin/bash"              5 minutes ago       Exited (0) 40 seconds ago                          dreamy_curran
+master $ docker start 3d087a0f72c4de54a8e8030645639c04088d1f7c18aef4bb16b95a59359d2b58 /bin/bash
+3d087a0f72c4de54a8e8030645639c04088d1f7c18aef4bb16b95a59359d2b58
+Error response from daemon: No such container: bin/bash
+Error: failed to start containers: /bin/bash
+master $ docker ps -a | grep 3d087a0f72c4
+3d087a0f72c4        5bd645084b3a           "/bin/bash"              6 minutes ago       Exited (0) 9 seconds ago                           dreamy_curran
+master $ docker exec -it 3d087a0f72c4 /bin/bash
+Error response from daemon: Container 3d087a0f72c4de54a8e8030645639c04088d1f7c18aef4bb16b95a59359d2b58 is not running
+master $
+
+
+37. Do you have running tomcat container? If yes, Stop it and kill all tomcat container.
+NO.
+
+master $ docker container ls
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS               NAMES
+a5f28999c292        ubuntu                 "/bin/bash"              About an hour ago   Up 28 minutes                           happy_ride
+cc345cce5abc        1f394ae9e226           "/home/weave/launch.…"   About an hour ago   Up About an hour                        k8s_weave_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_1
+ee87a63804ee        789b7f496034           "/usr/bin/weave-npc"     About an hour ago   Up About an hour                        k8s_weave-npc_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+1b16d53371a7        5cd54e388aba           "/usr/local/bin/kube…"   About an hour ago   Up About an hour                        k8s_kube-proxy_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+3722f693b261        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_weave-net-8k8bl_kube-system_6a38933e-05ee-11ea-9b66-0242ac110045_0
+eced743f8714        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_kube-proxy-p7p8j_kube-system_6a35d1c6-05ee-11ea-9b66-0242ac110045_0
+7f058c6a0729        ecf910f40d6e           "kube-apiserver --ad…"   About an hour ago   Up About an hour                        k8s_kube-apiserver_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+698889da74e4        00638a24688b           "kube-scheduler --bi…"   About an hour ago   Up About an hour                        k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+0245cd1ef79f        2c4adeb21b4f           "etcd --advertise-cl…"   About an hour ago   Up About an hour                        k8s_etcd_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+1e4d1263e360        b95b1efa0436           "kube-controller-man…"   About an hour ago   Up About an hour                        k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+59a5ddeebd71        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_kube-apiserver-master_kube-system_175dae84fb3a84aeed6b1e29da8c7d39_0
+bbe3bc2bf1eb        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+975b7d56f341        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_etcd-master_kube-system_62fcc0861d4e2ac4399e99444281dfe0_0
+56d93fbafafc        k8s.gcr.io/pause:3.1   "/pause"                 About an hour ago   Up About an hour                        k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+master $
+
+
+38. Create an index.html file with following code in it:-
+	<h1>This is Tomcat Container</h1>
+Now, Start a tomcat container in such a way that on hitting its URL for home page it should show the above html page.
+
+Need to discuss
+
+
+39. type below command:-
+	docker images --help
+Now, try to run command that proves the concept of following three options:-
+1. -a
+2. -f
+3. -q
+write atleast 1 command using each option above and prove their concepts as described in the --help.
+
+
+master $ docker images --help
+
+Usage:  docker images [OPTIONS] [REPOSITORY[:TAG]]
+
+List images
+
+Options:
+  -a, --all             Show all images (default hides intermediate images)
+      --digests         Show digests
+  -f, --filter filter   Filter output based on conditions provided
+      --format string   Pretty-print images using a Go template
+      --no-trunc        Don't truncate output
+  -q, --quiet           Only show numeric IDs
+master $
+
+1. master $ docker images -a ( for all images in docker)
+REPOSITORY                                            TAG                 IMAGE ID            CREATED             SIZE
+rahulimage                                            01                  5bd645084b3a        27 minutes ago      64.2MB
+ubuntu                                                18.04               775349758637        12 days ago         64.2MB
+ubuntu                                                latest              775349758637        12 days ago         64.2MB
+k8s.gcr.io/kube-proxy                                 v1.14.5             468c6baf864b        3 months ago        82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.5             3129b0ba0920        3 months ago        210MB
+k8s.gcr.io/kube-controller-manager                    v1.14.5             b8ab6b6b42c9        3 months ago        158MB
+k8s.gcr.io/kube-scheduler                             v1.14.5             ed5a937cb6f8        3 months ago        81.6MB
+redis                                                 latest              857c4ab5f029        3 months ago        98.2MB
+docker                                                latest              9a38a85b1e4e        3 months ago        216MB
+weaveworks/scope                                      1.11.4              a082d48f0b39        3 months ago        78.5MB
+ubuntu                                                <none>              3556258649b2        3 months ago        64.2MB
+alpine                                                latest              b7b28af77ffe        4 months ago        5.58MB
+katacoda/katacoda-cloud-provider                      0.0.1               74188596f8cb        4 months ago        116MB
+ubuntu                                                14.04               2c5e00d77a67        6 months ago        188MB
+weaveworks/flux                                       1.12.0              8bb853f52985        7 months ago        165MB
+k8s.gcr.io/kube-proxy                                 v1.14.0             5cd54e388aba        7 months ago        82.1MB
+k8s.gcr.io/kube-scheduler                             v1.14.0             00638a24688b        7 months ago        81.6MB
+k8s.gcr.io/kube-apiserver                             v1.14.0             ecf910f40d6e        7 months ago        210MB
+k8s.gcr.io/kube-controller-manager                    v1.14.0             b95b1efa0436        7 months ago        158MB
+gcr.io/kubernetes-helm/tiller                         v2.13.1             cb5aea7d0466        7 months ago        82.1MB
+alpine                                                3.7                 6d1ef012b567        8 months ago        4.2MB
+alpine                                                3.8                 dac705114996        8 months ago        4.41MB
+ruby                                                  2.5-alpine3.7       d1851fcb9251        9 months ago        43.7MB
+python                                                3.6-alpine3.7       28f54a6b0f1a        9 months ago        74.2MB
+weaveworks/weave-npc                                  2.5.1               789b7f496034        9 months ago        49.6MB
+weaveworks/weave-kube                                 2.5.1               1f394ae9e226        9 months ago        148MB
+k8s.gcr.io/coredns                                    1.3.1               eb516548c180        10 months ago       40.3MB
+k8s.gcr.io/etcd                                       3.3.10              2c4adeb21b4f        11 months ago       258MB
+weaveworks/scope                                      1.10.1              b0d8090d0e91        11 months ago       75.7MB
+k8s.gcr.io/kubernetes-dashboard-amd64                 v1.10.0             0dab2435c100        14 months ago       122MB
+weaveworks/scope                                      1.9.1               4b07159e407b        15 months ago       68MB
+quay.io/coreos/etcd                                   latest              61ad63875109        17 months ago       39.4MB
+prom/prometheus                                       v2.2.1              cc866859f8df        20 months ago       113MB
+node                                                  9.4-alpine          b5f94997f35f        22 months ago       68MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                     1.14.8              80cc5ea4b547        22 months ago       50.5MB
+k8s.gcr.io/pause                                      3.1                 da86e6ba6ca1        23 months ago       742kB
+prom/node-exporter                                    v0.15.2             ff5ecdcfc4a2        23 months ago       22.8MB
+prom/prometheus                                       v1.7.1              4da113bb6ae3        2 years ago         74.5MB
+prom/node-exporter                                    v0.14.0             bb4a6b774658        2 years ago         18.9MB
+gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        2 years ago         109MB
+gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago         142MB
+master $
+
+2.  Filer based on conditon. Can ask queston for more examples.
+docker images -f "dangling=true"
+
+3. only display IMAGE ID
+master $ docker images -q
+882487b8be1d
+468c6baf864b
+3129b0ba0920
+ed5a937cb6f8
+b8ab6b6b42c9
+857c4ab5f029
+9a38a85b1e4e
+a082d48f0b39
+3556258649b2
+b7b28af77ffe
+74188596f8cb
+8bb853f52985
+5cd54e388aba
+00638a24688b
+b95b1efa0436
+ecf910f40d6e
+cb5aea7d0466
+6d1ef012b567
+dac705114996
+d1851fcb9251
+28f54a6b0f1a
+789b7f496034
+1f394ae9e226
+eb516548c180
+2c4adeb21b4f
+b0d8090d0e91
+0dab2435c100
+4b07159e407b
+61ad63875109
+cc866859f8df
+b5f94997f35f
+80cc5ea4b547
+da86e6ba6ca1
+ff5ecdcfc4a2
+4da113bb6ae3
+bb4a6b774658
+416701f962f2
+959a1b4b8b0f
+master $
+
+
+
+40. type below command:-
+	docker ps --help
+
+	master $ docker ps --help
+
+Usage:  docker ps [OPTIONS]
+
+List containers
+
+Options:
+  -a, --all             Show all containers (default shows just running)
+  -f, --filter filter   Filter output based on conditions provided
+      --format string   Pretty-print containers using a Go template
+  -n, --last int        Show n last created containers (includes all states) (default -1)
+  -l, --latest          Show the latest created container (includes all states)
+      --no-trunc        Don't truncate output
+  -q, --quiet           Only display numeric IDs
+  -s, --size            Display total file sizes
+master $
+
+Now, try to run command that proves the concept of following six options:-
+1. -a
+
+master $ docker ps -a all list of containers/images
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS                      PORTS               NAMES
+c41aef2d8a54        1f394ae9e226           "/home/weave/launch.…"   25 minutes ago      Up 25 minutes                k8s_weave_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_1
+7828eb5c33b7        789b7f496034           "/usr/bin/weave-npc"     25 minutes ago      Up 25 minutes                k8s_weave-npc_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0
+1ec605c5435f        5cd54e388aba           "/usr/local/bin/kube…"   25 minutes ago      Up 25 minutes                k8s_kube-proxy_kube-proxy-wffpg_kube-system_c429e258-05f8-11ea-bdb6-0242ac110078_0
+9e913044dc79        1f394ae9e226           "/home/weave/launch.…"   25 minutes ago      Exited (1) 25 minutes ago                k8s_weave_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0
+9f17cdcad096        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                k8s_POD_kube-proxy-wffpg_kube-system_c429e258-05f8-11ea-bdb6-0242ac110078_0
+be85d866d3c4        k8s.gcr.io/pause:3.1   "/pause"                 25 minutes ago      Up 25 minutes                k8s_POD_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0
+1c61011c23b0        b95b1efa0436           "kube-controller-man…"   26 minutes ago      Up 26 minutes                k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+dd2dc4f01c63        00638a24688b           "kube-scheduler --bi…"   26 minutes ago      Up 26 minutes                k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+5b95aa1a1056        2c4adeb21b4f           "etcd --advertise-cl…"   26 minutes ago      Up 26 minutes                k8s_etcd_etcd-master_kube-system_70b9f5b7a6b5af78edeeab43181e3be4_0
+13b58a81248a        ecf910f40d6e           "kube-apiserver --ad…"   26 minutes ago      Up 26 minutes                k8s_kube-apiserver_kube-apiserver-master_kube-system_02f0fc71c44db1ce9ea6d2059fe9d5d5_0
+743f2444f67c        k8s.gcr.io/pause:3.1   "/pause"                 26 minutes ago      Up 26 minutes                k8s_POD_kube-apiserver-master_kube-system_02f0fc71c44db1ce9ea6d2059fe9d5d5_0
+13103e8dabfa        k8s.gcr.io/pause:3.1   "/pause"                 26 minutes ago      Up 26 minutes                k8s_POD_etcd-master_kube-system_70b9f5b7a6b5af78edeeab43181e3be4_0
+d25a698bfb5b        k8s.gcr.io/pause:3.1   "/pause"                 26 minutes ago      Up 26 minutes                k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+e9b7a62dfe37        k8s.gcr.io/pause:3.1   "/pause"                 26 minutes ago      Up 26 minutes                k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+master $
+
+
+2. -f  folterig based on condition
+master $ docker ps -f "name=sharp_goodall"
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS               NAMES
+911c5276144e        tomcat              "catalina.sh run"   About a minute ago   Up 49 seconds       8080/tcp            sharp_goodall
+master $
+
+3. -q :_ display Image ID only
+
+master $ docker ps -q
+911c5276144e
+c41aef2d8a54
+7828eb5c33b7
+1ec605c5435f
+9f17cdcad096
+be85d866d3c4
+1c61011c23b0
+dd2dc4f01c63
+5b95aa1a1056
+13b58a81248a
+743f2444f67c
+13103e8dabfa
+d25a698bfb5b
+e9b7a62dfe37
+master $
+
+
+4. -n :- diplay last 5 containers.
+master $ docker ps -n=5
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS               NAMES
+911c5276144e        tomcat              "catalina.sh run"        3 minutes ago       Up 2 minutes                8080/tcp            sharp_goodall
+c41aef2d8a54        1f394ae9e226        "/home/weave/launch.…"   31 minutes ago      Up 31 minutes                                   k8s_weave_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_1
+7828eb5c33b7        789b7f496034        "/usr/bin/weave-npc"     32 minutes ago      Up 32 minutes                                   k8s_weave-npc_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0
+1ec605c5435f        5cd54e388aba        "/usr/local/bin/kube…"   32 minutes ago      Up 32 minutes                                   k8s_kube-proxy_kube-proxy-wffpg_kube-system_c429e258-05f8-11ea-bdb6-0242ac110078_0
+9e913044dc79        1f394ae9e226        "/home/weave/launch.…"   32 minutes ago      Exited (1) 31 minutes ago                       k8s_weave_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0
+master $
+
+5. -l :- Display latest container/image
+master $ docker ps -l
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+911c5276144e        tomcat              "catalina.sh run"   4 minutes ago       Up 3 minutes        8080/tcp            sharp_goodall
+master $
+
+6. -s Display total container/image file size.
+master $ docker ps -s
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS               NAMES                                                                                  SIZE
+911c5276144e        tomcat                 "catalina.sh run"        4 minutes ago       Up 3 minutes        8080/tcp            sharp_goodall                                                                                  40kB (virtual 507MB)
+c41aef2d8a54        1f394ae9e226           "/home/weave/launch.…"   33 minutes ago      Up 33 minutes                           k8s_weave_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_1                                0B (virtual 148MB)
+7828eb5c33b7        789b7f496034           "/usr/bin/weave-npc"     34 minutes ago      Up 33 minutes                           k8s_weave-npc_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0                            0B (virtual 49.6MB)
+1ec605c5435f        5cd54e388aba           "/usr/local/bin/kube…"   34 minutes ago      Up 33 minutes                           k8s_kube-proxy_kube-proxy-wffpg_kube-system_c429e258-05f8-11ea-bdb6-0242ac110078_0                          0B (virtual 82.1MB)
+9f17cdcad096        k8s.gcr.io/pause:3.1   "/pause"                 34 minutes ago      Up 34 minutes                           k8s_POD_kube-proxy-wffpg_kube-system_c429e258-05f8-11ea-bdb6-0242ac110078_0                                 0B (virtual 742kB)
+be85d866d3c4        k8s.gcr.io/pause:3.1   "/pause"                 34 minutes ago      Up 34 minutes                           k8s_POD_weave-net-khghc_kube-system_c417a5f2-05f8-11ea-bdb6-0242ac110078_0                                  0B (virtual 742kB)
+1c61011c23b0        b95b1efa0436           "kube-controller-man…"   35 minutes ago      Up 34 minutes                           k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0   0B (virtual 158MB)
+dd2dc4f01c63        00638a24688b           "kube-scheduler --bi…"   35 minutes ago      Up 34 minutes                           k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0                     0B (virtual 81.6MB)
+5b95aa1a1056        2c4adeb21b4f           "etcd --advertise-cl…"   35 minutes ago      Up 34 minutes                           k8s_etcd_etcd-master_kube-system_70b9f5b7a6b5af78edeeab43181e3be4_0                                         0B (virtual 258MB)
+13b58a81248a        ecf910f40d6e           "kube-apiserver --ad…"   35 minutes ago      Up 34 minutes                           k8s_kube-apiserver_kube-apiserver-master_kube-system_02f0fc71c44db1ce9ea6d2059fe9d5d5_0                     0B (virtual 210MB)
+743f2444f67c        k8s.gcr.io/pause:3.1   "/pause"                 35 minutes ago      Up 34 minutes                           k8s_POD_kube-apiserver-master_kube-system_02f0fc71c44db1ce9ea6d2059fe9d5d5_0                                0B (virtual 742kB)
+13103e8dabfa        k8s.gcr.io/pause:3.1   "/pause"                 35 minutes ago      Up 34 minutes                           k8s_POD_etcd-master_kube-system_70b9f5b7a6b5af78edeeab43181e3be4_0                                          0B (virtual 742kB)
+d25a698bfb5b        k8s.gcr.io/pause:3.1   "/pause"                 35 minutes ago      Up 34 minutes                           k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0                                0B (virtual 742kB)
+e9b7a62dfe37        k8s.gcr.io/pause:3.1   "/pause"                 35 minutes ago      Up 34 minutes                           k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0                       0B (virtual 742kB)
+master $
+
+
+
+
+
+
+
+
+
 
 
