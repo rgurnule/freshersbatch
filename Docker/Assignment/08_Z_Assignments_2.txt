@@ -1,0 +1,333 @@
+Your company is ready to move forward with using Docker to run their applications. However, they have some complex container apps that can take advantage of the cluster management and orchestration features of Docker swarm. You have been asked to stand up a simple Docker swarm cluster to be used for some initial testing. A set of servers has already been provisioned for this purpose. The swarm cluster should meet the following criteria:
+
+One Swarm manager.
+Two worker nodes.
+All nodes should use Docker CE version 5:18.09.5~3-0~ubuntu-bionic.
+Both worker nodes should be joined to the cluster.
+Any non-root user should be able to run docker commands on all three servers.
+
+[NOTE: Write the series of commands to achieve above in this file below the question scenario with documentation]
+
+Good luck!
+
+===============================================================================================================================================
+
+Go to https://labs.play-with-docker.com/ site for this assignment.
+
+Step1:- Creating Swarm Manager 
+
+$ docker swarm init  --advertise-addr 192.168.0.18
+Swarm initialized: current node (u0wonnj0wdsgp5epzhohwk4pc) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-1grt1pyytr5f3c79fh7gt1el85k4ooixjjex1w8ym9tpgv353g-dfgqk58ugvrg9048h0fyzla4q 192.168.0.18:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+u0wonnj0wdsgp5epzhohwk4pc *   node1               Ready               Active              Leader              19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+u0wonnj0wdsgp5epzhohwk4pc *   node1               Ready               Active              Leader              19.03.4
+izypuar5hvc24o303zgkud0mb     node2               Ready               Active                                  19.03.4
+l6z5j6kk0pi4f8m65sanlknmm     node3               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+Step2:- Creating Worker 1 node
+
+[node2] (local) root@192.168.0.17 ~
+$ docker swarm join --token SWMTKN-1-1grt1pyytr5f3c79fh7gt1el85k4ooixjjex1w8ym9tpgv353g-dfgqk58ugvrg9048h0fyzla4q 192.168.0.18:2377
+This node joined a swarm as a worker.
+[node2] (local) root@192.168.0.17 ~
+$ 
+
+
+Step3:- Creating Worker 2 node
+[node3] (local) root@192.168.0.16 ~
+$ docker swarm join --token SWMTKN-1-1grt1pyytr5f3c79fh7gt1el85k4ooixjjex1w8ym9tpgv353g-dfgqk58ugvrg9048h0fyzla4q 192.168.0.18:2377
+This node joined a swarm as a worker.
+[node3] (local) root@192.168.0.16 ~
+$ 
+
+
+Checking all the nodes:- 
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+u0wonnj0wdsgp5epzhohwk4pc *   node1               Ready               Active              Leader              19.03.4
+izypuar5hvc24o303zgkud0mb     node2               Ready               Active                                  19.03.4
+l6z5j6kk0pi4f8m65sanlknmm     node3               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+Step 4:- 
+
+Pulling images in Manager node.
+
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+[node1] (local) root@192.168.0.18 ~
+$ docker image pull nigix
+Using default tag: latest
+Error response from daemon: pull access denied for nigix, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
+[node1] (local) root@192.168.0.18 ~
+$ docker image pull nginx
+Using default tag: latest
+latest: Pulling from library/nginx
+8d691f585fa8: Pull complete 
+5b07f4e08ad0: Pull complete 
+abc291867bca: Pull complete 
+Digest: sha256:922c815aa4df050d4df476e92daed4231f466acc8ee90e0e774951b0fd7195a4
+Status: Downloaded newer image for nginx:latest
+docker.io/library/nginx:latest
+[node1] (local) root@192.168.0.18 ~
+$ docker image pull tomcat
+Using default tag: latest
+latest: Pulling from library/tomcat
+9a0b0ce99936: Pull complete 
+db3b6004c61a: Pull complete 
+f8f075920295: Pull complete 
+6ef14aff1139: Pull complete 
+962785d3b7f9: Pull complete 
+631589572f9b: Pull complete 
+c55a0c6f4c7b: Pull complete 
+379605d88e88: Pull complete 
+e056aa10ded8: Pull complete 
+6349a1c98d85: Pull complete 
+Digest: sha256:77e41dbdf7854f03b9a933510e8852c99d836d42ae85cba4b3bc04e8710dc0f7
+Status: Downloaded newer image for tomcat:latest
+docker.io/library/tomcat:latest
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+Step 5:-
+Start service at manager swarm
+
+$ docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+vdx4p2t2f5r0        rahulapp            replicated          0/1                 rahul-list:1.0      *:8081->8080/tcp
+[node1] (local) root@192.168.0.18 ~
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+[node1] (local) root@192.168.0.18 ~
+[node1] (local) root@192.168.0.18 ~
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+[node1] (local) root@192.168.0.18 ~
+$ docker service create --name "tomcatapp" -p 8080:8080 tomcat
+idpl4wozhx775p4jd7vxclgre
+overall progress: 1 out of 1 tasks 
+1/1: running   [==================================================>] 
+verify: Service converged 
+[node1] (local) root@192.168.0.18 ~
+$ docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+vdx4p2t2f5r0        rahulapp            replicated          0/1                 rahul-list:1.0      *:8081->8080/tcp
+idpl4wozhx77        tomcatapp           replicated          1/1                 tomcat:latest       *:8080->8080/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+Running serice :-
+
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED              STATUS              PORTS               NAMES
+c11c4ce49e68        tomcat:latest       "catalina.sh run"   About a minute ago   Up About a minute   8080/tcp            tomcatapp.1.jh8cnfgzdck8dijje5dv75ikj
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+$ docker service ps tomcatapp
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+jh8cnfgzdck8        tomcatapp.1         tomcat:latest       node1               Running             Running 5 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ docker service ps tomcatapp
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+jh8cnfgzdck8        tomcatapp.1         tomcat:latest       node1               Running             Running 7 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker service create --name "tomcatapp1.0" --replicas 3 tomcat
+Error response from daemon: rpc error: code = InvalidArgument desc = name must be valid as a DNS name component
+[node1] (local) root@192.168.0.18 ~
+$ docker service create --name "tomcatapp1" --replicas 3 tomcat
+ycdehpkpqk6vcjthzxoems8d6
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service converged 
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ docker service ps tomcatapp1
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE                ERROR               PORTS
+jxulnhneg4to        tomcatapp1.1        tomcat:latest       node2               Running             Running about a minute ago                       
+1pni9bs4i7cj        tomcatapp1.2        tomcat:latest       node3               Running             Running about a minute ago                       
+s971c0wb9ddb        tomcatapp1.3        tomcat:latest       node1               Running             Running 4 minutes ago                            
+[node1] (local) root@192.168.0.18 ~
+
+Checking all 3 replicas of images
+
+$ docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+vdx4p2t2f5r0        rahulapp            replicated          0/1                 rahul-list:1.0      *:8081->8080/tcp
+idpl4wozhx77        tomcatapp           replicated          1/1                 tomcat:latest       *:8080->8080/tcp
+ycdehpkpqk6v        tomcatapp1          replicated          3/3                 tomcat:latest       
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+Worker Node 1:- commands:-
+
+[node2] (local) root@192.168.0.17 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+tomcat              <none>              882487b8be1d        3 weeks ago         507MB
+[node2] (local) root@192.168.0.17 ~
+$ docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull complete 
+Digest: sha256:c3b4ada4687bbaa170745b3e4dd8ac3f194ca95b2d0518b417fb47e5879d9b5f
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+[node2] (local) root@192.168.0.17 ~
+$ 
+
+[node2] (local) root@192.168.0.17 ~
+$ sudo adduser rahul1
+Changing password for rahul1
+New password: 
+Bad password: similar to username
+Retype password: 
+passwd: password for rahul1 changed by root
+[node2] (local) root@192.168.0.17 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+tomcat              <none>              882487b8be1d        3 weeks ago         507MB
+hello-world         latest              fce289e99eb9        10 months ago       1.84kB
+[node2] (local) root@192.168.0.17 ~
+$ 
+
+
+
+
+
+Worker Node 2:- commands:-
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+tomcat              <none>              882487b8be1d        3 weeks ago         507MB
+[node3] (local) root@192.168.0.16 ~
+$ docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+1b930d010525: Pull complete 
+Digest: sha256:c3b4ada4687bbaa170745b3e4dd8ac3f194ca95b2d0518b417fb47e5879d9b5f
+Status: Downloaded newer image for hello-world:latest
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+[node3] (local) root@192.168.0.16 ~
+$ 
+
+
+[node3] (local) root@192.168.0.16 ~
+$ sudo adduser rahul
+Changing password for rahul
+New password: 
+Bad password: too short
+Retype password: 
+passwd: password for rahul changed by root
+[node3] (local) root@192.168.0.16 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+tomcat              <none>              882487b8be1d        3 weeks ago         507MB
+hello-world         latest              fce289e99eb9        10 months ago       1.84kB
+[node3] (local) root@192.168.0.16 ~
+$ 
+
+
+
+Mastre node commands for non root user:-
+
+[node1] (local) root@192.168.0.18 ~
+sudo adduser cloud-user
+Changing password for cloud-user
+New password: 
+Bad password: too short
+Retype password: 
+passwd: password for cloud-user changed by root
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+

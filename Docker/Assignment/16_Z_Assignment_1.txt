@@ -1,0 +1,222 @@
+Your supermarket company has a simple web service built on nginx that serves a static list of fresh fruit available in their stores. They want to run this service as a Docker container in their new swarm environment, but first they need you to build a Docker image for this service.
+
+On this repo (https://github.com/satyensingh/full-docker-training-16-Z-Assignment1.git), you will find the files needed to create the image. Create a Dockerfile to define the image according to the provided specifications, then test the image by running a container in detached mode and verifying that you can access the fresh fruit data from the application.
+
+The image should meet the following specifications:
+
+1. Use nginx tag 1.15.8 as the base image.
+2. Add the static fresh fruit data to the image so that it will be served by the nginx server. The data file is located on the server at static/fruit.json under the project directory. Add this file to the image at the location /usr/share/nginx/html/fruit.json.
+3. Add the nginx configuration file. This file is located on the server in the project directory and is called nginx.conf. Add this file to the image at /etc/nginx/nginx.conf.
+4. The image should expose port 80.
+5. Use the following as the default command: nginx -g daemon off;.
+6. Build the image with the tag fruit-list:1.0.0
+
+Once you have built the image you should be able to test it by running it as a container:
+
+docker run --name fruit-list -d -p 8080:80 fruit-list:1.0.0
+
+
+Verify that the container serves the required data by making a request to it on port 8080. If everything is set up correctly, you should get a JSON list of fruits.
+
+curl localhost:8080
+
+
+[NOTE: Write the series of commands to achieve above in this file below the question scenario with documentation]
+
+
+Good luck!
+
+===============================================================================================================================================
+
+Step1:- For base image we need to create Dockerfile
+
+      FROM nginx:1.15.8
+      RUN apt-get update
+      WORKDIR /usr/share/nginx/html
+      #ADD ./static/fruit.json ./
+      ADD ./static/fruit.json ./
+      WORKDIR /etc/nginx
+      ADD ./nginx.conf ./
+      EXPOSE 80
+
+Step 2:- Creat required folders/dirctories
+
+root@ip-172-31-47-157:~/#  ~
+$ pwd
+/root
+root@ip-172-31-47-157:~/#  ~
+$ mkdir fruitapp
+root@ip-172-31-47-157:~/#  ~
+$ cd fruitapp
+root@ip-172-31-47-157:~/fruitapp# ~
+$ vi Dockerfile
+root@ip-172-31-47-157:~/fruitapp#  ~
+$ mkdir static
+root@ip-172-31-47-157:~/fruitapp#  ~
+$ cd static/
+root@ip-172-31-47-157:~/fruitapp#  ~/static
+$ git clone https://github.com/satyensingh/full-docker-training-16-Z-Assignment1.git
+Cloning into 'full-docker-training-16-Z-Assignment1'...
+remote: Enumerating objects: 5, done.
+remote: Counting objects: 100% (5/5), done.
+remote: Compressing objects: 100% (4/4), done.
+remote: Total 5 (delta 0), reused 5 (delta 0), pack-reused 0
+Unpacking objects: 100% (5/5), done.
+root@ip-172-31-47-157:~/fruitapp#  ~/static
+$ ls -ltr
+total 0
+drwxr-xr-x    4 root     root            50 Nov 15 12:46 full-docker-training-16-Z-Assignment1
+[node1] (local) root@192.168.0.18 ~/static
+$ cd full-docker-training-16-Z-Assignment1/
+[node1] (local) root@192.168.0.18 ~/static/full-docker-training-16-Z-Assignment1
+$ ls -ltr
+total 4
+drwxr-xr-x    2 root     root            24 Nov 15 12:46 static
+-rw-r--r--    1 root     root           145 Nov 15 12:46 nginx.conf
+$ cd fruitapp/
+[node1] (local) root@192.168.0.18 ~/fruitapp
+$ ls -ltr
+total 4
+-rw-r--r--    1 root     root           197 Nov 15 12:46 Dockerfile
+drwxr-xr-x    4 root     root            65 Nov 15 12:49 static
+[node1] (local) root@192.168.0.18 ~/fruitapp
+root@ip-172-31-47-157:~/fruitapp# ls -ltr
+total 12
+drwxrwxr-x 3 root root 4096 Nov 15 11:11 static
+-rw-rw-r-- 1 root root  145 Nov 15 11:13 nginx.conf
+-rw-rw-r-- 1 root root  228 Nov 15 13:04 Dockerfile
+root@ip-172-31-47-157:~/fruitapp#
+
+
+
+Step3:- Run Dockerfile to build docker
+
+root@ip-172-31-47-157:~/fruitapp# vi Dockerfile
+root@ip-172-31-47-157:~/fruitapp# docker build -t fruit-list:1.0.0 .
+Sending build context to Docker daemon  64.51kB
+Step 1/7 : FROM nginx:1.15.8
+ ---> f09fe80eb0e7
+Step 2/7 : RUN apt-get update
+ ---> Using cache
+ ---> f6218d511661
+Step 3/7 : WORKDIR /usr/share/nginx/html
+ ---> Using cache
+ ---> 3c258d86be93
+Step 4/7 : ADD ./static/fruit.json ./
+ ---> Using cache
+ ---> 807e6b3ad524
+Step 5/7 : WORKDIR /etc/nginx
+ ---> Using cache
+ ---> 6c969e4110de
+Step 6/7 : ADD ./nginx.conf ./
+ ---> 70e5522210f8
+Step 7/7 : EXPOSE 80
+ ---> Running in 3fdd0f938be4
+Removing intermediate container 3fdd0f938be4
+ ---> 6f18ccd9a994
+Successfully built 6f18ccd9a994
+Successfully tagged fruit-list:1.0.0
+
+Step4:- Run Container and check status with new built in image
+
+root@ip-172-31-47-157:~/fruitapp# docker run --name fruit-list -d -p 8080:80 fruit-list:1.0.0
+6daed8a4ef6f0a61af74901f5b5d4475bd4c6ce664f9bcc72ab226fe95a2b71b
+root@ip-172-31-47-157:~/fruitapp# docker ps -a
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS                      PORTS                  NAMES
+6daed8a4ef6f        fruit-list:1.0.0    "nginx -g 'daemon of…"   8 seconds ago       Up 7 seconds                0.0.0.0:8080->80/tcp   fruit-list
+1e999e44317c        hello-world         "/hello"                 4 hours ago         Exited (0) 4 hours ago                             practical_lalande
+07c9cd3fb815        hello-world         "/hello"                 24 hours ago        Exited (0) 24 hours ago                            priceless_mendel
+e10f0370d22e        hello-world         "/hello"                 24 hours ago        Exited (0) 24 hours ago                            stupefied_wiles
+aee0f759ad2e        ubuntu              "/bin/bash"              26 hours ago        Exited (127) 26 hours ago                          epic_noyce
+
+
+Step 5:- Run application
+
+root@ip-172-31-47-157:~/fruitapp# curl localhost:8080
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
+root@ip-172-31-47-157:~/fruitapp# 

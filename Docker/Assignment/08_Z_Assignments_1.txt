@@ -1,0 +1,301 @@
+Your company is ready to start using Docker on some of their servers. In order to get started, they want you to set up and configure Docker CE on a server that has already been set up. You will need to make sure that the server meets the following specifications:
+
+Docker CE is installed and running on the server.
+Use Docker CE version 5:18.09.5~3-0~ubuntu-bionic.
+Any non-root user has permission to run docker commands.
+The default logging driver is set to syslog.
+
+
+[NOTE: Write the series of commands to achieve above in this file below the question scenario with documentation]
+
+
+Good luck!
+
+===============================================================================================================================================
+
+Step1:- Installing docker steps:-
+
+ubuntu@ip-172-31-47-157:~$ sudo apt-get update
+Get:1 https://download.docker.com/linux/ubuntu bionic InRelease [64.4 kB]
+Get:2 https://download.docker.com/linux/ubuntu bionic/stable amd64 Packages [9852 B]
+Get:3 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Hit:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Get:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:6 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:7 http://security.ubuntu.com/ubuntu bionic-security/main amd64 Packages [573 kB]
+Get:8 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [796 kB]
+Get:9 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main Translation-en [283 kB]
+Get:10 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1025 kB]
+Get:11 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe Translation-en [315 kB]
+Get:12 http://security.ubuntu.com/ubuntu bionic-security/main Translation-en [189 kB]
+Get:13 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 Packages [619 kB]
+Get:14 http://security.ubuntu.com/ubuntu bionic-security/universe Translation-en [206 kB]
+Fetched 4333 kB in 4s (1111 kB/s)
+Reading package lists... Done
+ubuntu@ip-172-31-47-157:~$ sudo apt-get -y install \
+>   apt-transport-https \
+>   ca-certificates \
+>   curl \
+>   gnupg-agent \
+>   software-properties-common
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+ca-certificates is already the newest version (20180409).
+curl is already the newest version (7.58.0-2ubuntu3.8).
+software-properties-common is already the newest version (0.96.24.32.11).
+apt-transport-https is already the newest version (1.6.12).
+gnupg-agent is already the newest version (2.2.4-1ubuntu1.2).
+0 upgraded, 0 newly installed, 0 to remove and 29 not upgraded.
+ubuntu@ip-172-31-47-157:~$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+OK
+ubuntu@ip-172-31-47-157:~$ sudo apt-key fingerprint 0EBFCD88
+pub   rsa4096 2017-02-22 [SCEA]
+      9DC8 5822 9FC7 DD38 854A  E2D8 8D81 803C 0EBF CD88
+uid           [ unknown] Docker Release (CE deb) <docker@docker.com>
+sub   rsa4096 2017-02-22 [S]
+
+ubuntu@ip-172-31-47-157:~$ sudo add-apt-repository \
+>    "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+>    $(lsb_release -cs) \
+>    stable"
+Hit:1 https://download.docker.com/linux/ubuntu bionic InRelease
+Hit:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Hit:5 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Reading package lists... Done
+ubuntu@ip-172-31-47-157:~$
+
+Step2:- Install Docker CE packages:
+
+ubuntu@ip-172-31-47-157:~$ sudo apt-get update
+Hit:1 https://download.docker.com/linux/ubuntu bionic InRelease
+Hit:2 http://security.ubuntu.com/ubuntu bionic-security InRelease
+Hit:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Hit:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Reading package lists... Done
+ubuntu@ip-172-31-47-157:~$ sudo apt-get install -y docker-ce=5:18.09.5~3-0~ubuntu-bionic docker-ce-cli=5:18.09.5~3-0~ubuntu-bionic containerd.io
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+containerd.io is already the newest version (1.2.10-3).
+docker-ce-cli is already the newest version (5:18.09.5~3-0~ubuntu-bionic).
+docker-ce is already the newest version (5:18.09.5~3-0~ubuntu-bionic).
+0 upgraded, 0 newly installed, 0 to remove and 27 not upgraded.
+ubuntu@ip-172-31-47-157:~$ docker -v
+Docker version 18.09.5, build e8ff056
+ubuntu@ip-172-31-47-157:~$
+
+Step 3:- Any non-root user has permission to run docker commands.
+Give cloud_user permission to run docker commands:
+sudo usermod -a -G docker cloud_user
+
+
+ubuntu@ip-172-31-47-157:~$ sudo usermod -a -G docker cloud_user
+usermod: user 'cloud_user' does not exist
+ubuntu@ip-172-31-47-157:~$ sudo adduser cloud_user
+Adding user `cloud_user' ...
+Adding new group `cloud_user' (1001) ...
+Adding new user `cloud_user' (1001) with group `cloud_user' ...
+Creating home directory `/home/cloud_user' ...
+Copying files from `/etc/skel' ...
+Enter new UNIX password:
+Retype new UNIX password:
+passwd: password updated successfully
+Changing the user information for cloud_user
+Enter the new value, or press ENTER for the default
+        Full Name []: cloud_user
+        Room Number []:
+        Work Phone []: 1234
+        Home Phone []: 1234
+        Other []:
+Is the information correct? [Y/n] Y
+ubuntu@ip-172-31-47-157:~$ sudo usermod -a -G docker cloud_user
+ubuntu@ip-172-31-47-157:~$ sudo su
+root@ip-172-31-47-157:/home/ubuntu# login
+ip-172-31-47-157 login: cloud_user
+Password:
+Welcome to Ubuntu 18.04.3 LTS (GNU/Linux 4.15.0-1051-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Fri Nov 15 08:58:28 UTC 2019
+
+  System load:  0.0               Users logged in:                1
+  Usage of /:   36.8% of 7.69GB   IP address for eth0:            172.31.47.157
+  Memory usage: 25%               IP address for docker0:         172.17.0.1
+  Swap usage:   0%                IP address for docker_gwbridge: 172.18.0.1
+  Processes:    96
+
+
+ * Canonical Livepatch is available for installation.
+   - Reduce system reboots and improve kernel security. Activate at:
+     https://ubuntu.com/livepatch
+
+29 packages can be updated.
+0 updates are security updates.
+
+
+*** System restart required ***
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+cloud_user@ip-172-31-47-157:~$ docker run hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+cloud_user@ip-172-31-47-157:~$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              latest              775349758637        2 weeks ago         64.2MB
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+docker              latest              cf85f29ec76f        3 weeks ago         216MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+hello-world         latest              fce289e99eb9        10 months ago       1.84kB
+cloud_user@ip-172-31-47-157:~$
+
+
+Step 4:- The default logging driver is set to syslog.
+for above step, we need to update daemon.json file at path /etc/docker/ , create one if not present udpate log-driver: syslog
+{
+    "log-driver": "syslog,
+}
+
+cloud_user@ip-172-31-47-157:~$ cd
+cloud_user@ip-172-31-47-157:~$ cd /etc/docker
+cloud_user@ip-172-31-47-157:/etc/docker$ ls -ltr
+total 8
+-rwxr-xr-x 1 root   root   244 Nov 14 11:12 key.json
+-rwxr-xr-x 1 ubuntu ubuntu 414 Nov 14 11:18 daemon.json
+cloud_user@ip-172-31-47-157:/etc/docker$ exit
+logout
+root@ip-172-31-47-157:/home/ubuntu# cd /etc/docker/
+root@ip-172-31-47-157:/etc/docker# ls -ltr
+total 8
+-rwxr-xr-x 1 root   root   244 Nov 14 11:12 key.json
+-rwxr-xr-x 1 ubuntu ubuntu 414 Nov 14 11:18 daemon.json
+root@ip-172-31-47-157:/etc/docker# vi daemon.json
+root@ip-172-31-47-157:/etc/docker# systemctl restart docker
+Job for docker.service failed because the control process exited with error code.
+See "systemctl status docker.service" and "journalctl -xe" for details.
+root@ip-172-31-47-157:/etc/docker# docker info
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+root@ip-172-31-47-157:/etc/docker# docker  ps
+Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?
+root@ip-172-31-47-157:/etc/docker# docker run -it ubuntu
+docker: Cannot connect to the Docker daemon at unix:///var/run/docker.sock. Is the docker daemon running?.
+See 'docker run --help'.
+root@ip-172-31-47-157:/etc/docker# ls -ltr
+total 8
+-rwxr-xr-x 1 root   root   244 Nov 14 11:12 key.json
+-rwxr-xr-x 1 ubuntu ubuntu 414 Nov 14 11:18 daemon.json
+
+ubuntu@ip-172-31-47-157:~$ cd /etc/docker/
+ubuntu@ip-172-31-47-157:/etc/docker$ ls -ltr
+total 8
+-rw------- 1 root root 244 Nov 15 09:24 key.json
+-rw-r--r-- 1 root root  31 Nov 15 09:29 daemon.json
+ubuntu@ip-172-31-47-157:/etc/docker$ more daemon.json
+{
+        "log-driver": "syslog"
+        }
+ubuntu@ip-172-31-47-157:/etc/docker$ docker info
+Containers: 4
+ Running: 0
+ Paused: 0
+ Stopped: 4
+Images: 5
+Server Version: 18.09.5
+Storage Driver: overlay2
+ Backing Filesystem: extfs
+ Supports d_type: true
+ Native Overlay Diff: true
+Logging Driver: syslog    --> We can see its updated 
+Cgroup Driver: cgroupfs
+Plugins:
+ Volume: local
+ Network: bridge host macvlan null overlay
+ Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+Swarm: active
+ NodeID: zjt8r08kdq3g40wt5foxnbb3r
+ Is Manager: true
+ ClusterID: 14iht53yjfe2x2e2d8cr6q0zd
+ Managers: 1
+ Nodes: 1
+ Default Address Pool: 10.0.0.0/8
+ SubnetSize: 24
+ Orchestration:
+  Task History Retention Limit: 5
+ Raft:
+  Snapshot Interval: 10000
+  Number of Old Snapshots to Retain: 0
+  Heartbeat Tick: 1
+  Election Tick: 10
+ Dispatcher:
+  Heartbeat Period: 5 seconds
+ CA Configuration:
+  Expiry Duration: 3 months
+  Force Rotate: 0
+ Autolock Managers: false
+ Root Rotation In Progress: false
+ Node Address: 172.31.47.157
+ Manager Addresses:
+  172.31.47.157:2377
+Runtimes: runc
+Default Runtime: runc
+Init Binary: docker-init
+containerd version: b34a5c8af56e510852c35414db4c1f4fa6172339
+runc version: 3e425f80a8c931f88e6d94a8c831b9d5aa481657
+init version: fec3683
+Security Options:
+ apparmor
+ seccomp
+  Profile: default
+Kernel Version: 4.15.0-1054-aws
+Operating System: Ubuntu 18.04.3 LTS
+OSType: linux
+Architecture: x86_64
+CPUs: 1
+Total Memory: 984MiB
+Name: ip-172-31-47-157
+ID: BR3E:ZCXB:5NIG:ORD5:W4FV:GNOQ:U6Y5:RSZD:ZYBZ:6MJO:SGGX:VSLZ
+Docker Root Dir: /var/lib/docker
+Debug Mode (client): false
+Debug Mode (server): false
+Registry: https://index.docker.io/v1/
+Labels:
+Experimental: false
+Insecure Registries:
+ 127.0.0.0/8
+Live Restore Enabled: false
+Product License: Community Engine
+
+WARNING: No swap limit support
+ubuntu@ip-172-31-47-157:/etc/docker$

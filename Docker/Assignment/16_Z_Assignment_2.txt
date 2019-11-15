@@ -1,0 +1,309 @@
+Your company has recently decided to use Docker to run containers in production. They have built some Docker images to run their own proprietary software and need a place to store and manage these images. You have been asked to build a secure, private Docker registry for use by the company. In order to verify that everything works, you have also been asked to configure a Docker workstation server to push to and pull from the registry.
+
+To complete this lab, ensure that the following requirements are met for the registry:
+
+1. A private Docker registry is running on the Docker registry server using version 2 of the registry image.
+2. The container name for the registry should be registry.
+3. The registry should always automatically restart if it stops or the Docker daemon or server restarts.
+4. The registry should require authentication. Set up an initial account with the username docker and the password d0ck3rrU73z.
+5. The registry should use TLS with a self-signed certificate.
+6. The registry should listen on port 443.
+
+
+Set up the Docker workstation server to meet the following requirements:
+
+1. Docker is logged in to the private registry.
+2. Docker is configured to accept the self-signed cert. Do not turn off certificate verification using the insecure-registries setting.
+3. To confirm that everything is working, push a test image called ip-10-0-1-101:443/test-image:1 to the private registry. You can pull any image from Docker hub and tag it with ip-10-0-1-101:443/test-image:1 as a test.
+4. Delete the test image locally and pull it from the registry.
+
+[NOTE: Write the series of commands to achieve above in this file below the question scenario with documentation]
+
+Good luck!
+
+===============================================================================================================================================
+
+Step1:- Create required directries
+
+root@ip-172-31-47-157:~# mkdir registry
+root@ip-172-31-47-157:~# cd registry/
+root@ip-172-31-47-157:~/registry# mkdir auth
+root@ip-172-31-47-157:~/registry# ls
+auth
+root@ip-172-31-47-157:~/registry# pwd
+/root/registry
+root@ip-172-31-47-157:~/registry#
+
+
+Step2:- Create Registry
+
+root@ip-172-31-47-157:~/registry# docker run --entrypoint htpasswd registry:2 -Bbn docker d0ck3rrU73z > auth/htpasswd                                                                        Unable to find image 'registry:2' locally
+2: Pulling from library/registry
+c87736221ed0: Pulling fs layer
+1cc8e0bb44df: Pulling fs layer
+54d33bcb37f5: Pulling fs layer
+e8afc091c171: Pulling fs layer
+b4541f6d3db6: Pulling fs layer
+e8afc091c171: Waiting
+b4541f6d3db6: Waiting
+c87736221ed0: Verifying Checksum
+c87736221ed0: Download complete
+1cc8e0bb44df: Verifying Checksum
+1cc8e0bb44df: Download complete
+54d33bcb37f5: Verifying Checksum
+54d33bcb37f5: Download complete
+c87736221ed0: Pull complete
+1cc8e0bb44df: Pull complete
+e8afc091c171: Verifying Checksum
+e8afc091c171: Download complete
+b4541f6d3db6: Verifying Checksum
+b4541f6d3db6: Download complete
+54d33bcb37f5: Pull complete
+e8afc091c171: Pull complete
+b4541f6d3db6: Pull complete
+Digest: sha256:8004747f1e8cd820a148fb7499d71a76d45ff66bac6a29129bfdbfdc0154d146
+Status: Downloaded newer image for registry:2
+root@ip-172-31-47-157:~/registry# cd auth/
+root@ip-172-31-47-157:~/registry/auth# cat htpasswd
+docker:$2y$05$GwP2Xu2cxFQ4GCG4ZBu.YO.tembKWAfwqrdtH4oQoJLe.0YdrlXbW
+
+root@ip-172-31-47-157:~/registry/auth#
+
+
+Step3:- Creating certificate
+
+root@ip-172-31-47-157:~/registry/auth# mkdir certs
+
+root@ip-172-31-47-157:~/registry/auth# openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -x509 -days 365 -out certs/domain.crt
+Can't load /root/.rnd into RNG
+140227256517056:error:2406F079:random number generator:RAND_load_file:Cannot open file:../crypto/rand/randfile.c:88:Filename=/root/.rnd
+Generating a RSA private key
+...........................++++
+............................................................................................................................++++
+writing new private key to 'certs/domain.key'
+-----
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [AU]:
+State or Province Name (full name) [Some-State]:
+Locality Name (eg, city) []:
+Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+Organizational Unit Name (eg, section) []:
+Common Name (e.g. server FQDN or YOUR name) []:
+Email Address []:
+root@ip-172-31-47-157:~/registry/auth#
+
+
+Step4:- Run Registry
+
+root@ip-172-31-47-157:~/registry/auth# cd certs/
+root@ip-172-31-47-157:~/registry/auth/certs# ls -ltr
+total 8
+-rw------- 1 root root 3272 Nov 15 13:48 domain.key
+-rw-r--r-- 1 root root 1939 Nov 15 13:49 domain.crt
+root@ip-172-31-47-157:~/registry/auth/certs# cd ..
+root@ip-172-31-47-157:~/registry/auth# pwd
+/root/registry/auth
+root@ip-172-31-47-157:~/registry/auth# ls -ltr
+total 8
+-rw-r--r-- 1 root root   69 Nov 15 13:44 htpasswd
+drwxr-xr-x 2 root root 4096 Nov 15 13:49 certs
+root@ip-172-31-47-157:~/registry/auth# docker run -d -p 443:443 --restart=always --name registry -v /root/registry/auth:/auth -e REGISTRY_HTTP_ADDR=0.0.0.0:443 -e REGISTRY_AUTH=htpasswd -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" -e REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd -v /root/registry/auth/certs:/certs -e REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt -e REGISTRY_HTTP_TLS_KEY=/certs/domain.key registry:2
+5132679542c2ab3995969e5ebf7cdae5f80080c8e75ca1817ee88533f7c77c8a
+root@ip-172-31-47-157:~/registry/auth# docker ps
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                            NAMES
+5132679542c2        registry:2          "/entrypoint.sh /etc…"   30 seconds ago      Up 29 seconds       0.0.0.0:443->443/tcp, 5000/tcp   registry
+6daed8a4ef6f        fruit-list:1.0.0    "nginx -g 'daemon of…"   About an hour ago   Up About an hour    0.0.0.0:8080->80/tcp             fruit-list
+root@ip-172-31-47-157:~/registry/auth#
+
+
+Step5:- Login to localhost with registry credentials(username # docker & password # d0ck3rrU73z)
+
+root@ip-172-31-47-157:~/registry/auth# docker login localhost:443
+Username: docker
+Password:
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+root@ip-172-31-47-157:~/registry/auth# docker pull ubuntu
+Using default tag: latest
+latest: Pulling from library/ubuntu
+Digest: sha256:6e9f67fa63b0323e9a1e587fd71c561ba48a034504fb804fd26fd8800039835d
+Status: Image is up to date for ubuntu:latest
+root@ip-172-31-47-157:~/registry/auth# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+fruit-list          1.0.0               6f18ccd9a994        About an hour ago   126MB
+ubuntu              latest              775349758637        2 weeks ago         64.2MB
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+docker              latest              cf85f29ec76f        3 weeks ago         216MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+registry            2                   f32a97de94e1        8 months ago        25.8MB
+nginx               1.15.8              f09fe80eb0e7        9 months ago        109MB
+hello-world         latest              fce289e99eb9        10 months ago       1.84kB
+root@ip-172-31-47-157:~/registry/auth#
+
+
+
+Step6:- Tag newly created image and push  image to registery
+
+
+root@ip-172-31-47-157:~/registry/auth# docker tag ubuntu localhost:443/ubuntu:V1
+root@ip-172-31-47-157:~/registry/auth# docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+fruit-list             1.0.0               6f18ccd9a994        About an hour ago   126MB
+ubuntu                 latest              775349758637        2 weeks ago         64.2MB
+localhost:443/ubuntu   V1                  775349758637        2 weeks ago         64.2MB
+nginx                  latest              540a289bab6c        3 weeks ago         126MB
+docker                 latest              cf85f29ec76f        3 weeks ago         216MB
+tomcat                 latest              882487b8be1d        3 weeks ago         507MB
+registry               2                   f32a97de94e1        8 months ago        25.8MB
+nginx                  1.15.8              f09fe80eb0e7        9 months ago        109MB
+hello-world            latest              fce289e99eb9        10 months ago       1.84kB
+root@ip-172-31-47-157:~/registry/auth# docker push localhost:443/ubuntu:V1
+The push refers to repository [localhost:443/ubuntu]
+e0b3afb09dc3: Pushed
+6c01b5a53aac: Pushed
+2c6ac8e5063e: Pushed
+cc967c529ced: Pushed
+V1: digest: sha256:134c7fe821b9d359490cd009ce7ca322453f4f2d018623f849e580a89a685e5d size: 1152
+root@ip-172-31-47-157:~/registry/auth#
+
+
+Step7:- Delete exiting pulled images from localhost and then pull newely created image from registely we pushed earlier.
+
+root@ip-172-31-47-157:~/registry/auth# docker image rm localhost:443/ubuntu:V1
+Untagged: localhost:443/ubuntu:V1
+Untagged: localhost:443/ubuntu@sha256:134c7fe821b9d359490cd009ce7ca322453f4f2d018623f849e580a89a685e5d
+root@ip-172-31-47-157:~/registry/auth# docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+fruit-list          1.0.0               6f18ccd9a994        About an hour ago   126MB
+ubuntu              latest              775349758637        2 weeks ago         64.2MB
+nginx               latest              540a289bab6c        3 weeks ago         126MB
+docker              latest              cf85f29ec76f        3 weeks ago         216MB
+tomcat              latest              882487b8be1d        3 weeks ago         507MB
+registry            2                   f32a97de94e1        8 months ago        25.8MB
+nginx               1.15.8              f09fe80eb0e7        9 months ago        109MB
+hello-world         latest              fce289e99eb9        10 months ago       1.84kB
+
+root@ip-172-31-47-157:~/registry/auth# docker pull localhost:443/ubuntu:V1
+V1: Pulling from ubuntu
+Digest: sha256:134c7fe821b9d359490cd009ce7ca322453f4f2d018623f849e580a89a685e5d
+Status: Downloaded newer image for localhost:443/ubuntu:V1
+root@ip-172-31-47-157:~/registry/auth# docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+fruit-list             1.0.0               6f18ccd9a994        About an hour ago   126MB
+ubuntu                 latest              775349758637        2 weeks ago         64.2MB
+localhost:443/ubuntu   V1                  775349758637        2 weeks ago         64.2MB
+nginx                  latest              540a289bab6c        3 weeks ago         126MB
+docker                 latest              cf85f29ec76f        3 weeks ago         216MB
+tomcat                 latest              882487b8be1d        3 weeks ago         507MB
+registry               2                   f32a97de94e1        8 months ago        25.8MB
+nginx                  1.15.8              f09fe80eb0e7        9 months ago        109MB
+hello-world            latest              fce289e99eb9        10 months ago       1.84kB
+root@ip-172-31-47-157:~/registry/auth#
+
+
+root@ip-172-31-47-157:~/registry/auth# docker inspect localhost:443/ubuntu:V1
+[
+    {
+        "Id": "sha256:775349758637aff77bf85e2ff0597e86e3e859183ef0baba8b3e8fc8d3cba51c",
+        "RepoTags": [
+            "ubuntu:latest",
+            "localhost:443/ubuntu:V1"
+        ],
+        "RepoDigests": [
+            "ubuntu@sha256:6e9f67fa63b0323e9a1e587fd71c561ba48a034504fb804fd26fd8800039835d",
+            "localhost:443/ubuntu@sha256:134c7fe821b9d359490cd009ce7ca322453f4f2d018623f849e580a89a685e5d"
+        ],
+        "Parent": "",
+        "Comment": "",
+        "Created": "2019-10-31T22:20:37.714423666Z",
+        "Container": "4df7a03525342ee760076ade1c80bbdd041f236654f624ca581ada54310a1574",
+        "ContainerConfig": {
+            "Hostname": "4df7a0352534",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/sh",
+                "-c",
+                "#(nop) ",
+                "CMD [\"/bin/bash\"]"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:f0caea6f785de71fe8c8b1b276a7094151df6058aa3f22d2902fe6b51f1a7a8f",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {}
+        },
+        "DockerVersion": "18.06.1-ce",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "ArgsEscaped": true,
+            "Image": "sha256:f0caea6f785de71fe8c8b1b276a7094151df6058aa3f22d2902fe6b51f1a7a8f",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 64193254,
+        "VirtualSize": 64193254,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/591aa98fe2bba2879789e86b672b5da9c25d871c4a8d358bd2294b70ebde5503/diff:/var/lib/docker/overlay2/5bdbf6e208bcfec70c5ef81f3b1a08fc32406aa0c5cfdde90c547e5885645b35/diff:/var/lib/docker/overlay2/bb1adeaceb7ee988a54570ecd2488834fe3fa693a8ca34269702868c2f4b6188/diff",
+                "MergedDir": "/var/lib/docker/overlay2/11df4c3cd352af3ed9f16d84bf7e2a68173d4e8986cf500522585511e1a8e9b6/merged",
+                "UpperDir": "/var/lib/docker/overlay2/11df4c3cd352af3ed9f16d84bf7e2a68173d4e8986cf500522585511e1a8e9b6/diff",
+                "WorkDir": "/var/lib/docker/overlay2/11df4c3cd352af3ed9f16d84bf7e2a68173d4e8986cf500522585511e1a8e9b6/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:cc967c529ced563b7746b663d98248bc571afdb3c012019d7f54d6c092793b8b",
+                "sha256:2c6ac8e5063e35e91ab79dfb7330c6154b82f3a7e4724fb1b4475c0a95dfdd33",
+                "sha256:6c01b5a53aac53c66f02ea711295c7586061cbe083b110d54dafbeb6cf7636bf",
+                "sha256:e0b3afb09dc386786d49d6443bdfb20bc74d77dcf68e152db7e5bb36b1cca638"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2019-11-15T14:07:10.678430473Z"
+        }
+    }
+]
+
