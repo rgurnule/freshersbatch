@@ -1,0 +1,492 @@
+Your supermarket company is working on expanding their Docker infrastructure. They have an existing service that provides a list of fruit sold in their stores. After measuring the amount of load on this service, they have asked you to scale this service up to a higher number of replicas.
+
+In addition, there is a new service that provides a list of vegetables. This new service needs to be created in the cluster. Set up the swarm cluster to complete the lab, ensure that the swarm meets the following specifications:
+
+1. Scale the service called products-fruit to 5 replicas.
+2. Create a new service called products-vegetables running the linuxacademycontent/vegetable-service:1.0.0 image.
+3. Publish products-vegetables on port 8081. The application listens on port 80.
+4. Run products-vegetables with 3 replicas.
+
+You can test the products-fruit service from any swarm node (including the manager) with curl localhost:8080.
+
+Once products-vegetables is running, you should be able to test it from any swarm node (including the manager) with curl localhost:8081.
+
+Good luck!
+
+===============================================================================================================================================
+Step1:-
+
+1) Creating Manager nad Worker node to creating swarm cluster.
+
+$ docker swarm init  --advertise-addr 192.168.0.18
+Swarm initialized: current node (5txnu442f5qeuavxl9w1fkic0) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-5usffq0snsjoxx20cua0le0hv9lizaba9fjla8akziiotzam3b-bk0pwb48s8y5jaenwxngudg9l 192.168.0.18:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+5txnu442f5qeuavxl9w1fkic0 *   node1               Ready               Active              Leader              19.03.4
+[node1] (local) root@192.168.0.18 ~
+
+###############################################################
+[node2] (local) root@192.168.0.17 ~
+$ docker swarm join --token SWMTKN-1-5usffq0snsjoxx20cua0le0hv9lizaba9fjla8akziiotzam3b-bk0pwb48s8y5jaenwxngudg9l 192.168.0.18:2377
+This node joined a swarm as a worker.
+[node2] (local) root@192.168.0.17 ~
+$ docker node ls
+Error response from daemon: This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state. Please run this command on a manager node or promote the current node to a manager.
+[node2] (local) root@192.168.0.17 ~
+$ 
+
+	
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+5txnu442f5qeuavxl9w1fkic0 *   node1               Ready               Active              Leader              19.03.4
+p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+
+
+Step2:- Creating product-fruite service from nginx as i dont find  exiting fruit-list service.
+
+$ docker service create --replicas=5 --name products-fruit -p 8080:80 nginx
+d2yay3ps9zm4e05a9rc7krhf9
+overall progress: 5 out of 5 tasks 
+1/5: running   [==================================================>] 
+2/5: running   [==================================================>] 
+3/5: running   [==================================================>] 
+4/5: running   [==================================================>] 
+5/5: running   [==================================================>] 
+verify: Service converged 
+[node1] (local) root@192.168.0.18 ~
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+5txnu442f5qeuavxl9w1fkic0 *   node1               Ready               Active              Leader              19.03.4
+p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+d2yay3ps9zm4        products-fruit      replicated          5/5                 nginx:latest        *:8080->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+5txnu442f5qeuavxl9w1fkic0 *   node1               Ready               Active              Leader              19.03.4
+p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ docker service ls
+ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
+d2yay3ps9zm4        products-fruit      replicated          5/5                 nginx:latest        *:8080->80/tcp
+[node1] (local) root@192.168.0.18 ~
+[node1] (local) root@192.168.0.18 ~
+[node1] (local) root@192.168.0.18 ~
+$ docker service ps products-fruit
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+2soeicsuh1b9        products-fruit.1    nginx:latest        node1               Running             Running 7 minutes ago                       
+jw8og7k3cnsa        products-fruit.2    nginx:latest        node2               Running             Running 7 minutes ago                       
+vn96n3egoarv        products-fruit.3    nginx:latest        node1               Running             Running 7 minutes ago                       
+qkq6gje0s7mq        products-fruit.4    nginx:latest        node2               Running             Running 7 minutes ago                       
+kbx5eoxri9jf        products-fruit.5    nginx:latest        node2               Running             Running 7 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               <none>              540a289bab6c        3 weeks ago         126MB
+tomcat              latest              882487b8be1d        4 weeks ago         507MB
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+Step3:- Creating products-vegetables service from linuxacademycontent/vegetable-service:1.0.0 image with 3 replicas.
+
+$ docker image pull linuxacademycontent/vegetable-service:1.0.0
+1.0.0: Pulling from linuxacademycontent/vegetable-service
+6ae821421a7d: Pull complete 
+da4474e5966c: Pull complete 
+eb2aec2b9c9f: Pull complete 
+3e55604f8d01: Pull complete 
+45cded7731f3: Pull complete 
+Digest: sha256:958b5932d3b926d77efe4b1b2083060de28054d153daabdbc584c3bda2523958
+Status: Downloaded newer image for linuxacademycontent/vegetable-service:1.0.0
+docker.io/linuxacademycontent/vegetable-service:1.0.0
+[node1] (local) root@192.168.0.18 ~
+$ docker images
+REPOSITORY                              TAG                 IMAGE ID            CREATED             SIZE
+nginx                                   <none>              540a289bab6c        3 weeks ago         126MB
+tomcat                                  latest              882487b8be1d        4 weeks ago         507MB
+linuxacademycontent/vegetable-service   1.0.0               bd733e240b13        6 months ago        109MB
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+$ docker service create --replicas=3 --name products-vegetables -p 8081:80 linuxacademycontent/vegetable-service:1.0.0
+p50yzz3vhy7si6p0drg1dqf9u
+overall progress: 3 out of 3 tasks 
+1/3: running   [==================================================>] 
+2/3: running   [==================================================>] 
+3/3: running   [==================================================>] 
+verify: Service converged 
+[node1] (local) root@192.168.0.18 ~
+$ docker service ls
+ID                  NAME                  MODE                REPLICAS            IMAGE                                         PORTS
+d2yay3ps9zm4        products-fruit        replicated          5/5                 nginx:latest                                  *:8080->80/tcp
+p50yzz3vhy7s        products-vegetables   replicated          3/3                 linuxacademycontent/vegetable-service:1.0.0   *:8081->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+$ docker service ps products-vegetables
+ID                  NAME                    IMAGE                                         NODE                DESIRED STATE       CURRENT STATE                ERROR               PORTS
+zort0zp0l5fd        products-vegetables.1   linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running about a minute ago                       
+r5rmyuql7w9g        products-vegetables.2   linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running about a minute ago                       
+z0pry49uykbn        products-vegetables.3   linuxacademycontent/vegetable-service:1.0.0   node2               Running             Running about a minute ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker service ps products-fruit
+ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+2soeicsuh1b9        products-fruit.1    nginx:latest        node1               Running             Running 21 minutes ago                       
+jw8og7k3cnsa        products-fruit.2    nginx:latest        node2               Running             Running 21 minutes ago                       
+vn96n3egoarv        products-fruit.3    nginx:latest        node1               Running             Running 21 minutes ago                       
+qkq6gje0s7mq        products-fruit.4    nginx:latest        node2               Running             Running 21 minutes ago                       
+kbx5eoxri9jf        products-fruit.5    nginx:latest        node2               Running             Running 21 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+Step4:- Checking product-fruit service on Manger and Worker node:- Node1 is manager nad Node2 is Worker
+
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+[node2] (local) root@192.168.0.17 ~
+$ curl localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+[node2] (local) root@192.168.0.17 ~
+$ 
+
+
+Step 5:- Checking product-vegitable service on manager and worker nodes:-  Node1 is manager nad Node2 is Worker
+
+
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8081
+{
+    "description": "A list of vegetables.",
+    "vegetables": [
+        "acorn squash",
+        "alfalfa sprout",
+        "amaranth",
+        "anise",
+        "artichoke",
+        "arugula",
+        "asparagus",
+        "aubergine",
+        "azuki bean",
+        "banana squash",
+        "basil",
+        "bean sprout",
+        "beet",
+        "black bean",
+        "black-eyed pea",
+        "bok choy",
+        "borlotti bean",
+        "broad beans",
+        "broccoflower",
+        "broccoli",
+        "brussels sprout",
+        "butternut squash",
+        "cabbage",
+        "calabrese",
+        "caraway",
+        "carrot",
+        "cauliflower",
+        "cayenne pepper",
+        "celeriac",
+        "celery",
+        "chamomile",
+        "chard",
+        "chayote",
+        "chickpea",
+        "chives",
+        "cilantro",
+        "collard green",
+        "corn",
+        "corn salad",
+        "courgette",
+        "cucumber",
+        "daikon",
+        "delicata",
+        "dill",
+        "eggplant",
+        "endive",
+        "fennel",
+        "fiddlehead",
+        "frisee",
+        "garlic",
+        "gem squash",
+        "ginger",
+        "green bean",
+        "green pepper",
+        "habanero",
+        "herbs and spice",
+        "horseradish",
+        "hubbard squash",
+        "jalapeno",
+        "jerusalem artichoke",
+        "jicama",
+        "kale",
+        "kidney bean",
+        "kohlrabi",
+        "lavender",
+        "leek ",
+        "legume",
+        "lemon grass",
+        "lentils",
+        "lettuce",
+        "lima bean",
+        "mamey",
+        "mangetout",
+        "marjoram",
+        "mung bean",
+        "mushroom",
+        "mustard green",
+        "navy bean",
+        "new zealand spinach",
+        "nopale",
+        "okra",
+        "onion",
+        "oregano",
+        "paprika",
+        "parsley",
+        "parsnip",
+        "patty pan",
+        "pea",
+        "pinto bean",
+        "potato",
+        "pumpkin",
+        "radicchio",
+        "radish",
+        "rhubarb",
+        "rosemary",
+        "runner bean",
+        "rutabaga",
+        "sage",
+        "scallion",
+        "shallot",
+        "skirret",
+        "snap pea",
+        "soy bean",
+        "spaghetti squash",
+        "spinach",
+        "squash ",
+        "sweet potato",
+        "tabasco pepper",
+        "taro",
+        "tat soi",
+        "thyme",
+        "topinambur",
+        "tubers",
+        "turnip",
+        "wasabi",
+        "water chestnut",
+        "watercress",
+        "white radish",
+        "yam",
+        "zucchini"
+    ]
+}
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+[node2] (local) root@192.168.0.17 ~
+$ curl localhost:8081
+{
+    "description": "A list of vegetables.",
+    "vegetables": [
+        "acorn squash",
+        "alfalfa sprout",
+        "amaranth",
+        "anise",
+        "artichoke",
+        "arugula",
+        "asparagus",
+        "aubergine",
+        "azuki bean",
+        "banana squash",
+        "basil",
+        "bean sprout",
+        "beet",
+        "black bean",
+        "black-eyed pea",
+        "bok choy",
+        "borlotti bean",
+        "broad beans",
+        "broccoflower",
+        "broccoli",
+        "brussels sprout",
+        "butternut squash",
+        "cabbage",
+        "calabrese",
+        "caraway",
+        "carrot",
+        "cauliflower",
+        "cayenne pepper",
+        "celeriac",
+        "celery",
+        "chamomile",
+        "chard",
+        "chayote",
+        "chickpea",
+        "chives",
+        "cilantro",
+        "collard green",
+        "corn",
+        "corn salad",
+        "courgette",
+        "cucumber",
+        "daikon",
+        "delicata",
+        "dill",
+        "eggplant",
+        "endive",
+        "fennel",
+        "fiddlehead",
+        "frisee",
+        "garlic",
+        "gem squash",
+        "ginger",
+        "green bean",
+        "green pepper",
+        "habanero",
+        "herbs and spice",
+        "horseradish",
+        "hubbard squash",
+        "jalapeno",
+        "jerusalem artichoke",
+        "jicama",
+        "kale",
+        "kidney bean",
+        "kohlrabi",
+        "lavender",
+        "leek ",
+        "legume",
+        "lemon grass",
+        "lentils",
+        "lettuce",
+        "lima bean",
+        "mamey",
+        "mangetout",
+        "marjoram",
+        "mung bean",
+        "mushroom",
+        "mustard green",
+        "navy bean",
+        "new zealand spinach",
+        "nopale",
+        "okra",
+        "onion",
+        "oregano",
+        "paprika",
+        "parsley",
+        "parsnip",
+        "patty pan",
+        "pea",
+        "pinto bean",
+        "potato",
+        "pumpkin",
+        "radicchio",
+        "radish",
+        "rhubarb",
+        "rosemary",
+        "runner bean",
+        "rutabaga",
+        "sage",
+        "scallion",
+        "shallot",
+        "skirret",
+        "snap pea",
+        "soy bean",
+        "spaghetti squash",
+        "spinach",
+        "squash ",
+        "sweet potato",
+        "tabasco pepper",
+        "taro",
+        "tat soi",
+        "thyme",
+        "topinambur",
+        "tubers",
+        "turnip",
+        "wasabi",
+        "water chestnut",
+        "watercress",
+        "white radish",
+        "yam",
+        "zucchini"
+    ]
+}
+[node2] (local) root@192.168.0.17 ~
+$ 

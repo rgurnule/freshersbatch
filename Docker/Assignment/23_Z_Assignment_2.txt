@@ -1,0 +1,1244 @@
+Your supermarket company is in the process of improving their Docker-based applications. They have built a set of three RESTful data services that communicate with each other as part of a larger infrastructure. You have been given the task of designing a Docker application stack so that these three services can be easily managed and scaled as a unit. A Docker Swarm cluster has already been set up by you to use in previous execises.
+
+Here is some background information on the three services:
+
+1. Fruit Service
+	a. Provides a list of fruits sold in the company's stores.
+	b. You can use the Docker image tag linuxacademycontent/fruit-service:1.0.1 to run this service.
+	c. Listens on port 80.
+	d. The service should be named fruit inside the stack.
+
+2. Vegetable Service
+	a. Provides a list of vegetables sold in the company's stores.
+	b. You can use the Docker image tag linuxacademycontent/vegetable-service:1.0.0 to run this service.
+	c. Listens on port 80.
+	d. The service should be named vegetables inside the stack.
+
+3. All Products Service
+	a. Queries the other two services, combining their data into a single list of all produce.
+	b. You can use the Docker image tag linuxacademycontent/all-products:1.0.0 to run this service.
+	c. Listens on port 80.
+	d. Use the environment variables FRUIT_HOST and FRUIT_PORT to set the host and port which will be used to query the fruit service.
+	e. Use the environment variables VEGETABLE_HOST and VEGETABLE_PORT to set the host and port which will be used to query the vegetable service.
+
+Step 1
+Deploy a Docker application stack that meets the following specifications:
+1. The stack is called produce.
+2. The stack runs the Fruit, Vegetable, and All Products services.
+3. The All Products service is able to query the Fruit and Vegetable services.
+4. The All Products service is published on port 8080.
+
+One you have deployed the stack, you can verify whether it is working by querying the All Products service:
+
+curl localhost:8080
+
+If the stack is set up correctly, you should get a combined list of fruits and vegetables.
+
+Step 2
+Once you have deployed the stack and verified that it is working, modify the stack by scaling both the Fruit and Vegetable services up to 3 replicas.
+
+
+Good luck!
+
+===============================================================================================================================================
+
+
+==> Creating Swarm cluster with one manager and one worker node
+
+[node1] (local) root@192.168.0.18 ~
+$ docker swarm init  --advertise-addr 192.168.0.18
+Swarm initialized: current node (ds7oxfra4qygcjisxe2zm0t2i) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-5u3odrixzjr40e3ny6tg2filpjd02ph26pvj9deqgvv3zd31c3-7thvuat97eebrrioa2wve7uj9 192.168.0.18:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+[node1] (local) root@192.168.0.18 ~
+$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+ds7oxfra4qygcjisxe2zm0t2i *   node1               Ready               Active              Leader              19.03.4
+on54wci51oa5d6fy30la12k7a     node2               Ready               Active                                  19.03.4
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+[node2] (local) root@192.168.0.17 ~
+$ docker swarm join --token SWMTKN-1-5u3odrixzjr40e3ny6tg2filpjd02ph26pvj9deqgvv3zd31c3-7thvuat97eebrrioa2wve7uj9 192.168.0.18:2377
+This node joined a swarm as a worker.
+[node2] (local) root@192.168.0.17 ~
+$ docker node ls
+Error response from daemon: This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state. Please run this command on a manager node or promote the current node to a manager.
+[node2] (local) root@192.168.0.17 ~
+$
+
+
+==> Create produce.yml file for stack creation
+
+
+produce.yml
+version: "3"
+services:
+  fruit:
+    image: linuxacademycontent/fruit-service:1.0.1
+    ports:
+    - "8081:80"
+    environment:
+      FRUIT_HOST: localhost
+      FRUIT_PORT: 8081 
+  vegetables:
+    image: linuxacademycontent/vegetable-service:1.0.0
+    ports:
+    - "8082:80"
+    environment:
+      VEGETABLE_HOST: localhost
+      VEGETABLE_PORT: 8082
+  all_products:
+    image: linuxacademycontent/all-products:1.0.0
+    ports:
+    - "8080:80"	
+    environment:
+      ALL_PRODUCTS_HOST: localhost
+      ALL_PRODUCTS_PORT: 8080 
+
+==> Running/Depoying produce stack on master node
+
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml 
+"docker stack deploy" requires exactly 1 argument.
+See 'docker stack deploy --help'.
+
+Usage:  docker stack deploy [OPTIONS] STACK
+
+Deploy a new stack or update an existing stack
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml produce
+Creating network produce_default
+Creating service produce_fruit
+Creating service produce_vegetables
+Creating service produce_all-products
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ls
+NAME                SERVICES            ORCHESTRATOR
+produce             3                   Swarm
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 11 seconds ago                       
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Running             Running 28 seconds ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 29 seconds ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker stack services  produce
+ID                  NAME                   MODE                REPLICAS            IMAGE                                         PORTS
+c87py36orh8h        produce_all-products   replicated          1/1                 linuxacademycontent/all-products:1.0.0        *:8080->80/tcp
+joy4tilgba2r        produce_fruit          replicated          1/1                 linuxacademycontent/fruit-service:1.0.1       *:8081->80/tcp
+uaj6r9jxiq81        produce_vegetables     replicated          1/1                 linuxacademycontent/vegetable-service:1.0.0   *:8082->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+
+
+==> Checking /qurying Fruit and Vegitable services
+
+$ curl localhost:8080
+curl: (52) Empty reply from server
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8081
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8082
+{
+    "description": "A list of vegetables.",
+    "vegetables": [
+        "acorn squash",
+        "alfalfa sprout",
+        "amaranth",
+        "anise",
+        "artichoke",
+        "arugula",
+        "asparagus",
+        "aubergine",
+        "azuki bean",
+        "banana squash",
+        "basil",
+        "bean sprout",
+        "beet",
+        "black bean",
+        "black-eyed pea",
+        "bok choy",
+        "borlotti bean",
+        "broad beans",
+        "broccoflower",
+        "broccoli",
+        "brussels sprout",
+        "butternut squash",
+        "cabbage",
+        "calabrese",
+        "caraway",
+        "carrot",
+        "cauliflower",
+        "cayenne pepper",
+        "celeriac",
+        "celery",
+        "chamomile",
+        "chard",
+        "chayote",
+        "chickpea",
+        "chives",
+        "cilantro",
+        "collard green",
+        "corn",
+        "corn salad",
+        "courgette",
+        "cucumber",
+        "daikon",
+        "delicata",
+        "dill",
+        "eggplant",
+        "endive",
+        "fennel",
+        "fiddlehead",
+        "frisee",
+        "garlic",
+        "gem squash",
+        "ginger",
+        "green bean",
+        "green pepper",
+        "habanero",
+        "herbs and spice",
+        "horseradish",
+        "hubbard squash",
+        "jalapeno",
+        "jerusalem artichoke",
+        "jicama",
+        "kale",
+        "kidney bean",
+        "kohlrabi",
+        "lavender",
+        "leek ",
+        "legume",
+        "lemon grass",
+        "lentils",
+        "lettuce",
+        "lima bean",
+        "mamey",
+        "mangetout",
+        "marjoram",
+        "mung bean",
+        "mushroom",
+        "mustard green",
+        "navy bean",
+        "new zealand spinach",
+        "nopale",
+        "okra",
+        "onion",
+        "oregano",
+        "paprika",
+        "parsley",
+        "parsnip",
+        "patty pan",
+        "pea",
+        "pinto bean",
+        "potato",
+        "pumpkin",
+        "radicchio",
+        "radish",
+        "rhubarb",
+        "rosemary",
+        "runner bean",
+        "rutabaga",
+        "sage",
+        "scallion",
+        "shallot",
+        "skirret",
+        "snap pea",
+        "soy bean",
+        "spaghetti squash",
+        "spinach",
+        "squash ",
+        "sweet potato",
+        "tabasco pepper",
+        "taro",
+        "tat soi",
+        "thyme",
+        "topinambur",
+        "tubers",
+        "turnip",
+        "wasabi",
+        "water chestnut",
+        "watercress",
+        "white radish",
+        "yam",
+        "zucchini"
+    ]
+}
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8080
+curl: (52) Empty reply from server
+
+
+
+[node1] (local) root@192.168.0.18 ~
+$ vi produce.yml 
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml produce
+Updating service produce_fruit (id: joy4tilgba2rhrjxq6r0vjqpw)
+Updating service produce_vegetables (id: uaj6r9jxiq81syep5ucz0oy28)
+Updating service produce_all-products (id: c87py36orh8hts087d8fpviqk)
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 6 seconds ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 6 seconds ago                        
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 13 minutes ago                       
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 8 seconds ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 8 seconds ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ls
+NAME                SERVICES            ORCHESTRATOR
+produce             3                   Swarm
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 2 minutes ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 2 minutes ago                        
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 16 minutes ago                       
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 2 minutes ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 2 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+
+
+
+[node1] (local) root@192.168.0.18 ~
+$ docker inspect f5fmbskw7t4d
+[
+    {
+        "ID": "f5fmbskw7t4divx0idh96qgam",
+        "Version": {
+            "Index": 63
+        },
+        "CreatedAt": "2019-11-17T06:26:30.990654608Z",
+        "UpdatedAt": "2019-11-17T06:26:37.369040161Z",
+        "Labels": {},
+        "Spec": {
+            "ContainerSpec": {
+                "Image": "linuxacademycontent/fruit-service:1.0.1@sha256:c904541d6a51932256baaa1163c2b7947c4bc7168439631d931f08c6f7635112",
+                "Labels": {
+                    "com.docker.stack.namespace": "produce"
+                },
+                "Env": [
+                    "FRUIT_HOST=localhost",
+                    "FRUIT_PORT=8081"
+                ],
+                "Privileges": {
+                    "CredentialSpec": null,
+                    "SELinuxContext": null
+                },
+                "Isolation": "default"
+            },
+            "Resources": {},
+            "Placement": {
+                "Platforms": [
+                    {
+                        "Architecture": "amd64",
+                        "OS": "linux"
+                    }
+                ]
+            },
+            "Networks": [
+                {
+                    "Target": "7dip5qvudg70h4fics269346s",
+                    "Aliases": [
+                        "fruit"
+                    ]
+                }
+            ],
+            "ForceUpdate": 0
+        },
+        "ServiceID": "joy4tilgba2rhrjxq6r0vjqpw",
+        "Slot": 1,
+        "NodeID": "ds7oxfra4qygcjisxe2zm0t2i",
+        "Status": {
+            "Timestamp": "2019-11-17T06:26:37.336648588Z",
+            "State": "running",
+            "Message": "started",
+            "ContainerStatus": {
+                "ContainerID": "c87fff1d54fd1a7846e125fc3a57ad28fcbf053b48bef89045654a73b36bb801",
+                "PID": 22516,
+                "ExitCode": 0
+            },
+            "PortStatus": {}
+        },
+        "DesiredState": "running",
+        "NetworksAttachments": [
+            {
+                "Network": {
+                    "ID": "ofdt61a7zmx03intbz42gazl8",
+                    "Version": {
+                        "Index": 6
+                    },
+                    "CreatedAt": "2019-11-17T05:42:23.28074635Z",
+                    "UpdatedAt": "2019-11-17T05:42:23.291058169Z",
+                    "Spec": {
+                        "Name": "ingress",
+                        "Labels": {},
+                        "DriverConfiguration": {},
+                        "Ingress": true,
+                        "IPAMOptions": {
+                            "Driver": {},
+                            "Configs": [
+                                {
+                                    "Subnet": "10.255.0.0/16",
+                                    "Gateway": "10.255.0.1"
+                                }
+                            ]
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4096"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.255.0.0/16",
+                                "Gateway": "10.255.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.255.0.10/16"
+                ]
+            },
+            {
+                "Network": {
+                    "ID": "7dip5qvudg70h4fics269346s",
+                    "Version": {
+                        "Index": 17
+                    },
+                    "CreatedAt": "2019-11-17T06:12:21.180003705Z",
+                    "UpdatedAt": "2019-11-17T06:12:21.181043717Z",
+                    "Spec": {
+                        "Name": "produce_default",
+                        "Labels": {
+                            "com.docker.stack.namespace": "produce"
+                        },
+                        "DriverConfiguration": {
+                            "Name": "overlay"
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4097"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.0.0.0/24",
+                                "Gateway": "10.0.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.0.0.10/24"
+                ]
+            }
+        ]
+    }
+]
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ docker inspect f9rr5wof0x2p
+[
+    {
+        "ID": "f9rr5wof0x2pyb0yo2bt9n3mt",
+        "Version": {
+            "Index": 64
+        },
+        "CreatedAt": "2019-11-17T06:26:31.320993018Z",
+        "UpdatedAt": "2019-11-17T06:26:37.471057938Z",
+        "Labels": {},
+        "Spec": {
+            "ContainerSpec": {
+                "Image": "linuxacademycontent/vegetable-service:1.0.0@sha256:958b5932d3b926d77efe4b1b2083060de28054d153daabdbc584c3bda2523958",
+                "Labels": {
+                    "com.docker.stack.namespace": "produce"
+                },
+                "Env": [
+                    "VEGETABLE_HOST=localhost",
+                    "VEGETABLE_PORT=8082"
+                ],
+                "Privileges": {
+                    "CredentialSpec": null,
+                    "SELinuxContext": null
+                },
+                "Isolation": "default"
+            },
+            "Resources": {},
+            "Placement": {
+                "Platforms": [
+                    {
+                        "Architecture": "amd64",
+                        "OS": "linux"
+                    }
+                ]
+            },
+            "Networks": [
+                {
+                    "Target": "7dip5qvudg70h4fics269346s",
+                    "Aliases": [
+                        "vegetables"
+                    ]
+                }
+            ],
+            "ForceUpdate": 0
+        },
+        "ServiceID": "uaj6r9jxiq81syep5ucz0oy28",
+        "Slot": 1,
+        "NodeID": "ds7oxfra4qygcjisxe2zm0t2i",
+        "Status": {
+            "Timestamp": "2019-11-17T06:26:37.433712907Z",
+            "State": "running",
+            "Message": "started",
+            "ContainerStatus": {
+                "ContainerID": "7587b630c0c4a4b489799e8e0a66d0060f914db5a6a462f48890690b4c92df0d",
+                "PID": 22531,
+                "ExitCode": 0
+            },
+            "PortStatus": {}
+        },
+        "DesiredState": "running",
+        "NetworksAttachments": [
+            {
+                "Network": {
+                    "ID": "ofdt61a7zmx03intbz42gazl8",
+                    "Version": {
+                        "Index": 6
+                    },
+                    "CreatedAt": "2019-11-17T05:42:23.28074635Z",
+                    "UpdatedAt": "2019-11-17T05:42:23.291058169Z",
+                    "Spec": {
+                        "Name": "ingress",
+                        "Labels": {},
+                        "DriverConfiguration": {},
+                        "Ingress": true,
+                        "IPAMOptions": {
+                            "Driver": {},
+                            "Configs": [
+                                {
+                                    "Subnet": "10.255.0.0/16",
+                                    "Gateway": "10.255.0.1"
+                                }
+                            ]
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4096"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.255.0.0/16",
+                                "Gateway": "10.255.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.255.0.11/16"
+                ]
+            },
+            {
+                "Network": {
+                    "ID": "7dip5qvudg70h4fics269346s",
+                    "Version": {
+                        "Index": 17
+                    },
+                    "CreatedAt": "2019-11-17T06:12:21.180003705Z",
+                    "UpdatedAt": "2019-11-17T06:12:21.181043717Z",
+                    "Spec": {
+                        "Name": "produce_default",
+                        "Labels": {
+                            "com.docker.stack.namespace": "produce"
+                        },
+                        "DriverConfiguration": {
+                            "Name": "overlay"
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4097"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.0.0.0/24",
+                                "Gateway": "10.0.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.0.0.11/24"
+                ]
+            }
+        ]
+    }
+]
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ docker inspect i2n6ebd39i8k
+[
+    {
+        "ID": "i2n6ebd39i8k6h3jjbkzqvno2",
+        "Version": {
+            "Index": 43
+        },
+        "CreatedAt": "2019-11-17T06:12:22.233597152Z",
+        "UpdatedAt": "2019-11-17T06:12:47.59727546Z",
+        "Labels": {},
+        "Spec": {
+            "ContainerSpec": {
+                "Image": "linuxacademycontent/all-products:1.0.0@sha256:7e72bc8cafc6a312e42cf24c1692ab04686df1719c1d4819095b1ae194fe7e86",
+                "Labels": {
+                    "com.docker.stack.namespace": "produce"
+                },
+                "Privileges": {
+                    "CredentialSpec": null,
+                    "SELinuxContext": null
+                },
+                "Isolation": "default"
+            },
+            "Resources": {},
+            "Placement": {
+                "Platforms": [
+                    {
+                        "Architecture": "amd64",
+                        "OS": "linux"
+                    }
+                ]
+            },
+            "Networks": [
+                {
+                    "Target": "7dip5qvudg70h4fics269346s",
+                    "Aliases": [
+                        "all-products"
+                    ]
+                }
+            ],
+            "ForceUpdate": 0
+        },
+        "ServiceID": "c87py36orh8hts087d8fpviqk",
+        "Slot": 1,
+        "NodeID": "on54wci51oa5d6fy30la12k7a",
+        "Status": {
+            "Timestamp": "2019-11-17T06:12:47.571386662Z",
+            "State": "running",
+            "Message": "started",
+            "ContainerStatus": {
+                "ContainerID": "67790bf44e7fd0121907df3de1ddd43dc4302e1872e524214a32a8d8dbea5488",
+                "PID": 15492,
+                "ExitCode": 0
+            },
+            "PortStatus": {}
+        },
+        "DesiredState": "running",
+        "NetworksAttachments": [
+            {
+                "Network": {
+                    "ID": "ofdt61a7zmx03intbz42gazl8",
+                    "Version": {
+                        "Index": 6
+                    },
+                    "CreatedAt": "2019-11-17T05:42:23.28074635Z",
+                    "UpdatedAt": "2019-11-17T05:42:23.291058169Z",
+                    "Spec": {
+                        "Name": "ingress",
+                        "Labels": {},
+                        "DriverConfiguration": {},
+                        "Ingress": true,
+                        "IPAMOptions": {
+                            "Driver": {},
+                            "Configs": [
+                                {
+                                    "Subnet": "10.255.0.0/16",
+                                    "Gateway": "10.255.0.1"
+                                }
+                            ]
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4096"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.255.0.0/16",
+                                "Gateway": "10.255.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.255.0.9/16"
+                ]
+            },
+            {
+                "Network": {
+                    "ID": "7dip5qvudg70h4fics269346s",
+                    "Version": {
+                        "Index": 17
+                    },
+                    "CreatedAt": "2019-11-17T06:12:21.180003705Z",
+                    "UpdatedAt": "2019-11-17T06:12:21.181043717Z",
+                    "Spec": {
+                        "Name": "produce_default",
+                        "Labels": {
+                            "com.docker.stack.namespace": "produce"
+                        },
+                        "DriverConfiguration": {
+                            "Name": "overlay"
+                        },
+                        "Scope": "swarm"
+                    },
+                    "DriverState": {
+                        "Name": "overlay",
+                        "Options": {
+                            "com.docker.network.driver.overlay.vxlanid_list": "4097"
+                        }
+                    },
+                    "IPAMOptions": {
+                        "Driver": {
+                            "Name": "default"
+                        },
+                        "Configs": [
+                            {
+                                "Subnet": "10.0.0.0/24",
+                                "Gateway": "10.0.0.1"
+                            }
+                        ]
+                    }
+                },
+                "Addresses": [
+                    "10.0.0.9/24"
+                ]
+            }
+        ]
+    }
+]
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+[node1] (local) root@192.168.0.18 ~
+$ vi produce.yml 
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml produce
+Updating service produce_vegetables (id: uaj6r9jxiq81syep5ucz0oy28)
+Updating service produce_all-products (id: c87py36orh8hts087d8fpviqk)
+Updating service produce_fruit (id: joy4tilgba2rhrjxq6r0vjqpw)
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+v77simoh2ri2        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Ready               Ready 11 seconds ago                          
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 26 minutes ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 26 minutes ago                        
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Shutdown            Running 11 seconds ago                        
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 26 minutes ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 26 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+v77simoh2ri2        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 14 seconds ago                        
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 27 minutes ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 27 minutes ago                        
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Shutdown            Shutdown 16 seconds ago                       
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 27 minutes ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 27 minutes ago 
+
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8080
+curl: (52) Empty reply from server
+[node1] (local) root@192.168.0.18 ~
+$ dokcer stack ls
+bash: dokcer: command not found
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ls
+NAME                SERVICES            ORCHESTRATOR
+produce             3                   Swarm
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+v77simoh2ri2        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 3 minutes ago                         
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 29 minutes ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 29 minutes ago                        
+i2n6ebd39i8k        produce_all-products.1   linuxacademycontent/all-products:1.0.0        node2               Shutdown            Shutdown 3 minutes ago                        
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 29 minutes ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 29 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ docker stack services produce
+ID                  NAME                   MODE                REPLICAS            IMAGE                                         PORTS
+c87py36orh8h        produce_all-products   replicated          1/1                 linuxacademycontent/all-products:1.0.0        *:8080->80/tcp
+joy4tilgba2r        produce_fruit          replicated          1/1                 linuxacademycontent/fruit-service:1.0.1       *:8081->80/tcp
+uaj6r9jxiq81        produce_vegetables     replicated          1/1                 linuxacademycontent/vegetable-service:1.0.0   *:8082->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ docker ps
+CONTAINER ID        IMAGE                                         COMMAND                  CREATED             STATUS              PORTS               NAMES
+7587b630c0c4        linuxacademycontent/vegetable-service:1.0.0   "nginx -g 'daemon of…"   31 minutes ago      Up 31 minutes       80/tcp              produce_vegetables.1.f9rr5wof0x2pyb0yo2bt9n3mt
+c87fff1d54fd        linuxacademycontent/fruit-service:1.0.1       "nginx -g 'daemon of…"   31 minutes ago      Up 31 minutes       80/tcp              produce_fruit.1.f5fmbskw7t4divx0idh96qgam
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+==> For Creating 3 replicas for Fruit and Vegitable stack services.
+
+
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE             ERROR               PORTS
+iovu2weux78y        produce_all_products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 7 minutes ago                         
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 57 minutes ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running 57 minutes ago                        
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown 57 minutes ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown 57 minutes ago                       
+[node1] (local) root@192.168.0.18 ~
+$ vi produce.yml 
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml produce
+yaml: line 15: did not find expected key
+[node1] (local) root@192.168.0.18 ~
+$ vi produce.yml 
+
+
+Added   below line in produce.yml file
+deploy:
+      replicas: 3
+$ cat produce.yml 
+version: "3"
+services:
+  fruit:
+    image: linuxacademycontent/fruit-service:1.0.1
+    ports:
+    - "8081:80"
+    deploy:
+      replicas: 3
+    environment:
+      FRUIT_HOST: localhost
+      FRUIT_PORT: 8081 
+  vegetables:
+    image: linuxacademycontent/vegetable-service:1.0.0
+    ports:
+    - "8082:80"
+    deploy:
+      replicas: 3
+    environment:
+      VEGETABLE_HOST: localhost
+      VEGETABLE_PORT: 8082
+  all_products:
+    image: linuxacademycontent/all-products:1.0.0
+    ports:
+    - "8080:80"
+    environment:
+      ALL_PRODUCTS_HOST: localhost
+      ALL_PRODUCTS_PORT: 8080 
+
+
+[node1] (local) root@192.168.0.18 ~
+$ docker stack deploy -c produce.yml produce
+Updating service produce_fruit (id: joy4tilgba2rhrjxq6r0vjqpw)
+Updating service produce_vegetables (id: uaj6r9jxiq81syep5ucz0oy28)
+Updating service produce_all_products (id: dpz9ce2cqxuqrb5tr2zd49kx7)
+[node1] (local) root@192.168.0.18 ~
+$ docker stack ps produce
+ID                  NAME                     IMAGE                                         NODE                DESIRED STATE       CURRENT STATE                ERROR               PORTS
+iovu2weux78y        produce_all_products.1   linuxacademycontent/all-products:1.0.0        node2               Running             Running 10 minutes ago                           
+f9rr5wof0x2p        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running about an hour ago                        
+f5fmbskw7t4d        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Running             Running about an hour ago                        
+if4z2upex20q        produce_vegetables.1     linuxacademycontent/vegetable-service:1.0.0   node2               Shutdown            Shutdown about an hour ago                       
+9av2trbewkc4        produce_fruit.1          linuxacademycontent/fruit-service:1.0.1       node1               Shutdown            Shutdown about an hour ago                       
+i24v1f93rlid        produce_vegetables.2     linuxacademycontent/vegetable-service:1.0.0   node2               Running             Running 7 seconds ago                            
+piw11ai0m5mv        produce_fruit.2          linuxacademycontent/fruit-service:1.0.1       node2               Running             Running 7 seconds ago                            
+xbxx83rvwaui        produce_vegetables.3     linuxacademycontent/vegetable-service:1.0.0   node1               Running             Running 7 seconds ago                            
+bpbcwortsxn3        produce_fruit.3          linuxacademycontent/fruit-service:1.0.1       node2               Running             Running 7 seconds ago                            
+[node1] (local) root@192.168.0.18 ~
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ docker stack services  produce
+ID                  NAME                   MODE                REPLICAS            IMAGE                                         PORTS
+dpz9ce2cqxuq        produce_all_products   replicated          1/1                 linuxacademycontent/all-products:1.0.0        *:8080->80/tcp
+joy4tilgba2r        produce_fruit          replicated          3/3                 linuxacademycontent/fruit-service:1.0.1       *:8081->80/tcp
+uaj6r9jxiq81        produce_vegetables     replicated          3/3                 linuxacademycontent/vegetable-service:1.0.0   *:8082->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+
+
+
+
+
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8080
+
+
+curl: (52) Empty reply from server
+[node1] (local) root@192.168.0.18 ~
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ 
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:80
+curl: (7) Failed to connect to localhost port 80: Connection refused
+[node1] (local) root@192.168.0.18 ~
+$ docker inspect dpz9ce2cqxuq
+[
+    {
+        "ID": "dpz9ce2cqxuqrb5tr2zd49kx7",
+        "Version": {
+            "Index": 109
+        },
+        "CreatedAt": "2019-11-17T07:16:53.579348966Z",
+        "UpdatedAt": "2019-11-17T07:27:06.805471305Z",
+        "Spec": {
+            "Name": "produce_all_products",
+            "Labels": {
+                "com.docker.stack.image": "linuxacademycontent/all-products:1.0.0",
+                "com.docker.stack.namespace": "produce"
+            },
+            "TaskTemplate": {
+                "ContainerSpec": {
+                    "Image": "linuxacademycontent/all-products:1.0.0@sha256:7e72bc8cafc6a312e42cf24c1692ab04686df1719c1d4819095b1ae194fe7e86",
+                    "Labels": {
+                        "com.docker.stack.namespace": "produce"
+                    },
+                    "Env": [
+                        "ALL_PRODUCTS_HOST=localhost",
+                        "ALL_PRODUCTS_PORT=8080"
+                    ],
+                    "Privileges": {
+                        "CredentialSpec": null,
+                        "SELinuxContext": null
+                    },
+                    "StopGracePeriod": 10000000000,
+                    "DNSConfig": {},
+                    "Isolation": "default"
+                },
+                "Resources": {},
+                "RestartPolicy": {
+                    "Condition": "any",
+                    "Delay": 5000000000,
+                    "MaxAttempts": 0
+                },
+                "Placement": {
+                    "Platforms": [
+                        {
+                            "Architecture": "amd64",
+                            "OS": "linux"
+                        }
+                    ]
+                },
+                "Networks": [
+                    {
+                        "Target": "7dip5qvudg70h4fics269346s",
+                        "Aliases": [
+                            "all_products"
+                        ]
+                    }
+                ],
+                "ForceUpdate": 0,
+                "Runtime": "container"
+            },
+            "Mode": {
+                "Replicated": {
+                    "Replicas": 1
+                }
+            },
+            "UpdateConfig": {
+                "Parallelism": 1,
+                "FailureAction": "pause",
+                "Monitor": 5000000000,
+                "MaxFailureRatio": 0,
+                "Order": "stop-first"
+            },
+            "RollbackConfig": {
+                "Parallelism": 1,
+                "FailureAction": "pause",
+                "Monitor": 5000000000,
+                "MaxFailureRatio": 0,
+                "Order": "stop-first"
+            },
+            "EndpointSpec": {
+                "Mode": "vip",
+                "Ports": [
+                    {
+                        "Protocol": "tcp",
+                        "TargetPort": 80,
+                        "PublishedPort": 8080,
+                        "PublishMode": "ingress"
+                    }
+                ]
+            }
+        },
+        "PreviousSpec": {
+            "Name": "produce_all_products",
+            "Labels": {
+                "com.docker.stack.image": "linuxacademycontent/all-products:1.0.0",
+                "com.docker.stack.namespace": "produce"
+            },
+            "TaskTemplate": {
+                "ContainerSpec": {
+                    "Image": "linuxacademycontent/all-products:1.0.0@sha256:7e72bc8cafc6a312e42cf24c1692ab04686df1719c1d4819095b1ae194fe7e86",
+                    "Labels": {
+                        "com.docker.stack.namespace": "produce"
+                    },
+                    "Env": [
+                        "ALL_PRODUCTS_HOST=localhost",
+                        "ALL_PRODUCTS_PORT=8080"
+                    ],
+                    "Privileges": {
+                        "CredentialSpec": null,
+                        "SELinuxContext": null
+                    },
+                    "Isolation": "default"
+                },
+                "Resources": {},
+                "Placement": {
+                    "Platforms": [
+                        {
+                            "Architecture": "amd64",
+                            "OS": "linux"
+                        }
+                    ]
+                },
+                "Networks": [
+                    {
+                        "Target": "7dip5qvudg70h4fics269346s",
+                        "Aliases": [
+                            "all_products"
+                        ]
+                    }
+                ],
+                "ForceUpdate": 0,
+                "Runtime": "container"
+            },
+            "Mode": {
+                "Replicated": {
+                    "Replicas": 1
+                }
+            },
+            "EndpointSpec": {
+                "Mode": "vip",
+                "Ports": [
+                    {
+                        "Protocol": "tcp",
+                        "TargetPort": 80,
+                        "PublishedPort": 8080,
+                        "PublishMode": "ingress"
+                    }
+                ]
+            }
+        },
+        "Endpoint": {
+            "Spec": {
+                "Mode": "vip",
+                "Ports": [
+                    {
+                        "Protocol": "tcp",
+                        "TargetPort": 80,
+                        "PublishedPort": 8080,
+                        "PublishMode": "ingress"
+                    }
+                ]
+            },
+            "Ports": [
+                {
+                    "Protocol": "tcp",
+                    "TargetPort": 80,
+                    "PublishedPort": 8080,
+                    "PublishMode": "ingress"
+                }
+            ],
+            "VirtualIPs": [
+                {
+                    "NetworkID": "ofdt61a7zmx03intbz42gazl8",
+                    "Addr": "10.255.0.13/16"
+                },
+                {
+                    "NetworkID": "7dip5qvudg70h4fics269346s",
+                    "Addr": "10.0.0.13/24"
+                }
+            ]
+        }
+    }
+]
+[node1] (local) root@192.168.0.18 ~
+$ 
+
+[node1] (local) root@192.168.0.18 ~
+$ docker stack services  produce
+ID                  NAME                   MODE                REPLICAS            IMAGE                                         PORTS
+dpz9ce2cqxuq        produce_all_products   replicated          1/1                 linuxacademycontent/all-products:1.0.0        *:8080->80/tcp
+joy4tilgba2r        produce_fruit          replicated          3/3                 linuxacademycontent/fruit-service:1.0.1       *:8081->80/tcp
+uaj6r9jxiq81        produce_vegetables     replicated          3/3                 linuxacademycontent/vegetable-service:1.0.0   *:8082->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ docker service create  --name all_products -p 8080:80 linuxacademycontent/all-products:1.0.0
+Error response from daemon: rpc error: code = InvalidArgument desc = port '8080' is already in use by service 'produce_all_products' (dpz9ce2cqxuqrb5tr2zd49kx7) as an ingress port
+[node1] (local) root@192.168.0.18 ~
+$ docker service create  --name all_products -p 8083:80 linuxacademycontent/all-products:1.0.0
+tq70dhlx3ecottjrmtnit578t
+overall progress: 1 out of 1 tasks 
+1/1: running   [==================================================>] 
+verify: Service converged 
+[node1] (local) root@192.168.0.18 ~
+$ curl localhost:8083
+`curl: (52) Empty reply from server
+[node1] (local) root@192.168.0.18 ~
+$ `
+> ^C
+[node1] (local) root@192.168.0.18 ~
+$ docker ps
+CONTAINER ID        IMAGE                                         COMMAND                  CREATED             STATUS              PORTS               NAMES
+686ecee0783a        linuxacademycontent/all-products:1.0.0        "node index.js"          2 minutes ago       Up 2 minutes                            all_products.1.vztueyw8ns7b176l93vnzl7u7
+b99e60f78520        linuxacademycontent/vegetable-service:1.0.0   "nginx -g 'daemon of…"   10 minutes ago      Up 10 minutes       80/tcp              produce_vegetables.3.xbxx83rvwauixhwnbzs9fpuhs
+7587b630c0c4        linuxacademycontent/vegetable-service:1.0.0   "nginx -g 'daemon of…"   About an hour ago   Up About an hour    80/tcp              produce_vegetables.1.f9rr5wof0x2pyb0yo2bt9n3mt
+c87fff1d54fd        linuxacademycontent/fruit-service:1.0.1       "nginx -g 'daemon of…"   About an hour ago   Up About an hour    80/tcp              produce_fruit.1.f5fmbskw7t4divx0idh96qgam
+[node1] (local) root@192.168.0.18 ~
+$ docker stack services  produce
+ID                  NAME                   MODE                REPLICAS            IMAGE                                         PORTS
+dpz9ce2cqxuq        produce_all_products   replicated          1/1                 linuxacademycontent/all-products:1.0.0        *:8080->80/tcp
+joy4tilgba2r        produce_fruit          replicated          3/3                 linuxacademycontent/fruit-service:1.0.1       *:8081->80/tcp
+uaj6r9jxiq81        produce_vegetables     replicated          3/3                 linuxacademycontent/vegetable-service:1.0.0   *:8082->80/tcp
+[node1] (local) root@192.168.0.18 ~
+$ 
+
