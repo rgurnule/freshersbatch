@@ -99,8 +99,10 @@ services:
     ports:
     - "8080:80"	
     environment:
-      ALL_PRODUCTS_HOST: localhost
-      ALL_PRODUCTS_PORT: 8080 
+     - VEGETABLE_HOST=192.168.0.18
+     - VEGETABLE_PORT=8082 
+     - FRUIT_HOST=192.168.0.18
+     - FRUIT_PORT=8081 
 
 ==> Running/Depoying produce stack on master node
 
@@ -138,7 +140,17 @@ uaj6r9jxiq81        produce_vegetables     replicated          1/1              
 $ 
 
 
+$ docker ps
+CONTAINER ID        IMAGE                                         COMMAND                  CREATED              STATUS              PORTS               NAMES
+a4e6d927e21e        linuxacademycontent/vegetable-service:1.0.0   "nginx -g 'daemon of…"   About a minute ago   Up About a minute   80/tcp              produce_vegetables.1.zidn9grckltgsk1yygoasxrv2
+235d72a47c87        linuxacademycontent/fruit-service:1.0.1       "nginx -g 'daemon of…"   About a minute ago   Up About a minute   80/tcp              produce_fruit.1.ixp2tnsz8o11algvgyzcjmsbv
 
+[node2] (local) root@192.168.0.17 ~
+$ docker ps
+CONTAINER ID        IMAGE                                    COMMAND             CREATED              STATUS              PORTS               NAMES
+2827112fe95b        linuxacademycontent/all-products:1.0.0   "node index.js"     About a minute ago   Up About a minute                       produce_all_products.1.l9ka5kf4fogsnzjnowvq2x774
+[node2] (local) root@192.168.0.17 ~
+$ 
 
 
 ==> Checking /qurying Fruit and Vegitable services
@@ -367,8 +379,13 @@ $
 $ curl localhost:8080
 curl: (52) Empty reply from server
 
+[node1] (local) root@192.168.0.18 ~
+$ curl 192.168.0.17:8080
+{"description":"A list of all produce.","products":["acorn squash","alfalfa sprout","amaranth","anise","apple","apricot","artichoke","arugula","asparagus","aubergine","avocado","azuki bean","banana","banana squash","basil","bean sprout","beet","bell pepper","bilberry","black bean","black-eyed pea","blackberry","blackcurrant","blood orange","blueberry","bok choy","borlotti bean","boysenberry","breadfruit","broad beans","broccoflower","broccoli","brussels sprout","butternut squash","cabbage","calabrese","canary melon","cantaloupe","caraway","carrot","cauliflower","cayenne pepper","celeriac","celery","chamomile","chard","chayote","cherimoya","cherry","chickpea","chili pepper","chives","cilantro","clementine","cloudberry","coconut","collard green","corn","corn salad","courgette","cranberry","cucumber","cucumber","currant","daikon","damson","date","delicata","dill","dragonfruit","durian","eggplant","eggplant","elderberry","endive","feijoa","fennel","fiddlehead","fig","frisee","garlic","gem squash","ginger","goji berry","gooseberry","grape","grapefruit","green bean","green pepper","guava","habanero","herbs and spice","honeydew","horseradish","hubbard squash","huckleberry","jackfruit","jalapeno","jambul","jerusalem artichoke","jicama","jujube","kale","kidney bean","kiwi fruit","kohlrabi","kumquat","lavender","leek ","legume","lemon","lemon grass","lentils","lettuce","lima bean","lime","loquat","lychee","mamey","mandarine","mangetout","mango","marjoram","mulberry","mung bean","mushroom","mustard green","navy bean","nectarine","new zealand spinach","nopale","nut","okra","olive","onion","orange","oregano","pamelo","papaya","paprika","parsley","parsnip","passionfruit","patty pan","pea","peach","pear","persimmon","physalis","pineapple","pinto bean","plum","pomegranate","pomelo","potato","pumpkin","purple mangosteen","quince","radicchio","radish","raisin","rambutan","raspberry","redcurrant","rhubarb","rock melon","rosemary","runner bean","rutabaga","sage","salal berry","satsuma","scallion","shallot","skirret","snap pea","soy bean","spaghetti squash","spinach","squash ","star fruit","strawberry","sweet potato","tabasco pepper","tamarillo","tangerine","taro","tat soi","thyme","tomato","topinambur","tubers","turnip","ugli fruit","wasabi","water chestnut","watercress","watermelon","white radish","yam","zucchini"]}[node1] (local) root@192.168.0.18 ~
+$ 
 
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 [node1] (local) root@192.168.0.18 ~
 $ vi produce.yml 
 [node1] (local) root@192.168.0.18 ~
@@ -1242,3 +1259,16 @@ uaj6r9jxiq81        produce_vegetables     replicated          3/3              
 [node1] (local) root@192.168.0.18 ~
 $ 
 
+
+
+We need to add Ip address in produce.yml file for all product and all product container is present on node 2
+
+[node1] (local) root@192.168.0.18 ~
+$ curl 192.168.0.17:8080
+{"description":"A list of all produce.","products":["acorn squash","alfalfa sprout","amaranth","anise","apple","apricot","artichoke","arugula","asparagus","aubergine","avocado","azuki bean","banana","banana squash","basil","bean sprout","beet","bell pepper","bilberry","black bean","black-eyed pea","blackberry","blackcurrant","blood orange","blueberry","bok choy","borlotti bean","boysenberry","breadfruit","broad beans","broccoflower","broccoli","brussels sprout","butternut squash","cabbage","calabrese","canary melon","cantaloupe","caraway","carrot","cauliflower","cayenne pepper","celeriac","celery","chamomile","chard","chayote","cherimoya","cherry","chickpea","chili pepper","chives","cilantro","clementine","cloudberry","coconut","collard green","corn","corn salad","courgette","cranberry","cucumber","cucumber","currant","daikon","damson","date","delicata","dill","dragonfruit","durian","eggplant","eggplant","elderberry","endive","feijoa","fennel","fiddlehead","fig","frisee","garlic","gem squash","ginger","goji berry","gooseberry","grape","grapefruit","green bean","green pepper","guava","habanero","herbs and spice","honeydew","horseradish","hubbard squash","huckleberry","jackfruit","jalapeno","jambul","jerusalem artichoke","jicama","jujube","kale","kidney bean","kiwi fruit","kohlrabi","kumquat","lavender","leek ","legume","lemon","lemon grass","lentils","lettuce","lima bean","lime","loquat","lychee","mamey","mandarine","mangetout","mango","marjoram","mulberry","mung bean","mushroom","mustard green","navy bean","nectarine","new zealand spinach","nopale","nut","okra","olive","onion","orange","oregano","pamelo","papaya","paprika","parsley","parsnip","passionfruit","patty pan","pea","peach","pear","persimmon","physalis","pineapple","pinto bean","plum","pomegranate","pomelo","potato","pumpkin","purple mangosteen","quince","radicchio","radish","raisin","rambutan","raspberry","redcurrant","rhubarb","rock melon","rosemary","runner bean","rutabaga","sage","salal berry","satsuma","scallion","shallot","skirret","snap pea","soy bean","spaghetti squash","spinach","squash ","star fruit","strawberry","sweet potato","tabasco pepper","tamarillo","tangerine","taro","tat soi","thyme","tomato","topinambur","tubers","turnip","ugli fruit","wasabi","water chestnut","watercress","watermelon","white radish","yam","zucchini"]}[node1] (local) root@192.168.0.18 ~
+
+       produce_all_products.1.l9ka5kf4fogsnzjnowvq2x774
+[node2] (local) root@192.168.0.17 ~
+$ curl 192.168.0.17:8080
+{"description":"A list of all produce.","products":["acorn squash","alfalfa sprout","amaranth","anise","apple","apricot","artichoke","arugula","asparagus","aubergine","avocado","azuki bean","banana","banana squash","basil","bean sprout","beet","bell pepper","bilberry","black bean","black-eyed pea","blackberry","blackcurrant","blood orange","blueberry","bok choy","borlotti bean","boysenberry","breadfruit","broad beans","broccoflower","broccoli","brussels sprout","butternut squash","cabbage","calabrese","canary melon","cantaloupe","caraway","carrot","cauliflower","cayenne pepper","celeriac","celery","chamomile","chard","chayote","cherimoya","cherry","chickpea","chili pepper","chives","cilantro","clementine","cloudberry","coconut","collard green","corn","corn salad","courgette","cranberry","cucumber","cucumber","currant","daikon","damson","date","delicata","dill","dragonfruit","durian","eggplant","eggplant","elderberry","endive","feijoa","fennel","fiddlehead","fig","frisee","garlic","gem squash","ginger","goji berry","gooseberry","grape","grapefruit","green bean","green pepper","guava","habanero","herbs and spice","honeydew","horseradish","hubbard squash","huckleberry","jackfruit","jalapeno","jambul","jerusalem artichoke","jicama","jujube","kale","kidney bean","kiwi fruit","kohlrabi","kumquat","lavender","leek ","legume","lemon","lemon grass","lentils","lettuce","lima bean","lime","loquat","lychee","mamey","mandarine","mangetout","mango","marjoram","mulberry","mung bean","mushroom","mustard green","navy bean","nectarine","new zealand spinach","nopale","nut","okra","olive","onion","orange","oregano","pamelo","papaya","paprika","parsley","parsnip","passionfruit","patty pan","pea","peach","pear","persimmon","physalis","pineapple","pinto bean","plum","pomegranate","pomelo","potato","pumpkin","purple mangosteen","quince","radicchio","radish","raisin","rambutan","raspberry","redcurrant","rhubarb","rock melon","rosemary","runner bean","rutabaga","sage","salal berry","satsuma","scallion","shallot","skirret","snap pea","soy bean","spaghetti squash","spinach","squash ","star fruit","strawberry","sweet potato","tabasco pepper","tamarillo","tangerine","taro","tat soi","thyme","tomato","topinambur","tubers","turnip","ugli fruit","wasabi","water chestnut","watercress","watermelon","white radish","yam","zucchini"]}[node2] (local) root@192.168.0.17 ~
+$ 
