@@ -54,9 +54,9 @@ p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active    
 [node1] (local) root@192.168.0.18 ~
 
 
-Step2:- Creating product-fruite service from nginx as i dont find  exiting fruit-list service.
+Step2:- Creating product-fruite service from exiting fruit-list service.
 
-$ docker service create --replicas=5 --name products-fruit -p 8080:80 nginx
+$ docker service create --replicas=5 --name products-fruit -p 8080:80 linuxacademycontent/fruit-service:1.0.0
 d2yay3ps9zm4e05a9rc7krhf9
 overall progress: 5 out of 5 tasks 
 1/5: running   [==================================================>] 
@@ -76,8 +76,8 @@ ID                            HOSTNAME            STATUS              AVAILABILI
 p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active                                  19.03.4
 [node1] (local) root@192.168.0.18 ~
 $ docker service ls
-ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
-d2yay3ps9zm4        products-fruit      replicated          5/5                 nginx:latest        *:8080->80/tcp
+ID                  NAME                MODE                REPLICAS            IMAGE						PORTS
+d2yay3ps9zm4        products-fruit      replicated          5/5                 linuxacademycontent/fruit-service:1.0.0       *:8080->80/tcp
 [node1] (local) root@192.168.0.18 ~
 $ 
 
@@ -88,18 +88,18 @@ ID                            HOSTNAME            STATUS              AVAILABILI
 p8h75w7pz0ipik5gc7y0etre9     node2               Ready               Active                                  19.03.4
 [node1] (local) root@192.168.0.18 ~
 $ docker service ls
-ID                  NAME                MODE                REPLICAS            IMAGE               PORTS
-d2yay3ps9zm4        products-fruit      replicated          5/5                 nginx:latest        *:8080->80/tcp
+ID                  NAME                MODE                REPLICAS            IMAGE						PORTS
+d2yay3ps9zm4        products-fruit      replicated          5/5                 linuxacademycontent/fruit-service:1.0.0        *:8080->80/tcp
 [node1] (local) root@192.168.0.18 ~
 [node1] (local) root@192.168.0.18 ~
 [node1] (local) root@192.168.0.18 ~
 $ docker service ps products-fruit
-ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
-2soeicsuh1b9        products-fruit.1    nginx:latest        node1               Running             Running 7 minutes ago                       
-jw8og7k3cnsa        products-fruit.2    nginx:latest        node2               Running             Running 7 minutes ago                       
-vn96n3egoarv        products-fruit.3    nginx:latest        node1               Running             Running 7 minutes ago                       
-qkq6gje0s7mq        products-fruit.4    nginx:latest        node2               Running             Running 7 minutes ago                       
-kbx5eoxri9jf        products-fruit.5    nginx:latest        node2               Running             Running 7 minutes ago                       
+ID                  NAME                IMAGE				               NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+2soeicsuh1b9        products-fruit.1    linuxacademycontent/fruit-service:1.0.0        node1               Running             Running 7 minutes ago                       
+jw8og7k3cnsa        products-fruit.2    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 7 minutes ago                       
+vn96n3egoarv        products-fruit.3    linuxacademycontent/fruit-service:1.0.0        node1               Running             Running 7 minutes ago                       
+qkq6gje0s7mq        products-fruit.4    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 7 minutes ago                       
+kbx5eoxri9jf        products-fruit.5    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 7 minutes ago                       
 [node1] (local) root@192.168.0.18 ~
 $ docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
@@ -141,7 +141,7 @@ verify: Service converged
 [node1] (local) root@192.168.0.18 ~
 $ docker service ls
 ID                  NAME                  MODE                REPLICAS            IMAGE                                         PORTS
-d2yay3ps9zm4        products-fruit        replicated          5/5                 nginx:latest                                  *:8080->80/tcp
+d2yay3ps9zm4        products-fruit        replicated          5/5                 linuxacademycontent/fruit-service:1.0.0       *:8080->80/tcp
 p50yzz3vhy7s        products-vegetables   replicated          3/3                 linuxacademycontent/vegetable-service:1.0.0   *:8081->80/tcp
 [node1] (local) root@192.168.0.18 ~
 $ 
@@ -152,12 +152,12 @@ r5rmyuql7w9g        products-vegetables.2   linuxacademycontent/vegetable-servic
 z0pry49uykbn        products-vegetables.3   linuxacademycontent/vegetable-service:1.0.0   node2               Running             Running about a minute ago                       
 [node1] (local) root@192.168.0.18 ~
 $ docker service ps products-fruit
-ID                  NAME                IMAGE               NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
-2soeicsuh1b9        products-fruit.1    nginx:latest        node1               Running             Running 21 minutes ago                       
-jw8og7k3cnsa        products-fruit.2    nginx:latest        node2               Running             Running 21 minutes ago                       
-vn96n3egoarv        products-fruit.3    nginx:latest        node1               Running             Running 21 minutes ago                       
-qkq6gje0s7mq        products-fruit.4    nginx:latest        node2               Running             Running 21 minutes ago                       
-kbx5eoxri9jf        products-fruit.5    nginx:latest        node2               Running             Running 21 minutes ago                       
+ID                  NAME                IMAGE					       NODE                DESIRED STATE       CURRENT STATE            ERROR               PORTS
+2soeicsuh1b9        products-fruit.1    linuxacademycontent/fruit-service:1.0.0        node1               Running             Running 21 minutes ago                       
+jw8og7k3cnsa        products-fruit.2    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 21 minutes ago                       
+vn96n3egoarv        products-fruit.3    linuxacademycontent/fruit-service:1.0.0        node1               Running             Running 21 minutes ago                       
+qkq6gje0s7mq        products-fruit.4    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 21 minutes ago                       
+kbx5eoxri9jf        products-fruit.5    linuxacademycontent/fruit-service:1.0.0        node2               Running             Running 21 minutes ago                       
 [node1] (local) root@192.168.0.18 ~
 $ 
 
@@ -167,62 +167,184 @@ Step4:- Checking product-fruit service on Manger and Worker node:- Node1 is mana
 
 [node1] (local) root@192.168.0.18 ~
 $ curl localhost:8080
-<!DOCTYPE html>
-<html>
-<head>
-<title>Welcome to nginx!</title>
-<style>
-    body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
-    }
-</style>
-</head>
-<body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-</body>
-</html>
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
 [node1] (local) root@192.168.0.18 ~
 $ 
 
 
 [node2] (local) root@192.168.0.17 ~
 $ curl localhost:8080
-<!DOCTYPE html>
-<html>
-<head>
-<title>Welcome to nginx!</title>
-<style>
-    body {
-        width: 35em;
-        margin: 0 auto;
-        font-family: Tahoma, Verdana, Arial, sans-serif;
-    }
-</style>
-</head>
-<body>
-<h1>Welcome to nginx!</h1>
-<p>If you see this page, the nginx web server is successfully installed and
-working. Further configuration is required.</p>
-
-<p>For online documentation and support please refer to
-<a href="http://nginx.org/">nginx.org</a>.<br/>
-Commercial support is available at
-<a href="http://nginx.com/">nginx.com</a>.</p>
-
-<p><em>Thank you for using nginx.</em></p>
-</body>
-</html>
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
 [node2] (local) root@192.168.0.17 ~
 $ 
 
