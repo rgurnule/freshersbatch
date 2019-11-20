@@ -1,2 +1,3 @@
 # gitcourse
-Learning git 
+Learning git for self learning
+
