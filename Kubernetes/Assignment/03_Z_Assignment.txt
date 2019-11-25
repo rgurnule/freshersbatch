@@ -1,0 +1,336 @@
+Learning Objectives:-
+Create a yaml file containing the pod spec for the nginx pod.
+Create the pod.
+
+
+Your company is getting ready to launch a new website, and they need you to set up an nginx web server in their Kubernetes cluster. The nginx server will need to be accessible via network in the future, so you will need to expose port 80 as a containerPort for the nginx container. Your team has also asked you to ensure that nginx runs in quiet mode for the time being to cut down on unnecessary log output. You can do this by setting the command to nginx and passing the following arg to the container: -g daemon off; -q. As this nginx server belongs to the Web team, you will need to create it in the team's web namespace.
+
+To summarize:
+
+Use the nginx container image.
+The container needs a containerPort of 80.
+Set the command to nginx
+Pass in the -g daemon off; -q args to run nginx in quiet mode.
+Create the pod in the web namespace.
+Once the pod is created, you should be able to find it with kubectl get pods -n web. Once the pod is created, you can get more information about its current status with kubectl describe pod nginx -n web.
+
+==============================================================================================================================================================================================================
+
+
+Step1:-  I am using KataKoda for doing this assignment so that i dont need to create infra for kubernets nodes.
+
+
+First check if both the kubernets nodes are running and ready to use.
+
+master $	
+NAME     STATUS   ROLES    AGE   VERSION
+master   Ready    master   59m   v1.14.0
+node01   Ready    <none>   58m   v1.14.0
+
+
+Create folder where need to create yaml file for nginx pod.
+
+master $ mkdir devops-batch3
+master $ cd devops-batch3/
+master $ vi nginx-pod.yml
+master $ ls -ltr
+total 4
+-rw-r--r-- 1 root root 141 Nov 25 10:17 nginx-pod.yml
+master $ kubectl get pods
+No resources found.
+master $ cat nginx-pod.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: web
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    ports:
+       - containerPort: 80
+    command: [nginx, '-g', 'daemon off;']
+
+master $ kubectl create namespace batch3
+namespace/batch3 created
+
+master $ vi nginx-pod.yml
+master $ kubectl apply -f nginx-pod.yml
+error: error validating "nginx-pod.yml": error validating data: apiVersion not set; if you choose to ignore these errors, turn validation off with --validate=false
+master $ vi nginx-pod.yml
+master $ kubectl apply -f nginx-pod.yml
+Error from server (NotFound): error when creating "nginx-pod.yml": namespaces "web" not found
+master $ kubectl create namespace web
+namespace/web created
+
+master $ kubectl apply -f nginx-pod.yml
+pod/nginx-pod created
+
+master $ kubectl get pods --all-namespaces
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+kube-system   coredns-fb8b8dccf-hvr5j                    1/1     Running   1          115m
+kube-system   coredns-fb8b8dccf-rkrcc                    1/1     Running   1          115m
+kube-system   etcd-master                                1/1     Running   0          114m
+kube-system   katacoda-cloud-provider-65c6945c68-5s22l   1/1     Running   33         115m
+kube-system   kube-apiserver-master                      1/1     Running   0          114m
+kube-system   kube-controller-manager-master             1/1     Running   0          114m
+kube-system   kube-keepalived-vip-c9p54                  1/1     Running   0          115m
+kube-system   kube-proxy-k9ftz                           1/1     Running   0          115m
+kube-system   kube-proxy-knvqf                           1/1     Running   0          115m
+kube-system   kube-scheduler-master                      1/1     Running   0          114m
+kube-system   weave-net-pd9z6                            2/2     Running   1          115m
+kube-system   weave-net-x5cvw                            2/2     Running   1          115m
+web           nginx-pod                                  1/1     Running   0          45m
+master $
+
+master $ kubectl get pods
+No resources found.
+master $ kubectl get pods -n web
+NAME        READY   STATUS              RESTARTS   AGE
+nginx-pod   0/1     ContainerCreating   0          55s
+master $ kubectl get pods -n web
+NAME        READY   STATUS    RESTARTS   AGE
+nginx-pod   1/1     Running   0          86s
+
+master $ kubectl get namespace
+NAME              STATUS   AGE
+batch3            Active   21m
+default           Active   88m
+kube-node-lease   Active   88m
+kube-public       Active   88m
+kube-system       Active   88m
+web               Active   18m
+master $ 
+
+Step 2:- get more information about Pods current status 
+
+master $ kubectl describe pod nginx -n web
+Name:               nginx-pod
+Namespace:          web
+Priority:           0
+PriorityClassName:  <none>
+Node:               node01/172.17.0.45
+Start Time:         Mon, 25 Nov 2019 10:23:59 +0000
+Labels:             <none>
+Annotations:        kubectl.kubernetes.io/last-applied-configuration:
+                      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"nginx-pod","namespace":"web"},"spec":{"containers":[{"image":"nginx",...
+Status:             Running
+IP:                 10.32.0.2
+Containers:
+  nginx-container:
+    Container ID:   docker://7d735b3f13c17d8cedfe3bfb1f785b4f2e5b20bc565d17c6210cf920cfb9d05b
+    Image:          nginx
+    Image ID:       docker-pullable://nginx@sha256:50cf965a6e08ec5784009d0fccb380fc479826b6e0e65684d9879170a9df8566
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Mon, 25 Nov 2019 10:25:03 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-tn2xc (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-tn2xc:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-tn2xc
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  2m36s  default-scheduler  Successfully assigned web/nginx-pod to node01
+  Normal  Pulling    2m21s  kubelet, node01    Pulling image "nginx"
+  Normal  Pulled     93s    kubelet, node01    Successfully pulled image "nginx"
+  Normal  Created    93s    kubelet, node01    Created container nginx-container
+  Normal  Started    92s    kubelet, node01    Started container nginx-container
+
+master $ kubectl get pods -o wide
+No resources found.
+
+master $ kubectl get pods -n web  -o wide
+NAME        READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+nginx-pod   1/1     Running   0          3m54s   10.32.0.2   node01   <none>           <none>
+
+
+Step3:- checking Pod on command prompt with curl statement(master node)
+
+master $ curl 10.32.0.2:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+
+master $ curl 10.32.0.2
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+master $
+
+
+master $ docker container ls
+CONTAINER ID        IMAGE                  COMMAND                  CREATED             STATUS              PORTS      NAMES
+ecde3b913d66        1f394ae9e226           "/home/weave/launch.…"   2 hours ago         Up 2 hours      k8s_weave_weave-net-pd9z6_kube-system_de90382f-0f63-11ea-a47b-0242ac110021_1
+e081e433e35c        789b7f496034           "/usr/bin/weave-npc"     2 hours ago         Up 2 hours      k8s_weave-npc_weave-net-pd9z6_kube-system_de90382f-0f63-11ea-a47b-0242ac110021_0
+d5991eda6ca6        5cd54e388aba           "/usr/local/bin/kube…"   2 hours ago         Up 2 hours      k8s_kube-proxy_kube-proxy-knvqf_kube-system_de8ee0c4-0f63-11ea-a47b-0242ac110021_0
+9c612d857c10        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_weave-net-pd9z6_kube-system_de90382f-0f63-11ea-a47b-0242ac110021_0
+4ebfa45adaad        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_kube-proxy-knvqf_kube-system_de8ee0c4-0f63-11ea-a47b-0242ac110021_0
+29b16030f7b6        ecf910f40d6e           "kube-apiserver --ad…"   2 hours ago         Up 2 hours      k8s_kube-apiserver_kube-apiserver-master_kube-system_d481323bbc40c29626e78adc423e9688_0
+22597d27aa05        b95b1efa0436           "kube-controller-man…"   2 hours ago         Up 2 hours      k8s_kube-controller-manager_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+dfe309fadf93        00638a24688b           "kube-scheduler --bi…"   2 hours ago         Up 2 hours      k8s_kube-scheduler_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+c5858108fdb6        2c4adeb21b4f           "etcd --advertise-cl…"   2 hours ago         Up 2 hours      k8s_etcd_etcd-master_kube-system_3361193a500a15c50b976c31673e571d_0
+d6ae02e5c40a        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_kube-scheduler-master_kube-system_58272442e226c838b193bbba4c44091e_0
+13757902d05c        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_kube-controller-manager-master_kube-system_e45f10af1ae684722cbd74cb11807900_0
+4daba0b7404d        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_kube-apiserver-master_kube-system_d481323bbc40c29626e78adc423e9688_0
+7b7028555b13        k8s.gcr.io/pause:3.1   "/pause"                 2 hours ago         Up 2 hours      k8s_POD_etcd-master_kube-system_3361193a500a15c50b976c31673e571d_0
+master $
+
+
+From Node1:-
+
+
+node01 $ kubectl get nodes
+The connection to the server localhost:8080 was refused - did you specify the right host or port?
+node01 $ curl 10.32.0.2
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+node01 $
+
+node01 $ curl 10.32.0.2:80
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+node01 $
+
+node01 $ docker container ls
+CONTAINER ID        IMAGE                                          COMMAND                  CREATED             STATUS          PORTS               NAMES
+7d735b3f13c1        nginx                                          "nginx -g 'daemon of…"   33 minutes ago      Up 33 minutes                           k8s_nginx-container_nginx-pod_web_b1674356-0f6d-11ea-a47b-0242ac110021_0
+c9f5418fc475        k8s.gcr.io/pause:3.1                           "/pause"                 34 minutes ago      Up 34 minutes                           k8s_POD_nginx-pod_web_b1674356-0f6d-11ea-a47b-0242ac110021_0
+62bcb8b12202        eb516548c180                                   "/coredns -conf /etc…"   2 hours ago         Up 2 hours                              k8s_coredns_coredns-fb8b8dccf-hvr5j_kube-system_deb81354-0f63-11ea-a47b-0242ac110021_1
+229cd583dc2d        eb516548c180                                   "/coredns -conf /etc…"   2 hours ago         Up 2 hours                              k8s_coredns_coredns-fb8b8dccf-rkrcc_kube-system_debe3f09-0f63-11ea-a47b-0242ac110021_1
+3bb27c2be1c4        1f394ae9e226                                   "/home/weave/launch.…"   2 hours ago         Up 2 hours                              k8s_weave_weave-net-x5cvw_kube-system_e3a52da0-0f63-11ea-a47b-0242ac110021_1
+afd284bcc959        k8s.gcr.io/kube-proxy                          "/usr/local/bin/kube…"   2 hours ago         Up 2 hours                              k8s_kube-proxy_kube-proxy-k9ftz_kube-system_e3a551b6-0f63-11ea-a47b-0242ac110021_0
+e319df96e5f6        gcr.io/google_containers/kube-keepalived-vip   "/kube-keepalived-vi…"   2 hours ago         Up 2 hours                              k8s_kube-keepalived-vip_kube-keepalived-vip-c9p54_kube-system_e591b1c8-0f63-11ea-a47b-0242ac110021_0
+435ffcd0566d        789b7f496034                                   "/usr/bin/weave-npc"     2 hours ago         Up 2 hours                              k8s_weave-npc_weave-net-x5cvw_kube-system_e3a52da0-0f63-11ea-a47b-0242ac110021_0
+37f1e36f0096        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_kube-keepalived-vip-c9p54_kube-system_e591b1c8-0f63-11ea-a47b-0242ac110021_0
+afe6039e4bc6        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_coredns-fb8b8dccf-hvr5j_kube-system_deb81354-0f63-11ea-a47b-0242ac110021_0
+543137c58224        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_weave-net-x5cvw_kube-system_e3a52da0-0f63-11ea-a47b-0242ac110021_0
+4e2e29fbb8ec        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_coredns-fb8b8dccf-rkrcc_kube-system_debe3f09-0f63-11ea-a47b-0242ac110021_0
+e11dc084e6b7        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_katacoda-cloud-provider-65c6945c68-5s22l_kube-system_deb6a633-0f63-11ea-a47b-0242ac110021_0
+e53d4d11c241        k8s.gcr.io/pause:3.1                           "/pause"                 2 hours ago         Up 2 hours                              k8s_POD_kube-proxy-k9ftz_kube-system_e3a551b6-0f63-11ea-a47b-0242ac110021_0
+node01 $
+
+
+
+Facing issue in setting up command for nginx, kindly advise.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  namespace: web
+spec:
+  containers:
+  - name: nginx-container
+    image: nginx
+    ports:
+    - containerPort: 80
+    command: ['-q', '-g', 'daemon off;']

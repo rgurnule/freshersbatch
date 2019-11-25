@@ -1,0 +1,1547 @@
+
+ubuntu@ip-172-31-45-19:~$ java --version
+
+Command 'java' not found, but can be installed with:
+
+sudo apt install default-jre
+sudo apt install openjdk-11-jre-headless
+sudo apt install openjdk-8-jre-headless
+
+ubuntu@ip-172-31-45-19:~$ cd /usr/lib/
+accountsservice/         environment.d/           initcpio/                lxd/                     pm-utils/                software-properties/     ubuntu-release-upgrader/
+apt/                     file/                    initramfs-tools/         man-db/                  policykit-1/             ssl/                     update-notifier/
+binfmt.d/                gcc/                     kernel/                  mime/                    python2.7/               sudo/                    valgrind/
+byobu/                   git-core/                klibc/                   modules-load.d/          python3/                 sysctl.d/                x86_64-linux-gnu/
+cloud-init/              gnupg/                   language-selector/       networkd-dispatcher/     python3.6/               systemd/
+dbus-1.0/                gnupg2/                  linux/                   open-vm-tools/           python3.7/               sysusers.d/
+dpkg/                    groff/                   linux-boot-probes/       openssh/                 rsyslog/                 tar/
+dracut/                  grub/                    locale/                  os-prober/               sasl2/                   tc/
+eject/                   grub-legacy/             lxcfs/                   os-probes/               snapd/                   tmpfiles.d/
+ubuntu@ip-172-31-45-19:~$ sudo apt install default-jre
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  at-spi2-core ca-certificates-java default-jre-headless fontconfig-config fonts-dejavu-core fonts-dejavu-extra java-common libasound2 libasound2-data libatk-bridge2.0-0
+  libatk-wrapper-java libatk-wrapper-java-jni libatk1.0-0 libatk1.0-data libatspi2.0-0 libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libdrm-amdgpu1 libdrm-intel1
+  libdrm-nouveau2 libdrm-radeon1 libfontconfig1 libfontenc1 libgif7 libgl1 libgl1-mesa-dri libglapi-mesa libglvnd0 libglx-mesa0 libglx0 libice6 libjpeg-turbo8 libjpeg8 liblcms2-2 libllvm8
+  libnspr4 libnss3 libpciaccess0 libpcsclite1 libsensors4 libsm6 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcomposite1
+  libxdamage1 libxfixes3 libxft2 libxi6 libxinerama1 libxmu6 libxpm4 libxrandr2 libxrender1 libxshmfence1 libxt6 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 openjdk-11-jre
+  openjdk-11-jre-headless x11-common x11-utils
+Suggested packages:
+  libasound2-plugins alsa-utils cups-common liblcms2-utils pcscd lm-sensors libnss-mdns fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei | fonts-wqy-zenhei fonts-indic
+  mesa-utils
+The following NEW packages will be installed:
+  at-spi2-core ca-certificates-java default-jre default-jre-headless fontconfig-config fonts-dejavu-core fonts-dejavu-extra java-common libasound2 libasound2-data libatk-bridge2.0-0
+  libatk-wrapper-java libatk-wrapper-java-jni libatk1.0-0 libatk1.0-data libatspi2.0-0 libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libdrm-amdgpu1 libdrm-intel1
+  libdrm-nouveau2 libdrm-radeon1 libfontconfig1 libfontenc1 libgif7 libgl1 libgl1-mesa-dri libglapi-mesa libglvnd0 libglx-mesa0 libglx0 libice6 libjpeg-turbo8 libjpeg8 liblcms2-2 libllvm8
+  libnspr4 libnss3 libpciaccess0 libpcsclite1 libsensors4 libsm6 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcomposite1
+  libxdamage1 libxfixes3 libxft2 libxi6 libxinerama1 libxmu6 libxpm4 libxrandr2 libxrender1 libxshmfence1 libxt6 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 openjdk-11-jre
+  openjdk-11-jre-headless x11-common x11-utils
+0 upgraded, 72 newly installed, 0 to remove and 0 not upgraded.
+Need to get 65.0 MB of archives.
+After this operation, 415 MB of additional disk space will be used.
+Do you want to continue? [Y/n] sudo apt install openjdk-11-jre-headless
+Abort.
+ubuntu@ip-172-31-45-19:~$ java --version
+
+Command 'java' not found, but can be installed with:
+
+sudo apt install default-jre
+sudo apt install openjdk-11-jre-headless
+sudo apt install openjdk-8-jre-headless
+
+ubuntu@ip-172-31-45-19:~$ sudo apt install default-jre
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  at-spi2-core ca-certificates-java default-jre-headless fontconfig-config fonts-dejavu-core fonts-dejavu-extra java-common libasound2 libasound2-data libatk-bridge2.0-0
+  libatk-wrapper-java libatk-wrapper-java-jni libatk1.0-0 libatk1.0-data libatspi2.0-0 libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libdrm-amdgpu1 libdrm-intel1
+  libdrm-nouveau2 libdrm-radeon1 libfontconfig1 libfontenc1 libgif7 libgl1 libgl1-mesa-dri libglapi-mesa libglvnd0 libglx-mesa0 libglx0 libice6 libjpeg-turbo8 libjpeg8 liblcms2-2 libllvm8
+  libnspr4 libnss3 libpciaccess0 libpcsclite1 libsensors4 libsm6 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcomposite1
+  libxdamage1 libxfixes3 libxft2 libxi6 libxinerama1 libxmu6 libxpm4 libxrandr2 libxrender1 libxshmfence1 libxt6 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 openjdk-11-jre
+  openjdk-11-jre-headless x11-common x11-utils
+Suggested packages:
+  libasound2-plugins alsa-utils cups-common liblcms2-utils pcscd lm-sensors libnss-mdns fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei | fonts-wqy-zenhei fonts-indic
+  mesa-utils
+The following NEW packages will be installed:
+  at-spi2-core ca-certificates-java default-jre default-jre-headless fontconfig-config fonts-dejavu-core fonts-dejavu-extra java-common libasound2 libasound2-data libatk-bridge2.0-0
+  libatk-wrapper-java libatk-wrapper-java-jni libatk1.0-0 libatk1.0-data libatspi2.0-0 libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libdrm-amdgpu1 libdrm-intel1
+  libdrm-nouveau2 libdrm-radeon1 libfontconfig1 libfontenc1 libgif7 libgl1 libgl1-mesa-dri libglapi-mesa libglvnd0 libglx-mesa0 libglx0 libice6 libjpeg-turbo8 libjpeg8 liblcms2-2 libllvm8
+  libnspr4 libnss3 libpciaccess0 libpcsclite1 libsensors4 libsm6 libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-shape0 libxcb-sync1 libxcomposite1
+  libxdamage1 libxfixes3 libxft2 libxi6 libxinerama1 libxmu6 libxpm4 libxrandr2 libxrender1 libxshmfence1 libxt6 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 openjdk-11-jre
+  openjdk-11-jre-headless x11-common x11-utils
+0 upgraded, 72 newly installed, 0 to remove and 0 not upgraded.
+Need to get 65.0 MB of archives.
+After this operation, 415 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Ign:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjpeg-turbo8 amd64 1.5.2-0ubuntu5.18.04.1
+Get:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 x11-common all 1:7.7+19ubuntu7.1 [22.5 kB]
+Err:1 http://security.ubuntu.com/ubuntu bionic-updates/main amd64 libjpeg-turbo8 amd64 1.5.2-0ubuntu5.18.04.1
+  404  Not Found [IP: 54.248.192.197 80]
+Get:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libice6 amd64 2:1.0.9-2 [40.2 kB]
+Get:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libsm6 amd64 2:1.2.2-1 [15.8 kB]
+Get:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 fonts-dejavu-core all 2.37-1 [1041 kB]
+Get:6 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 fontconfig-config all 2.12.6-0ubuntu2 [55.8 kB]
+Get:7 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libfontconfig1 amd64 2.12.6-0ubuntu2 [137 kB]
+Get:8 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxrender1 amd64 1:0.9.10-1 [18.7 kB]
+Get:9 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxft2 amd64 2.3.2-1 [36.1 kB]
+Get:10 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxinerama1 amd64 2:1.1.3-1 [7908 B]
+Get:11 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxxf86dga1 amd64 2:1.1.4-1 [13.7 kB]
+Get:12 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxxf86vm1 amd64 1:1.1.4-1 [10.6 kB]
+Get:13 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatspi2.0-0 amd64 2.28.0-1 [59.6 kB]
+Get:14 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxtst6 amd64 2:1.2.3-1 [12.8 kB]
+Get:15 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 at-spi2-core amd64 2.28.0-1 [47.9 kB]
+Get:16 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 java-common all 0.68ubuntu1~18.04.1 [14.5 kB]
+Get:17 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common-data amd64 0.7-3.1ubuntu1.2 [22.1 kB]
+Get:18 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-common3 amd64 0.7-3.1ubuntu1.2 [21.6 kB]
+Get:19 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libavahi-client3 amd64 0.7-3.1ubuntu1.2 [25.2 kB]
+Get:20 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libcups2 amd64 2.2.7-1ubuntu2.7 [211 kB]
+Get:21 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 liblcms2-2 amd64 2.9-1ubuntu0.1 [139 kB]
+Get:22 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libjpeg8 amd64 8c-2ubuntu8 [2194 B]
+Get:23 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libnspr4 amd64 2:4.18-1ubuntu1 [112 kB]
+Get:24 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libnss3 amd64 2:3.35-2ubuntu2.3 [1136 kB]
+Get:25 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libasound2-data all 1.1.3-5ubuntu0.2 [36.5 kB]
+Get:26 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libasound2 amd64 1.1.3-5ubuntu0.2 [359 kB]
+Get:27 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libpcsclite1 amd64 1.8.23-1 [21.3 kB]
+Get:28 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxi6 amd64 2:1.7.9-1 [29.2 kB]
+Get:29 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openjdk-11-jre-headless amd64 11.0.4+11-1ubuntu2~18.04.3 [37.4 MB]
+Get:30 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 default-jre-headless amd64 2:1.11-68ubuntu1~18.04.1 [10.9 kB]
+Get:31 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ca-certificates-java all 20180516ubuntu1~18.04.1 [12.2 kB]
+Get:32 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglvnd0 amd64 1.0.0-2ubuntu2.3 [47.0 kB]
+Err:33 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglapi-mesa amd64 19.0.8-0ubuntu0~18.04.2
+  404  Not Found [IP: 54.248.192.197 80]
+Get:34 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libx11-xcb1 amd64 2:1.6.4-3ubuntu0.2 [9376 B]
+Get:35 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri2-0 amd64 1.13-2~ubuntu18.04 [6920 B]
+Get:36 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-dri3-0 amd64 1.13-2~ubuntu18.04 [6568 B]
+Get:37 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-glx0 amd64 1.13-2~ubuntu18.04 [22.1 kB]
+Get:38 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-present0 amd64 1.13-2~ubuntu18.04 [5552 B]
+Get:39 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-sync1 amd64 1.13-2~ubuntu18.04 [8808 B]
+Get:40 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxdamage1 amd64 1:1.1.4-3 [6934 B]
+Get:41 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxfixes3 amd64 1:5.0.3-1 [10.8 kB]
+Get:42 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxshmfence1 amd64 1.3-1 [5028 B]
+Get:43 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-amdgpu1 amd64 2.4.97-1ubuntu1~18.04.1 [17.7 kB]
+Get:44 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libpciaccess0 amd64 0.14-1 [17.9 kB]
+Get:45 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-intel1 amd64 2.4.97-1ubuntu1~18.04.1 [59.9 kB]
+Get:46 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-nouveau2 amd64 2.4.97-1ubuntu1~18.04.1 [16.5 kB]
+Get:47 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libdrm-radeon1 amd64 2.4.97-1ubuntu1~18.04.1 [21.7 kB]
+Get:48 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libllvm8 amd64 1:8-3~ubuntu18.04.1 [13.6 MB]
+Get:49 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libsensors4 amd64 1:3.4.0-4 [28.8 kB]
+Err:50 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1-mesa-dri amd64 19.0.8-0ubuntu0~18.04.2
+  404  Not Found [IP: 54.248.192.197 80]
+Err:51 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx-mesa0 amd64 19.0.8-0ubuntu0~18.04.2
+  404  Not Found [IP: 54.248.192.197 80]
+Get:52 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libglx0 amd64 1.0.0-2ubuntu2.3 [28.1 kB]
+Get:53 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgl1 amd64 1.0.0-2ubuntu2.3 [86.2 kB]
+Get:54 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libgif7 amd64 5.1.4-2ubuntu0.1 [30.9 kB]
+Get:55 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 openjdk-11-jre amd64 11.0.4+11-1ubuntu2~18.04.3 [34.4 kB]
+Get:56 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 default-jre amd64 2:1.11-68ubuntu1~18.04.1 [1076 B]
+Get:57 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 fonts-dejavu-extra all 2.37-1 [1953 kB]
+Get:58 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-data all 2.28.1-1 [2992 B]
+Get:59 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatk1.0-0 amd64 2.28.1-1 [43.9 kB]
+Get:60 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatk-bridge2.0-0 amd64 2.26.2-1 [57.3 kB]
+Get:61 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libfontenc1 amd64 1:1.1.3-1 [13.9 kB]
+Get:62 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxt6 amd64 1:1.1.5-1 [160 kB]
+Get:63 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxmu6 amd64 2:1.1.2-2 [46.0 kB]
+Get:64 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxpm4 amd64 1:3.5.12-1 [34.0 kB]
+Get:65 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxaw7 amd64 2:1.0.13-1 [173 kB]
+Get:66 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libxcb-shape0 amd64 1.13-2~ubuntu18.04 [5972 B]
+Get:67 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxcomposite1 amd64 1:0.4.4-2 [6988 B]
+Get:68 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxrandr2 amd64 2:1.5.1-1 [18.1 kB]
+Get:69 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libxv1 amd64 2:1.0.11-1 [10.7 kB]
+Get:70 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 x11-utils amd64 7.7+3build1 [196 kB]
+Get:71 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatk-wrapper-java all 0.33.3-20ubuntu0.1 [34.7 kB]
+Get:72 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libatk-wrapper-java-jni amd64 0.33.3-20ubuntu0.1 [28.3 kB]
+Fetched 57.9 MB in 13s (4449 kB/s)
+E: Failed to fetch http://security.ubuntu.com/ubuntu/pool/main/libj/libjpeg-turbo/libjpeg-turbo8_1.5.2-0ubuntu5.18.04.1_amd64.deb  404  Not Found [IP: 54.248.192.197 80]
+E: Failed to fetch http://ap-south-1.ec2.archive.ubuntu.com/ubuntu/pool/main/m/mesa/libglapi-mesa_19.0.8-0ubuntu0~18.04.2_amd64.deb  404  Not Found [IP: 54.248.192.197 80]
+E: Failed to fetch http://ap-south-1.ec2.archive.ubuntu.com/ubuntu/pool/main/m/mesa/libgl1-mesa-dri_19.0.8-0ubuntu0~18.04.2_amd64.deb  404  Not Found [IP: 54.248.192.197 80]
+E: Failed to fetch http://ap-south-1.ec2.archive.ubuntu.com/ubuntu/pool/main/m/mesa/libglx-mesa0_19.0.8-0ubuntu0~18.04.2_amd64.deb  404  Not Found [IP: 54.248.192.197 80]
+E: Unable to fetch some archives, maybe run apt-get update or try with --fix-missing?
+ubuntu@ip-172-31-45-19:~$ sudo apt update
+Hit:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Get:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Get:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Get:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 Packages [8570 kB]
+Get:6 http://security.ubuntu.com/ubuntu bionic-security/main amd64 Packages [573 kB]
+Get:7 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe Translation-en [4941 kB]
+Get:8 http://security.ubuntu.com/ubuntu bionic-security/main Translation-en [189 kB]
+Get:9 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/multiverse amd64 Packages [151 kB]
+Get:10 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/multiverse Translation-en [108 kB]
+Get:11 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 Packages [796 kB]
+Get:12 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main Translation-en [283 kB]
+Get:13 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/restricted amd64 Packages [21.9 kB]
+Get:14 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/restricted Translation-en [6128 B]
+Get:15 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 Packages [1025 kB]
+Get:16 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe Translation-en [315 kB]
+Get:17 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/multiverse amd64 Packages [8520 B]
+Get:18 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/multiverse Translation-en [4044 B]
+Get:19 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports/main amd64 Packages [2512 B]
+Get:20 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports/main Translation-en [1644 B]
+Get:21 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports/universe amd64 Packages [4028 B]
+Get:22 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports/universe Translation-en [1856 B]
+Get:23 http://security.ubuntu.com/ubuntu bionic-security/restricted amd64 Packages [13.2 kB]
+Get:24 http://security.ubuntu.com/ubuntu bionic-security/restricted Translation-en [4292 B]
+Get:25 http://security.ubuntu.com/ubuntu bionic-security/universe amd64 Packages [620 kB]
+Get:26 http://security.ubuntu.com/ubuntu bionic-security/universe Translation-en [207 kB]
+Get:27 http://security.ubuntu.com/ubuntu bionic-security/multiverse amd64 Packages [5904 B]
+Get:28 http://security.ubuntu.com/ubuntu bionic-security/multiverse Translation-en [2568 B]
+Fetched 18.1 MB in 8s (2193 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+49 packages can be upgraded. Run 'apt list --upgradable' to see them.
+ubuntu@ip-172-31-45-19:~$ sudo apt install oracle-java11-installer
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Package oracle-java11-installer is not available, but is referred to by another package.
+This may mean that the package is missing, has been obsoleted, or
+is only available from another source
+
+E: Package 'oracle-java11-installer' has no installation candidate
+ubuntu@ip-172-31-45-19:~$ sudo oracle-java11-installer
+sudo: oracle-java11-installer: command not found
+ubuntu@ip-172-31-45-19:~$ oracle-java11-installer
+oracle-java11-installer: command not found
+ubuntu@ip-172-31-45-19:~$ sudo apt install openjdk-11-jre-headless
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  ca-certificates-java fontconfig-config fonts-dejavu-core java-common libasound2 libasound2-data libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libfontconfig1
+  libjpeg-turbo8 libjpeg8 liblcms2-2 libnspr4 libnss3 libpcsclite1 libxi6 libxrender1 libxtst6 x11-common
+Suggested packages:
+  default-jre libasound2-plugins alsa-utils cups-common liblcms2-utils pcscd libnss-mdns fonts-dejavu-extra fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei | fonts-wqy-zenhei
+  fonts-indic
+The following NEW packages will be installed:
+  ca-certificates-java fontconfig-config fonts-dejavu-core java-common libasound2 libasound2-data libavahi-client3 libavahi-common-data libavahi-common3 libcups2 libfontconfig1
+  libjpeg-turbo8 libjpeg8 liblcms2-2 libnspr4 libnss3 libpcsclite1 libxi6 libxrender1 libxtst6 openjdk-11-jre-headless x11-common
+0 upgraded, 22 newly installed, 0 to remove and 49 not upgraded.
+Need to get 110 kB/40.9 MB of archives.
+After this operation, 183 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libjpeg-turbo8 amd64 1.5.2-0ubuntu5.18.04.3 [110 kB]
+Fetched 110 kB in 1s (178 kB/s)
+Selecting previously unselected package libjpeg-turbo8:amd64.
+(Reading database ... 56531 files and directories currently installed.)
+Preparing to unpack .../00-libjpeg-turbo8_1.5.2-0ubuntu5.18.04.3_amd64.deb ...
+Unpacking libjpeg-turbo8:amd64 (1.5.2-0ubuntu5.18.04.3) ...
+Selecting previously unselected package java-common.
+Preparing to unpack .../01-java-common_0.68ubuntu1~18.04.1_all.deb ...
+Unpacking java-common (0.68ubuntu1~18.04.1) ...
+Selecting previously unselected package libavahi-common-data:amd64.
+Preparing to unpack .../02-libavahi-common-data_0.7-3.1ubuntu1.2_amd64.deb ...
+Unpacking libavahi-common-data:amd64 (0.7-3.1ubuntu1.2) ...
+Selecting previously unselected package libavahi-common3:amd64.
+Preparing to unpack .../03-libavahi-common3_0.7-3.1ubuntu1.2_amd64.deb ...
+Unpacking libavahi-common3:amd64 (0.7-3.1ubuntu1.2) ...
+Selecting previously unselected package libavahi-client3:amd64.
+Preparing to unpack .../04-libavahi-client3_0.7-3.1ubuntu1.2_amd64.deb ...
+Unpacking libavahi-client3:amd64 (0.7-3.1ubuntu1.2) ...
+Selecting previously unselected package libcups2:amd64.
+Preparing to unpack .../05-libcups2_2.2.7-1ubuntu2.7_amd64.deb ...
+Unpacking libcups2:amd64 (2.2.7-1ubuntu2.7) ...
+Selecting previously unselected package liblcms2-2:amd64.
+Preparing to unpack .../06-liblcms2-2_2.9-1ubuntu0.1_amd64.deb ...
+Unpacking liblcms2-2:amd64 (2.9-1ubuntu0.1) ...
+Selecting previously unselected package libjpeg8:amd64.
+Preparing to unpack .../07-libjpeg8_8c-2ubuntu8_amd64.deb ...
+Unpacking libjpeg8:amd64 (8c-2ubuntu8) ...
+Selecting previously unselected package fonts-dejavu-core.
+Preparing to unpack .../08-fonts-dejavu-core_2.37-1_all.deb ...
+Unpacking fonts-dejavu-core (2.37-1) ...
+Selecting previously unselected package fontconfig-config.
+Preparing to unpack .../09-fontconfig-config_2.12.6-0ubuntu2_all.deb ...
+Unpacking fontconfig-config (2.12.6-0ubuntu2) ...
+Selecting previously unselected package libfontconfig1:amd64.
+Preparing to unpack .../10-libfontconfig1_2.12.6-0ubuntu2_amd64.deb ...
+Unpacking libfontconfig1:amd64 (2.12.6-0ubuntu2) ...
+Selecting previously unselected package libnspr4:amd64.
+Preparing to unpack .../11-libnspr4_2%3a4.18-1ubuntu1_amd64.deb ...
+Unpacking libnspr4:amd64 (2:4.18-1ubuntu1) ...
+Selecting previously unselected package libnss3:amd64.
+Preparing to unpack .../12-libnss3_2%3a3.35-2ubuntu2.3_amd64.deb ...
+Unpacking libnss3:amd64 (2:3.35-2ubuntu2.3) ...
+Selecting previously unselected package libasound2-data.
+Preparing to unpack .../13-libasound2-data_1.1.3-5ubuntu0.2_all.deb ...
+Unpacking libasound2-data (1.1.3-5ubuntu0.2) ...
+Selecting previously unselected package libasound2:amd64.
+Preparing to unpack .../14-libasound2_1.1.3-5ubuntu0.2_amd64.deb ...
+Unpacking libasound2:amd64 (1.1.3-5ubuntu0.2) ...
+Selecting previously unselected package libpcsclite1:amd64.
+Preparing to unpack .../15-libpcsclite1_1.8.23-1_amd64.deb ...
+Unpacking libpcsclite1:amd64 (1.8.23-1) ...
+Selecting previously unselected package libxi6:amd64.
+Preparing to unpack .../16-libxi6_2%3a1.7.9-1_amd64.deb ...
+Unpacking libxi6:amd64 (2:1.7.9-1) ...
+Selecting previously unselected package libxrender1:amd64.
+Preparing to unpack .../17-libxrender1_1%3a0.9.10-1_amd64.deb ...
+Unpacking libxrender1:amd64 (1:0.9.10-1) ...
+Selecting previously unselected package x11-common.
+Preparing to unpack .../18-x11-common_1%3a7.7+19ubuntu7.1_all.deb ...
+dpkg-query: no packages found matching nux-tools
+Unpacking x11-common (1:7.7+19ubuntu7.1) ...
+Selecting previously unselected package libxtst6:amd64.
+Preparing to unpack .../19-libxtst6_2%3a1.2.3-1_amd64.deb ...
+Unpacking libxtst6:amd64 (2:1.2.3-1) ...
+Selecting previously unselected package openjdk-11-jre-headless:amd64.
+Preparing to unpack .../20-openjdk-11-jre-headless_11.0.4+11-1ubuntu2~18.04.3_amd64.deb ...
+Unpacking openjdk-11-jre-headless:amd64 (11.0.4+11-1ubuntu2~18.04.3) ...
+Selecting previously unselected package ca-certificates-java.
+Preparing to unpack .../21-ca-certificates-java_20180516ubuntu1~18.04.1_all.deb ...
+Unpacking ca-certificates-java (20180516ubuntu1~18.04.1) ...
+Setting up libxi6:amd64 (2:1.7.9-1) ...
+Setting up liblcms2-2:amd64 (2.9-1ubuntu0.1) ...
+Setting up libpcsclite1:amd64 (1.8.23-1) ...
+Setting up fonts-dejavu-core (2.37-1) ...
+Setting up libasound2-data (1.1.3-5ubuntu0.2) ...
+Setting up java-common (0.68ubuntu1~18.04.1) ...
+Setting up libjpeg-turbo8:amd64 (1.5.2-0ubuntu5.18.04.3) ...
+Setting up libnspr4:amd64 (2:4.18-1ubuntu1) ...
+Setting up libasound2:amd64 (1.1.3-5ubuntu0.2) ...
+Setting up libxrender1:amd64 (1:0.9.10-1) ...
+Setting up x11-common (1:7.7+19ubuntu7.1) ...
+update-rc.d: warning: start and stop actions are no longer supported; falling back to defaults
+Setting up libavahi-common-data:amd64 (0.7-3.1ubuntu1.2) ...
+Setting up libjpeg8:amd64 (8c-2ubuntu8) ...
+Setting up fontconfig-config (2.12.6-0ubuntu2) ...
+Setting up libnss3:amd64 (2:3.35-2ubuntu2.3) ...
+Setting up libxtst6:amd64 (2:1.2.3-1) ...
+Setting up libavahi-common3:amd64 (0.7-3.1ubuntu1.2) ...
+Setting up libfontconfig1:amd64 (2.12.6-0ubuntu2) ...
+Setting up libavahi-client3:amd64 (0.7-3.1ubuntu1.2) ...
+Setting up libcups2:amd64 (2.2.7-1ubuntu2.7) ...
+Setting up openjdk-11-jre-headless:amd64 (11.0.4+11-1ubuntu2~18.04.3) ...
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/rmid to provide /usr/bin/rmid (rmid) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/java to provide /usr/bin/java (java) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/keytool to provide /usr/bin/keytool (keytool) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/jjs to provide /usr/bin/jjs (jjs) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/pack200 to provide /usr/bin/pack200 (pack200) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/rmiregistry to provide /usr/bin/rmiregistry (rmiregistry) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/bin/unpack200 to provide /usr/bin/unpack200 (unpack200) in auto mode
+update-alternatives: using /usr/lib/jvm/java-11-openjdk-amd64/lib/jexec to provide /usr/bin/jexec (jexec) in auto mode
+Setting up ca-certificates-java (20180516ubuntu1~18.04.1) ...
+head: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory
+Adding debian:TUBITAK_Kamu_SM_SSL_Kok_Sertifikasi_-_Surum_1.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_RSA_R2.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G3.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R5.pem
+Adding debian:OISTE_WISeKey_Global_Root_GB_CA.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_3.pem
+Adding debian:ACCVRAIZ1.pem
+Adding debian:USERTrust_ECC_Certification_Authority.pem
+Adding debian:GeoTrust_Primary_Certification_Authority_-_G2.pem
+Adding debian:Cybertrust_Global_Root.pem
+Adding debian:Certplus_Root_CA_G2.pem
+Adding debian:Entrust_Root_Certification_Authority.pem
+Adding debian:DigiCert_Global_Root_G2.pem
+Adding debian:TrustCor_RootCert_CA-2.pem
+Adding debian:Security_Communication_RootCA2.pem
+Adding debian:QuoVadis_Root_CA_2_G3.pem
+Adding debian:Trustis_FPS_Root_CA.pem
+Adding debian:IdenTrust_Public_Sector_Root_CA_1.pem
+Adding debian:SZAFIR_ROOT_CA2.pem
+Adding debian:thawte_Primary_Root_CA_-_G2.pem
+Adding debian:GlobalSign_ECC_Root_CA_-_R4.pem
+Adding debian:AddTrust_External_Root.pem
+Adding debian:VeriSign_Universal_Root_Certification_Authority.pem
+Adding debian:SSL.com_Root_Certification_Authority_RSA.pem
+Adding debian:TWCA_Root_Certification_Authority.pem
+Adding debian:QuoVadis_Root_CA_1_G3.pem
+Adding debian:Security_Communication_Root_CA.pem
+Adding debian:IdenTrust_Commercial_Root_CA_1.pem
+Adding debian:COMODO_ECC_Certification_Authority.pem
+Adding debian:CFCA_EV_ROOT.pem
+Adding debian:Staat_der_Nederlanden_Root_CA_-_G3.pem
+Adding debian:SecureSign_RootCA11.pem
+Adding debian:DigiCert_High_Assurance_EV_Root_CA.pem
+Adding debian:QuoVadis_Root_CA.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2015.pem
+Adding debian:Amazon_Root_CA_4.pem
+Adding debian:XRamp_Global_CA_Root.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G4.pem
+Adding debian:GDCA_TrustAUTH_R5_ROOT.pem
+Adding debian:Network_Solutions_Certificate_Authority.pem
+Adding debian:Izenpe.com.pem
+Adding debian:VeriSign_Class_3_Public_Primary_Certification_Authority_-_G5.pem
+Adding debian:Starfield_Services_Root_Certificate_Authority_-_G2.pem
+Adding debian:Global_Chambersign_Root_-_2008.pem
+Adding debian:Certplus_Root_CA_G1.pem
+Adding debian:GeoTrust_Primary_Certification_Authority.pem
+Adding debian:GeoTrust_Global_CA.pem
+Adding debian:LuxTrust_Global_Root_2.pem
+Adding debian:GeoTrust_Universal_CA.pem
+Adding debian:ePKI_Root_Certification_Authority.pem
+Adding debian:TeliaSonera_Root_CA_v1.pem
+Adding debian:TWCA_Global_Root_CA.pem
+Adding debian:QuoVadis_Root_CA_3.pem
+Adding debian:EE_Certification_Centre_Root_CA.pem
+Adding debian:EC-ACC.pem
+Adding debian:GlobalSign_Root_CA_-_R3.pem
+Adding debian:AffirmTrust_Networking.pem
+Adding debian:thawte_Primary_Root_CA_-_G3.pem
+Adding debian:T-TeleSec_GlobalRoot_Class_2.pem
+Adding debian:AffirmTrust_Commercial.pem
+Adding debian:NetLock_Arany_=Class_Gold=_Fotanúsítvány.pem
+Adding debian:certSIGN_ROOT_CA.pem
+Adding debian:COMODO_Certification_Authority.pem
+Adding debian:GlobalSign_Root_CA.pem
+Adding debian:Entrust_Root_Certification_Authority_-_EC1.pem
+Adding debian:Secure_Global_CA.pem
+Adding debian:Buypass_Class_2_Root_CA.pem
+Adding debian:CA_Disig_Root_R2.pem
+Adding debian:DigiCert_Trusted_Root_G4.pem
+Adding debian:GlobalSign_Root_CA_-_R2.pem
+Adding debian:Certigna.pem
+Adding debian:DigiCert_Assured_ID_Root_CA.pem
+Adding debian:Amazon_Root_CA_3.pem
+Adding debian:Sonera_Class_2_Root_CA.pem
+Adding debian:Certinomis_-_Root_CA.pem
+Adding debian:GeoTrust_Universal_CA_2.pem
+Adding debian:OpenTrust_Root_CA_G3.pem
+Adding debian:Autoridad_de_Certificacion_Firmaprofesional_CIF_A62634068.pem
+Adding debian:TÜRKTRUST_Elektronik_Sertifika_Hizmet_Saglayicisi_H5.pem
+Adding debian:AffirmTrust_Premium.pem
+Adding debian:QuoVadis_Root_CA_2.pem
+Adding debian:AffirmTrust_Premium_ECC.pem
+Adding debian:TrustCor_ECA-1.pem
+Adding debian:Certum_Trusted_Network_CA.pem
+Adding debian:Chambers_of_Commerce_Root_-_2008.pem
+Adding debian:E-Tugra_Certification_Authority.pem
+Adding debian:AC_RAIZ_FNMT-RCM.pem
+Adding debian:Visa_eCommerce_Root.pem
+Adding debian:Starfield_Root_Certificate_Authority_-_G2.pem
+Adding debian:DigiCert_Global_Root_G3.pem
+Adding debian:SwissSign_Gold_CA_-_G2.pem
+Adding debian:Taiwan_GRCA.pem
+Adding debian:DigiCert_Assured_ID_Root_G3.pem
+Adding debian:SSL.com_EV_Root_Certification_Authority_ECC.pem
+Adding debian:OISTE_WISeKey_Global_Root_GA_CA.pem
+Adding debian:Starfield_Class_2_CA.pem
+Adding debian:Staat_der_Nederlanden_EV_Root_CA.pem
+Adding debian:Amazon_Root_CA_2.pem
+Adding debian:Go_Daddy_Root_Certificate_Authority_-_G2.pem
+Adding debian:Buypass_Class_3_Root_CA.pem
+Adding debian:COMODO_RSA_Certification_Authority.pem
+Adding debian:SwissSign_Silver_CA_-_G2.pem
+Adding debian:OpenTrust_Root_CA_G2.pem
+Adding debian:Go_Daddy_Class_2_CA.pem
+Adding debian:Comodo_AAA_Services_root.pem
+Adding debian:TrustCor_RootCert_CA-1.pem
+Adding debian:Baltimore_CyberTrust_Root.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_ECC_RootCA_2015.pem
+Adding debian:Certum_Trusted_Network_CA_2.pem
+Adding debian:Certplus_Class_2_Primary_CA.pem
+Adding debian:USERTrust_RSA_Certification_Authority.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_EV_2009.pem
+Adding debian:SecureTrust_CA.pem
+Adding debian:Microsec_e-Szigno_Root_CA_2009.pem
+Adding debian:SSL.com_Root_Certification_Authority_ECC.pem
+Adding debian:Deutsche_Telekom_Root_CA_2.pem
+Adding debian:DigiCert_Assured_ID_Root_G2.pem
+Adding debian:OpenTrust_Root_CA_G1.pem
+Adding debian:D-TRUST_Root_Class_3_CA_2_2009.pem
+Adding debian:DST_Root_CA_X3.pem
+Adding debian:Atos_TrustedRoot_2011.pem
+Adding debian:Hellenic_Academic_and_Research_Institutions_RootCA_2011.pem
+Adding debian:ISRG_Root_X1.pem
+Adding debian:Staat_der_Nederlanden_Root_CA_-_G2.pem
+Adding debian:Amazon_Root_CA_1.pem
+Adding debian:Actalis_Authentication_Root_CA.pem
+Adding debian:Entrust.net_Premium_2048_Secure_Server_CA.pem
+Adding debian:Verisign_Class_3_Public_Primary_Certification_Authority_-_G3.pem
+Adding debian:thawte_Primary_Root_CA.pem
+Adding debian:Entrust_Root_Certification_Authority_-_G2.pem
+Adding debian:DigiCert_Global_Root_CA.pem
+Adding debian:Hongkong_Post_Root_CA_1.pem
+Adding debian:QuoVadis_Root_CA_3_G3.pem
+done.
+Processing triggers for ureadahead (0.100.0-21) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for systemd (237-3ubuntu10.29) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for ca-certificates (20180409) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+
+done.
+done.
+ubuntu@ip-172-31-45-19:~$ java --version
+openjdk 11.0.4 2019-07-16
+OpenJDK Runtime Environment (build 11.0.4+11-post-Ubuntu-1ubuntu218.04.3)
+OpenJDK 64-Bit Server VM (build 11.0.4+11-post-Ubuntu-1ubuntu218.04.3, mixed mode, sharing)
+ubuntu@ip-172-31-45-19:~$ sudo apt install openjdk-8-jre-headless
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  libnss-mdns fonts-dejavu-extra fonts-ipafont-gothic fonts-ipafont-mincho fonts-wqy-microhei fonts-wqy-zenhei fonts-indic
+The following NEW packages will be installed:
+  openjdk-8-jre-headless
+0 upgraded, 1 newly installed, 0 to remove and 49 not upgraded.
+Need to get 27.4 MB of archives.
+After this operation, 100 MB of additional disk space will be used.
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 openjdk-8-jre-headless amd64 8u222-b10-1ubuntu1~18.04.1 [27.4 MB]
+Fetched 27.4 MB in 6s (4946 kB/s)
+Selecting previously unselected package openjdk-8-jre-headless:amd64.
+(Reading database ... 57309 files and directories currently installed.)
+Preparing to unpack .../openjdk-8-jre-headless_8u222-b10-1ubuntu1~18.04.1_amd64.deb ...
+Unpacking openjdk-8-jre-headless:amd64 (8u222-b10-1ubuntu1~18.04.1) ...
+Setting up openjdk-8-jre-headless:amd64 (8u222-b10-1ubuntu1~18.04.1) ...
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/hsdb to provide /usr/bin/hsdb (hsdb) in auto mode
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/clhsdb to provide /usr/bin/clhsdb (clhsdb) in auto mode
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/orbd to provide /usr/bin/orbd (orbd) in auto mode
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/servertool to provide /usr/bin/servertool (servertool) in auto mode
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/tnameserv to provide /usr/bin/tnameserv (tnameserv) in auto mode
+ubuntu@ip-172-31-45-19:~$ java --version
+openjdk 11.0.4 2019-07-16
+OpenJDK Runtime Environment (build 11.0.4+11-post-Ubuntu-1ubuntu218.04.3)
+OpenJDK 64-Bit Server VM (build 11.0.4+11-post-Ubuntu-1ubuntu218.04.3, mixed mode, sharing)
+ubuntu@ip-172-31-45-19:~$ cd /usr/lib/jvm/
+ubuntu@ip-172-31-45-19:/usr/lib/jvm$ ls -ltr
+total 8
+lrwxrwxrwx 1 root root   21 Jul 18 18:21 java-1.11.0-openjdk-amd64 -> java-11-openjdk-amd64
+lrwxrwxrwx 1 root root   20 Jul 18 18:52 java-1.8.0-openjdk-amd64 -> java-8-openjdk-amd64
+drwxr-xr-x 7 root root 4096 Nov 20 12:41 java-11-openjdk-amd64
+drwxr-xr-x 5 root root 4096 Nov 20 12:42 java-8-openjdk-amd64
+ubuntu@ip-172-31-45-19:/usr/lib/jvm$ sudo update-alternatives --config java
+There are 2 choices for the alternative java (providing /usr/bin/java).
+
+  Selection    Path                                            Priority   Status
+------------------------------------------------------------
+* 0            /usr/lib/jvm/java-11-openjdk-amd64/bin/java      1111      auto mode
+  1            /usr/lib/jvm/java-11-openjdk-amd64/bin/java      1111      manual mode
+  2            /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java   1081      manual mode
+
+Press <enter> to keep the current choice[*], or type selection number: 2
+update-alternatives: using /usr/lib/jvm/java-8-openjdk-amd64/jre/bin/java to provide /usr/bin/java (java) in manual mode
+ubuntu@ip-172-31-45-19:/usr/lib/jvm$ java --version
+Unrecognized option: --version
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+ubuntu@ip-172-31-45-19:/usr/lib/jvm$ ls -ltr
+total 8
+lrwxrwxrwx 1 root root   21 Jul 18 18:21 java-1.11.0-openjdk-amd64 -> java-11-openjdk-amd64
+lrwxrwxrwx 1 root root   20 Jul 18 18:52 java-1.8.0-openjdk-amd64 -> java-8-openjdk-amd64
+drwxr-xr-x 7 root root 4096 Nov 20 12:41 java-11-openjdk-amd64
+drwxr-xr-x 5 root root 4096 Nov 20 12:42 java-8-openjdk-amd64
+ubuntu@ip-172-31-45-19:/usr/lib/jvm$ cd -
+/home/ubuntu
+ubuntu@ip-172-31-45-19:~$ java --version
+Unrecognized option: --version
+Error: Could not create the Java Virtual Machine.
+Error: A fatal exception has occurred. Program will exit.
+ubuntu@ip-172-31-45-19:~$ java -version
+openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
+OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
+ubuntu@ip-172-31-45-19:~$
+
+
+
+
+ubuntu@ip-172-31-45-19:~$ mvn -v
+
+Command 'mvn' not found, but can be installed with:
+
+sudo apt install maven
+
+ubuntu@ip-172-31-45-19:~$ sudo apt install maven
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  libaopalliance-java libapache-pom-java libatinject-jsr330-api-java libcdi-api-java libcommons-cli-java libcommons-io-java libcommons-lang3-java libcommons-parent-java
+  libgeronimo-annotation-1.3-spec-java libgeronimo-interceptor-3.0-spec-java libguava-java libguice-java libhawtjni-runtime-java libjansi-java libjansi-native-java libjsr305-java
+  libmaven-parent-java libmaven-resolver-java libmaven-shared-utils-java libmaven3-core-java libplexus-cipher-java libplexus-classworlds-java libplexus-component-annotations-java
+  libplexus-interpolation-java libplexus-sec-dispatcher-java libplexus-utils2-java libsisu-inject-java libsisu-plexus-java libslf4j-java libwagon-file-java libwagon-http-shaded-java
+  libwagon-provider-api-java
+Suggested packages:
+  libaopalliance-java-doc libatinject-jsr330-api-java-doc libservlet3.1-java libcommons-io-java-doc libcommons-lang3-java-doc libasm-java libcglib-java libjsr305-java-doc
+  libmaven-shared-utils-java-doc liblogback-java libplexus-cipher-java-doc libplexus-classworlds-java-doc libplexus-interpolation-java-doc libplexus-sec-dispatcher-java-doc
+  libplexus-utils2-java-doc junit4 testng libcommons-logging-java liblog4j1.2-java
+The following NEW packages will be installed:
+  libaopalliance-java libapache-pom-java libatinject-jsr330-api-java libcdi-api-java libcommons-cli-java libcommons-io-java libcommons-lang3-java libcommons-parent-java
+  libgeronimo-annotation-1.3-spec-java libgeronimo-interceptor-3.0-spec-java libguava-java libguice-java libhawtjni-runtime-java libjansi-java libjansi-native-java libjsr305-java
+  libmaven-parent-java libmaven-resolver-java libmaven-shared-utils-java libmaven3-core-java libplexus-cipher-java libplexus-classworlds-java libplexus-component-annotations-java
+  libplexus-interpolation-java libplexus-sec-dispatcher-java libplexus-utils2-java libsisu-inject-java libsisu-plexus-java libslf4j-java libwagon-file-java libwagon-http-shaded-java
+  libwagon-provider-api-java maven
+0 upgraded, 33 newly installed, 0 to remove and 49 not upgraded.
+Need to get 8916 kB of archives.
+After this operation, 11.8 MB of additional disk space will be used.
+Do you want to continue? [Y/n] Y
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libapache-pom-java all 18-1 [4720 B]
+Get:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libatinject-jsr330-api-java all 1.0+ds1-5 [5348 B]
+Get:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libgeronimo-interceptor-3.0-spec-java all 1.0.1-4fakesync [8616 B]
+Get:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libcdi-api-java all 1.2-2 [54.5 kB]
+Get:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libcommons-cli-java all 1.4-1 [53.8 kB]
+Get:6 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libcommons-parent-java all 43-1 [10.8 kB]
+Get:7 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libcommons-io-java all 2.6-2 [198 kB]
+Get:8 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libcommons-lang3-java all 3.8-1~18.04.2 [479 kB]
+Get:9 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libgeronimo-annotation-1.3-spec-java all 1.0-1 [10.7 kB]
+Get:10 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libjsr305-java all 0.1~+svn49-10 [26.5 kB]
+Get:11 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libguava-java all 19.0-1 [2028 kB]
+Get:12 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libaopalliance-java all 20070526-6 [9084 B]
+Get:13 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libguice-java all 4.0-4 [853 kB]
+Get:14 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libhawtjni-runtime-java all 1.15-2 [27.1 kB]
+Get:15 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libjansi-native-java all 1.7-1 [19.4 kB]
+Get:16 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libjansi-java all 1.16-1 [36.2 kB]
+Get:17 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libmaven-parent-java all 31-2~18.04 [5196 B]
+Get:18 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-utils2-java all 3.0.24-3 [246 kB]
+Get:19 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libwagon-provider-api-java all 3.0.0-2 [48.2 kB]
+Get:20 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libmaven-resolver-java all 1.3.1-1~18.04 [549 kB]
+Get:21 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libmaven-shared-utils-java all 3.3.0-1~18.04 [149 kB]
+Get:22 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-cipher-java all 1.7-3 [15.1 kB]
+Get:23 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-classworlds-java all 2.5.2-2 [49.3 kB]
+Get:24 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-component-annotations-java all 1.7.1-7 [6596 B]
+Get:25 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-interpolation-java all 1.24-1 [73.4 kB]
+Get:26 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libplexus-sec-dispatcher-java all 1.4-3 [28.0 kB]
+Get:27 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libslf4j-java all 1.7.25-3 [141 kB]
+Get:28 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libsisu-inject-java all 0.3.2-2 [346 kB]
+Get:29 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libsisu-plexus-java all 0.3.3-3 [182 kB]
+Get:30 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 libmaven3-core-java all 3.6.0-1~18.04.1 [1465 kB]
+Get:31 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libwagon-file-java all 3.0.0-2 [7960 B]
+Get:32 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 libwagon-http-shaded-java all 3.0.0-2 [1757 kB]
+Get:33 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/universe amd64 maven all 3.6.0-1~18.04.1 [22.4 kB]
+Fetched 8916 kB in 3s (3464 kB/s)
+Extracting templates from packages: 100%
+Selecting previously unselected package libapache-pom-java.
+(Reading database ... 57544 files and directories currently installed.)
+Preparing to unpack .../00-libapache-pom-java_18-1_all.deb ...
+Unpacking libapache-pom-java (18-1) ...
+Selecting previously unselected package libatinject-jsr330-api-java.
+Preparing to unpack .../01-libatinject-jsr330-api-java_1.0+ds1-5_all.deb ...
+Unpacking libatinject-jsr330-api-java (1.0+ds1-5) ...
+Selecting previously unselected package libgeronimo-interceptor-3.0-spec-java.
+Preparing to unpack .../02-libgeronimo-interceptor-3.0-spec-java_1.0.1-4fakesync_all.deb ...
+Unpacking libgeronimo-interceptor-3.0-spec-java (1.0.1-4fakesync) ...
+Selecting previously unselected package libcdi-api-java.
+Preparing to unpack .../03-libcdi-api-java_1.2-2_all.deb ...
+Unpacking libcdi-api-java (1.2-2) ...
+Selecting previously unselected package libcommons-cli-java.
+Preparing to unpack .../04-libcommons-cli-java_1.4-1_all.deb ...
+Unpacking libcommons-cli-java (1.4-1) ...
+Selecting previously unselected package libcommons-parent-java.
+Preparing to unpack .../05-libcommons-parent-java_43-1_all.deb ...
+Unpacking libcommons-parent-java (43-1) ...
+Selecting previously unselected package libcommons-io-java.
+Preparing to unpack .../06-libcommons-io-java_2.6-2_all.deb ...
+Unpacking libcommons-io-java (2.6-2) ...
+Selecting previously unselected package libcommons-lang3-java.
+Preparing to unpack .../07-libcommons-lang3-java_3.8-1~18.04.2_all.deb ...
+Unpacking libcommons-lang3-java (3.8-1~18.04.2) ...
+Selecting previously unselected package libgeronimo-annotation-1.3-spec-java.
+Preparing to unpack .../08-libgeronimo-annotation-1.3-spec-java_1.0-1_all.deb ...
+Unpacking libgeronimo-annotation-1.3-spec-java (1.0-1) ...
+Selecting previously unselected package libjsr305-java.
+Preparing to unpack .../09-libjsr305-java_0.1~+svn49-10_all.deb ...
+Unpacking libjsr305-java (0.1~+svn49-10) ...
+Selecting previously unselected package libguava-java.
+Preparing to unpack .../10-libguava-java_19.0-1_all.deb ...
+Unpacking libguava-java (19.0-1) ...
+Selecting previously unselected package libaopalliance-java.
+Preparing to unpack .../11-libaopalliance-java_20070526-6_all.deb ...
+Unpacking libaopalliance-java (20070526-6) ...
+Selecting previously unselected package libguice-java.
+Preparing to unpack .../12-libguice-java_4.0-4_all.deb ...
+Unpacking libguice-java (4.0-4) ...
+Selecting previously unselected package libhawtjni-runtime-java.
+Preparing to unpack .../13-libhawtjni-runtime-java_1.15-2_all.deb ...
+Unpacking libhawtjni-runtime-java (1.15-2) ...
+Selecting previously unselected package libjansi-native-java.
+Preparing to unpack .../14-libjansi-native-java_1.7-1_all.deb ...
+Unpacking libjansi-native-java (1.7-1) ...
+Selecting previously unselected package libjansi-java.
+Preparing to unpack .../15-libjansi-java_1.16-1_all.deb ...
+Unpacking libjansi-java (1.16-1) ...
+Selecting previously unselected package libmaven-parent-java.
+Preparing to unpack .../16-libmaven-parent-java_31-2~18.04_all.deb ...
+Unpacking libmaven-parent-java (31-2~18.04) ...
+Selecting previously unselected package libplexus-utils2-java.
+Preparing to unpack .../17-libplexus-utils2-java_3.0.24-3_all.deb ...
+Unpacking libplexus-utils2-java (3.0.24-3) ...
+Selecting previously unselected package libwagon-provider-api-java.
+Preparing to unpack .../18-libwagon-provider-api-java_3.0.0-2_all.deb ...
+Unpacking libwagon-provider-api-java (3.0.0-2) ...
+Selecting previously unselected package libmaven-resolver-java.
+Preparing to unpack .../19-libmaven-resolver-java_1.3.1-1~18.04_all.deb ...
+Unpacking libmaven-resolver-java (1.3.1-1~18.04) ...
+Selecting previously unselected package libmaven-shared-utils-java.
+Preparing to unpack .../20-libmaven-shared-utils-java_3.3.0-1~18.04_all.deb ...
+Unpacking libmaven-shared-utils-java (3.3.0-1~18.04) ...
+Selecting previously unselected package libplexus-cipher-java.
+Preparing to unpack .../21-libplexus-cipher-java_1.7-3_all.deb ...
+Unpacking libplexus-cipher-java (1.7-3) ...
+Selecting previously unselected package libplexus-classworlds-java.
+Preparing to unpack .../22-libplexus-classworlds-java_2.5.2-2_all.deb ...
+Unpacking libplexus-classworlds-java (2.5.2-2) ...
+Selecting previously unselected package libplexus-component-annotations-java.
+Preparing to unpack .../23-libplexus-component-annotations-java_1.7.1-7_all.deb ...
+Unpacking libplexus-component-annotations-java (1.7.1-7) ...
+Selecting previously unselected package libplexus-interpolation-java.
+Preparing to unpack .../24-libplexus-interpolation-java_1.24-1_all.deb ...
+Unpacking libplexus-interpolation-java (1.24-1) ...
+Selecting previously unselected package libplexus-sec-dispatcher-java.
+Preparing to unpack .../25-libplexus-sec-dispatcher-java_1.4-3_all.deb ...
+Unpacking libplexus-sec-dispatcher-java (1.4-3) ...
+Selecting previously unselected package libslf4j-java.
+Preparing to unpack .../26-libslf4j-java_1.7.25-3_all.deb ...
+Unpacking libslf4j-java (1.7.25-3) ...
+Selecting previously unselected package libsisu-inject-java.
+Preparing to unpack .../27-libsisu-inject-java_0.3.2-2_all.deb ...
+Unpacking libsisu-inject-java (0.3.2-2) ...
+Selecting previously unselected package libsisu-plexus-java.
+Preparing to unpack .../28-libsisu-plexus-java_0.3.3-3_all.deb ...
+Unpacking libsisu-plexus-java (0.3.3-3) ...
+Selecting previously unselected package libmaven3-core-java.
+Preparing to unpack .../29-libmaven3-core-java_3.6.0-1~18.04.1_all.deb ...
+Unpacking libmaven3-core-java (3.6.0-1~18.04.1) ...
+Selecting previously unselected package libwagon-file-java.
+Preparing to unpack .../30-libwagon-file-java_3.0.0-2_all.deb ...
+Unpacking libwagon-file-java (3.0.0-2) ...
+Selecting previously unselected package libwagon-http-shaded-java.
+Preparing to unpack .../31-libwagon-http-shaded-java_3.0.0-2_all.deb ...
+Unpacking libwagon-http-shaded-java (3.0.0-2) ...
+Selecting previously unselected package maven.
+Preparing to unpack .../32-maven_3.6.0-1~18.04.1_all.deb ...
+Unpacking maven (3.6.0-1~18.04.1) ...
+Setting up libslf4j-java (1.7.25-3) ...
+Setting up libplexus-classworlds-java (2.5.2-2) ...
+Setting up libhawtjni-runtime-java (1.15-2) ...
+Setting up libplexus-cipher-java (1.7-3) ...
+Setting up libplexus-interpolation-java (1.24-1) ...
+Setting up libplexus-component-annotations-java (1.7.1-7) ...
+Setting up libplexus-utils2-java (3.0.24-3) ...
+Setting up libwagon-provider-api-java (3.0.0-2) ...
+Setting up libjsr305-java (0.1~+svn49-10) ...
+Setting up libgeronimo-interceptor-3.0-spec-java (1.0.1-4fakesync) ...
+Setting up libmaven-resolver-java (1.3.1-1~18.04) ...
+Setting up libjansi-native-java (1.7-1) ...
+Setting up libwagon-http-shaded-java (3.0.0-2) ...
+Setting up libapache-pom-java (18-1) ...
+Setting up libatinject-jsr330-api-java (1.0+ds1-5) ...
+Setting up libmaven-parent-java (31-2~18.04) ...
+Setting up libaopalliance-java (20070526-6) ...
+Setting up libgeronimo-annotation-1.3-spec-java (1.0-1) ...
+Setting up libcommons-cli-java (1.4-1) ...
+Setting up libplexus-sec-dispatcher-java (1.4-3) ...
+Setting up libjansi-java (1.16-1) ...
+Setting up libguava-java (19.0-1) ...
+Setting up libwagon-file-java (3.0.0-2) ...
+Setting up libcommons-parent-java (43-1) ...
+Setting up libcdi-api-java (1.2-2) ...
+Setting up libcommons-lang3-java (3.8-1~18.04.2) ...
+Setting up libcommons-io-java (2.6-2) ...
+Setting up libguice-java (4.0-4) ...
+Setting up libmaven-shared-utils-java (3.3.0-1~18.04) ...
+Setting up libsisu-inject-java (0.3.2-2) ...
+Setting up libsisu-plexus-java (0.3.3-3) ...
+Setting up libmaven3-core-java (3.6.0-1~18.04.1) ...
+Setting up maven (3.6.0-1~18.04.1) ...
+update-alternatives: using /usr/share/maven/bin/mvn to provide /usr/bin/mvn (mvn) in auto mode
+ubuntu@ip-172-31-45-19:~$ mvn -v
+Apache Maven 3.6.0
+Maven home: /usr/share/maven
+Java version: 1.8.0_222, vendor: Private Build, runtime: /usr/lib/jvm/java-8-openjdk-amd64/jre
+Default locale: en, platform encoding: UTF-8
+OS name: "linux", version: "4.15.0-1051-aws", arch: "amd64", family: "unix"
+ubuntu@ip-172-31-45-19:~$
+
+
+
+
+
+ubuntu@ip-172-31-45-19:~$ wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+OK
+ubuntu@ip-172-31-45-19:~$ sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+ubuntu@ip-172-31-45-19:~$ sudo apt update
+Get:1 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Hit:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Hit:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease
+Ign:4 http://pkg.jenkins.io/debian-stable binary/ InRelease
+Hit:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease
+Get:6 http://pkg.jenkins.io/debian-stable binary/ Release [2042 B]
+Get:7 http://pkg.jenkins.io/debian-stable binary/ Release.gpg [181 B]
+Get:8 http://pkg.jenkins.io/debian-stable binary/ Packages [15.8 kB]
+Fetched 107 kB in 1s (84.2 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+49 packages can be upgraded. Run 'apt list --upgradable' to see them.
+ubuntu@ip-172-31-45-19:~$
+
+ubuntu@ip-172-31-45-19:~$ sudo apt install jenkins
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+The following additional packages will be installed:
+  daemon
+The following NEW packages will be installed:
+  daemon jenkins
+0 upgraded, 2 newly installed, 0 to remove and 49 not upgraded.
+Need to get 77.6 MB of archives.
+After this operation, 78.6 MB of additional disk space will be used.
+Do you want to continue? [Y/n] Y
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/universe amd64 daemon amd64 0.6.4-1build1 [99.5 kB]
+Get:2 http://pkg.jenkins.io/debian-stable binary/ jenkins 2.190.2 [77.5 MB]
+Fetched 77.6 MB in 17s (4599 kB/s)
+Selecting previously unselected package daemon.
+(Reading database ... 58473 files and directories currently installed.)
+Preparing to unpack .../daemon_0.6.4-1build1_amd64.deb ...
+Unpacking daemon (0.6.4-1build1) ...
+Selecting previously unselected package jenkins.
+Preparing to unpack .../jenkins_2.190.2_all.deb ...
+Unpacking jenkins (2.190.2) ...
+Setting up daemon (0.6.4-1build1) ...
+Setting up jenkins (2.190.2) ...
+Processing triggers for systemd (237-3ubuntu10.29) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for ureadahead (0.100.0-21) ...
+ubuntu@ip-172-31-45-19:~$
+
+
+ubuntu@ip-172-31-45-19:~$ systemctl status jenkins
+? jenkins.service - LSB: Start Jenkins at boot time
+   Loaded: loaded (/etc/init.d/jenkins; generated)
+   Active: active (exited) since Wed 2019-11-20 12:49:34 UTC; 3min 38s ago
+     Docs: man:systemd-sysv-generator(8)
+    Tasks: 0 (limit: 1152)
+   CGroup: /system.slice/jenkins.service
+
+Nov 20 12:49:32 ip-172-31-45-19 systemd[1]: Starting LSB: Start Jenkins at boot time...
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]: Correct java version found
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]:  * Starting Jenkins Automation Server jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: Successful su for jenkins by root
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: + ??? root:jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session opened for user jenkins by (uid=0)
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session closed for user jenkins
+Nov 20 12:49:34 ip-172-31-45-19 jenkins[5243]:    ...done.
+Nov 20 12:49:34 ip-172-31-45-19 systemd[1]: Started LSB: Start Jenkins at boot time.
+ubuntu@ip-172-31-45-19:~$
+
+
+ubuntu@ip-172-31-45-19:~$ sudo ufw allow 8080
+Rules updated
+Rules updated (v6)
+ubuntu@ip-172-31-45-19:~$ sudo ufw status
+Status: inactive
+ubuntu@ip-172-31-45-19:~$ hostname
+ip-172-31-45-19
+ubuntu@ip-172-31-45-19:~$ sudo ufw status
+Status: inactive
+ubuntu@ip-172-31-45-19:~$ sudo apt update
+Hit:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic InRelease
+Get:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates InRelease [88.7 kB]
+Get:3 http://security.ubuntu.com/ubuntu bionic-security InRelease [88.7 kB]
+Ign:4 http://pkg.jenkins.io/debian-stable binary/ InRelease
+Hit:5 http://pkg.jenkins.io/debian-stable binary/ Release
+Get:6 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-backports InRelease [74.6 kB]
+Fetched 252 kB in 1s (238 kB/s)
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+49 packages can be upgraded. Run 'apt list --upgradable' to see them.
+ubuntu@ip-172-31-45-19:~$ systemctl status jenkins
+? jenkins.service - LSB: Start Jenkins at boot time
+   Loaded: loaded (/etc/init.d/jenkins; generated)
+   Active: active (exited) since Wed 2019-11-20 12:49:34 UTC; 10min ago
+     Docs: man:systemd-sysv-generator(8)
+    Tasks: 0 (limit: 1152)
+   CGroup: /system.slice/jenkins.service
+
+Nov 20 12:49:32 ip-172-31-45-19 systemd[1]: Starting LSB: Start Jenkins at boot time...
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]: Correct java version found
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]:  * Starting Jenkins Automation Server jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: Successful su for jenkins by root
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: + ??? root:jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session opened for user jenkins by (uid=0)
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session closed for user jenkins
+Nov 20 12:49:34 ip-172-31-45-19 jenkins[5243]:    ...done.
+Nov 20 12:49:34 ip-172-31-45-19 systemd[1]: Started LSB: Start Jenkins at boot time.
+ubuntu@ip-172-31-45-19:~$ sudo ufw allow 8080
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+ubuntu@ip-172-31-45-19:~$ sudo ufw status
+Status: inactive
+ubuntu@ip-172-31-45-19:~$ sudo ufw enable
+Command may disrupt existing ssh connections. Proceed with operation (y|n)? y
+Firewall is active and enabled on system startup
+ubuntu@ip-172-31-45-19:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+8080                       ALLOW       Anywhere
+8080 (v6)                  ALLOW       Anywhere (v6)
+
+ubuntu@ip-172-31-45-19:~$
+ubuntu@ip-172-31-45-19:~$ curl http://172.31.45.19:8080/
+<html><head><meta http-equiv='refresh' content='1;url=/login?from=%2F'/><script>window.location.replace('/login?from=%2F');</script></head><body style='background-color:white; color:white;'>
+
+
+Authentication required
+<!--
+You are authenticated as: anonymous
+Groups that you are in:
+
+Permission you need to have (but didn't): hudson.model.Hudson.Administer
+-->
+
+</body></html>                                                                                                                                                                                                                                                                                                            ubuntu@ip-172-31-45-19:~$ curl http://172.31.45.19:8080/^C
+ubuntu@ip-172-31-45-19:~$ curl http://13.126.17.39:8080/
+^C
+ubuntu@ip-172-31-45-19:~$ cd /var/lib/jenkins/secrets/
+-bash: cd: /var/lib/jenkins/secrets/: Permission denied
+ubuntu@ip-172-31-45-19:~$ sudo su
+root@ip-172-31-45-19:/home/ubuntu# cd /var/lib/jenkins/secret
+bash: cd: /var/lib/jenkins/secret: No such file or directory
+root@ip-172-31-45-19:/home/ubuntu# cd /var/lib/jenkins/secrets/
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# ls -ltr
+total 28
+-rw-r--r-- 1 jenkins jenkins  256 Nov 20 12:49 master.key
+-rw-r--r-- 1 jenkins jenkins  272 Nov 20 12:49 org.jenkinsci.main.modules.instance_identity.InstanceIdentity.KEY
+-rw-r--r-- 1 jenkins jenkins   32 Nov 20 12:49 jenkins.model.Jenkins.crumbSalt
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 whitelisted-callables.d
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 filepath-filters.d
+-rw-r--r-- 1 jenkins jenkins    5 Nov 20 12:49 slave-to-master-security-kill-switch
+-rw-r----- 1 jenkins jenkins   33 Nov 20 12:49 initialAdminPassword
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# more initialAdminPassword
+2e51454d5153407c872d9f64cf0d897c
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+2e51454d5153407c872d9f64cf0d897c
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# java -version
+openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
+OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# systemctl status jenkins
+? jenkins.service - LSB: Start Jenkins at boot time
+   Loaded: loaded (/etc/init.d/jenkins; generated)
+   Active: active (exited) since Wed 2019-11-20 12:49:34 UTC; 25min ago
+     Docs: man:systemd-sysv-generator(8)
+    Tasks: 0 (limit: 1152)
+   CGroup: /system.slice/jenkins.service
+
+Nov 20 12:49:32 ip-172-31-45-19 systemd[1]: Starting LSB: Start Jenkins at boot time...
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]: Correct java version found
+Nov 20 12:49:32 ip-172-31-45-19 jenkins[5243]:  * Starting Jenkins Automation Server jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: Successful su for jenkins by root
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: + ??? root:jenkins
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session opened for user jenkins by (uid=0)
+Nov 20 12:49:33 ip-172-31-45-19 su[5289]: pam_unix(su:session): session closed for user jenkins
+Nov 20 12:49:34 ip-172-31-45-19 jenkins[5243]:    ...done.
+Nov 20 12:49:34 ip-172-31-45-19 systemd[1]: Started LSB: Start Jenkins at boot time.
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# date
+Wed Nov 20 13:15:40 UTC 2019
+root@ip-172-31-45-19:/var/lib/jenkins/secrets# cd ..
+root@ip-172-31-45-19:/var/lib/jenkins# ls -ltr
+total 60
+-rw-r--r-- 1 jenkins jenkins   64 Nov 20 12:49 secret.key
+-rw-r--r-- 1 jenkins jenkins    0 Nov 20 12:49 secret.key.not-so-secret
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 plugins
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 jobs
+-rw-r--r-- 1 jenkins jenkins  156 Nov 20 12:49 hudson.model.UpdateCenter.xml
+-rw------- 1 jenkins jenkins 1712 Nov 20 12:49 identity.key.enc
+-rw-r--r-- 1 jenkins jenkins  171 Nov 20 12:49 jenkins.telemetry.Correlator.xml
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 nodes
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:49 userContent
+-rw-r--r-- 1 jenkins jenkins  907 Nov 20 12:49 nodeMonitors.xml
+drwxr-xr-x 3 jenkins jenkins 4096 Nov 20 12:49 logs
+-rw-r--r-- 1 jenkins jenkins    7 Nov 20 12:49 jenkins.install.UpgradeWizard.state
+drwxr-xr-x 3 jenkins jenkins 4096 Nov 20 12:49 users
+drwx------ 4 jenkins jenkins 4096 Nov 20 12:49 secrets
+drwxr-xr-x 2 jenkins jenkins 4096 Nov 20 12:50 updates
+-rw-r--r-- 1 jenkins jenkins 1640 Nov 20 12:50 config.xml
+root@ip-172-31-45-19:/var/lib/jenkins# less config.xml
+root@ip-172-31-45-19:/var/lib/jenkins# cd /etc/default/jenkins
+bash: cd: /etc/default/jenkins: Not a directory
+root@ip-172-31-45-19:/var/lib/jenkins# cd /etc/default/
+acpid                console-setup        ebtables             jenkins              motd-news            pollinate            ufw
+apport               cron                 grub                 keyboard             networkd-dispatcher  rsync                useradd
+bsdmainutils         cryptdisks           grub.d/              locale               nss                  rsyslog
+cacerts              dbus                 irqbalance           mdadm                open-iscsi           ssh
+root@ip-172-31-45-19:/var/lib/jenkins# cat /etc/default/jenkins
+# defaults for Jenkins automation server
+
+# pulled in from the init script; makes things easier.
+NAME=jenkins
+
+# arguments to pass to java
+
+# Allow graphs etc. to work even when an X server is present
+JAVA_ARGS="-Djava.awt.headless=true"
+
+#JAVA_ARGS="-Xmx256m"
+
+# make jenkins listen on IPv4 address
+#JAVA_ARGS="-Djava.net.preferIPv4Stack=true"
+
+PIDFILE=/var/run/$NAME/$NAME.pid
+
+# user and group to be invoked as (default to jenkins)
+JENKINS_USER=$NAME
+JENKINS_GROUP=$NAME
+
+# location of the jenkins war file
+JENKINS_WAR=/usr/share/$NAME/$NAME.war
+
+# jenkins home location
+JENKINS_HOME=/var/lib/$NAME
+
+# set this to false if you don't want Jenkins to run by itself
+# in this set up, you are expected to provide a servlet container
+# to host jenkins.
+RUN_STANDALONE=true
+
+# log location.  this may be a syslog facility.priority
+JENKINS_LOG=/var/log/$NAME/$NAME.log
+#JENKINS_LOG=daemon.info
+
+# Whether to enable web access logging or not.
+# Set to "yes" to enable logging to /var/log/$NAME/access_log
+JENKINS_ENABLE_ACCESS_LOG="no"
+
+# OS LIMITS SETUP
+#   comment this out to observe /etc/security/limits.conf
+#   this is on by default because http://github.com/jenkinsci/jenkins/commit/2fb288474e980d0e7ff9c4a3b768874835a3e92e
+#   reported that Ubuntu's PAM configuration doesn't include pam_limits.so, and as a result the # of file
+#   descriptors are forced to 1024 regardless of /etc/security/limits.conf
+MAXOPENFILES=8192
+
+# set the umask to control permission bits of files that Jenkins creates.
+#   027 makes files read-only for group and inaccessible for others, which some security sensitive users
+#   might consider benefitial, especially if Jenkins runs in a box that's used for multiple purposes.
+#   Beware that 027 permission would interfere with sudo scripts that run on the master (JENKINS-25065.)
+#
+#   Note also that the particularly sensitive part of $JENKINS_HOME (such as credentials) are always
+#   written without 'others' access. So the umask values only affect job configuration, build records,
+#   that sort of things.
+#
+#   If commented out, the value from the OS is inherited,  which is normally 022 (as of Ubuntu 12.04,
+#   by default umask comes from pam_umask(8) and /etc/login.defs
+
+# UMASK=027
+
+# port for HTTP connector (default 8080; disable with -1)
+HTTP_PORT=8080
+
+
+# servlet context, important if you want to use apache proxying
+PREFIX=/$NAME
+
+# arguments to pass to jenkins.
+# --javahome=$JAVA_HOME
+# --httpListenAddress=$HTTP_HOST (default 0.0.0.0)
+# --httpPort=$HTTP_PORT (default 8080; disable with -1)
+# --httpsPort=$HTTP_PORT
+# --argumentsRealm.passwd.$ADMIN_USER=[password]
+# --argumentsRealm.roles.$ADMIN_USER=admin
+# --webroot=~/.jenkins/war
+# --prefix=$PREFIX
+
+JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT"
+root@ip-172-31-45-19:/var/lib/jenkins# vi /etc/default/jenkins
+root@ip-172-31-45-19:/var/lib/jenkins# sudo service jenkins restart
+root@ip-172-31-45-19:/var/lib/jenkins# systemctl status jenkins
+? jenkins.service - LSB: Start Jenkins at boot time
+   Loaded: loaded (/etc/init.d/jenkins; generated)
+   Active: active (exited) since Wed 2019-11-20 13:19:44 UTC; 6s ago
+     Docs: man:systemd-sysv-generator(8)
+  Process: 6177 ExecStop=/etc/init.d/jenkins stop (code=exited, status=0/SUCCESS)
+  Process: 6226 ExecStart=/etc/init.d/jenkins start (code=exited, status=0/SUCCESS)
+
+Nov 20 13:19:42 ip-172-31-45-19 systemd[1]: Stopped LSB: Start Jenkins at boot time.
+Nov 20 13:19:42 ip-172-31-45-19 systemd[1]: Starting LSB: Start Jenkins at boot time...
+Nov 20 13:19:42 ip-172-31-45-19 jenkins[6226]: Correct java version found
+Nov 20 13:19:42 ip-172-31-45-19 jenkins[6226]:  * Starting Jenkins Automation Server jenkins
+Nov 20 13:19:42 ip-172-31-45-19 su[6271]: Successful su for jenkins by root
+Nov 20 13:19:42 ip-172-31-45-19 su[6271]: + ??? root:jenkins
+Nov 20 13:19:42 ip-172-31-45-19 su[6271]: pam_unix(su:session): session opened for user jenkins by (uid=0)
+Nov 20 13:19:42 ip-172-31-45-19 su[6271]: pam_unix(su:session): session closed for user jenkins
+Nov 20 13:19:44 ip-172-31-45-19 jenkins[6226]:    ...done.
+Nov 20 13:19:44 ip-172-31-45-19 systemd[1]: Started LSB: Start Jenkins at boot time.
+root@ip-172-31-45-19:/var/lib/jenkins# sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+8080                       ALLOW       Anywhere
+8080 (v6)                  ALLOW       Anywhere (v6)
+
+root@ip-172-31-45-19:/var/lib/jenkins# sudo ufw allow 8080
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+root@ip-172-31-45-19:/var/lib/jenkins# sudo ufw allow 8090
+Rule added
+Rule added (v6)
+root@ip-172-31-45-19:/var/lib/jenkins# sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+8080                       ALLOW       Anywhere
+8090                       ALLOW       Anywhere
+8080 (v6)                  ALLOW       Anywhere (v6)
+8090 (v6)                  ALLOW       Anywhere (v6)
+
+root@ip-172-31-45-19:/var/lib/jenkins#
+
+
+ubuntu@ip-172-31-41-173:~$ docker run -d -p 8080:80 nginx
+docker: Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Post http://%2Fvar%2Frun%2Fdocker.sock/v1.39/containers/create: dial unix /var/run/docker.sock: connect: permission denied.
+See 'docker run --help'.
+ubuntu@ip-172-31-41-173:~$ sudo docker run -d -p 8080:80 nginx
+fdb74f2d26882da59b126d91d4297009fdf2224e7166ddb08a269fb5f91b5499
+ubuntu@ip-172-31-41-173:~$ curl localhost:8080
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+ubuntu@ip-172-31-41-173:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+8080                       ALLOW       Anywhere
+OpenSSH                    ALLOW       Anywhere
+8080 (v6)                  ALLOW       Anywhere (v6)
+OpenSSH (v6)               ALLOW       Anywhere (v6)
+
+ubuntu@ip-172-31-41-173:~$ sudo ufw allow 8080
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+ubuntu@ip-172-31-41-173:~$ sudo ufw allow 8090
+Rule added
+Rule added (v6)
+ubuntu@ip-172-31-41-173:~$ sudo ufw status
+Status: active
+
+To                         Action      From
+--                         ------      ----
+8080                       ALLOW       Anywhere
+OpenSSH                    ALLOW       Anywhere
+8090                       ALLOW       Anywhere
+8080 (v6)                  ALLOW       Anywhere (v6)
+OpenSSH (v6)               ALLOW       Anywhere (v6)
+8090 (v6)                  ALLOW       Anywhere (v6)
+
+ubuntu@ip-172-31-41-173:~$
+
+
+Created Jenkins Job and confugiration:-
+
+-> creating docker-build-and-push pipline 
+   configure below:-
+   Poll SCM schedule:-  * * * * *
+   Pipeline --> Git, 
+   Global Tool Configuration :-
+   Java:- JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
+   Git:- Default=git
+   maven:- MAVEN_HOME=/usr/share/maven
+
+
+
+ Created/Updated Git project Jenkinsfile file
+ Git URL:- https://github.com/rgurnule/maven-project
+
+ pipeline {
+    agent any
+    tools {
+        jdk 'JAVA_HOME'
+        maven 'MAVEN_HOME'
+    }
+    stages{
+        stage('Maven-Build'){
+            steps {
+                 echo "Starting"
+                 sh 'mvn clean package'
+               }
+          }
+        stage('Docker-Build'){
+            steps {
+                sh "docker build -t webapp:${env.BUILD_ID} ."
+            }
+        }
+        stage('Tagging-Docker-Image'){
+            steps {
+                sh 'docker login -u srahulgurnule -p Google@123#'
+                sh "docker tag webapp:${env.BUILD_ID} srahulgurnule/webapp:${env.BUILD_ID}"
+		
+            }
+        }
+        stage('Pushing-Image-to-DockerHub'){
+            steps {
+                sh 'echo Pushed'
+		sh "docker push srahulgurnule/webapp:${env.BUILD_ID}"        
+            }
+        }
+    }
+}   
+
+
+Build will start and  image will push to docker hub
+
+ubuntu@ip-172-31-41-173:/usr/lib/jvm/java-8-openjdk-amd64/jre$ java -version
+openjdk version "1.8.0_222"
+OpenJDK Runtime Environment (build 1.8.0_222-8u222-b10-1ubuntu1~18.04.1-b10)
+OpenJDK 64-Bit Server VM (build 25.222-b10, mixed mode)
+ubuntu@ip-172-31-41-173:/usr/lib/jvm/java-8-openjdk-amd64/jre$ ls -ltr
+total 164
+-rw-r--r-- 1 root root 147535 Jul 18 18:52 THIRD_PARTY_README
+-rw-r--r-- 1 root root   1522 Jul 18 18:52 ASSEMBLY_EXCEPTION
+drwxr-xr-x 4 root root   4096 Nov 20 13:31 man
+drwxr-xr-x 8 root root   4096 Nov 20 13:31 lib
+drwxr-xr-x 2 root root   4096 Nov 21 07:27 bin
+ubuntu@ip-172-31-41-173:/usr/lib/jvm/java-8-openjdk-amd64/jre$ cd ../..
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ ls -ltr
+total 8
+lrwxrwxrwx 1 root root   25 Feb 20  2019 default-java -> java-1.11.0-openjdk-amd64
+lrwxrwxrwx 1 root root   21 Jul 18 18:21 java-1.11.0-openjdk-amd64 -> java-11-openjdk-amd64
+lrwxrwxrwx 1 root root   20 Jul 18 18:52 java-1.8.0-openjdk-amd64 -> java-8-openjdk-amd64
+drwxr-xr-x 7 root root 4096 Nov 20 13:30 java-11-openjdk-amd64
+drwxr-xr-x 7 root root 4096 Nov 21 07:27 java-8-openjdk-amd64
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ date
+Thu Nov 21 07:27:59 UTC 2019
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ pwd
+/usr/lib/jvm
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ sudo chmod 777 /var/run/docker.sock
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ ls -ltr /var/run/docker.sock
+srwxrwxrwx 1 root docker 0 Nov 21 06:15 /var/run/docker.sock
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 7                   7ca45ae850c4        8 minutes ago       356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        8 minutes ago       356MB
+webapp                 6                   91cccf6445fc        10 minutes ago      356MB
+srahulgurnule/webapp   6                   91cccf6445fc        10 minutes ago      356MB
+webapp                 5                   336945de93e2        13 minutes ago      356MB
+srahulgurnule/webapp   5                   336945de93e2        13 minutes ago      356MB
+webapp                 4                   0e749a52b8db        16 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: srahulgurnule
+Password:
+WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+srahulgurnule/webapp   7                   7ca45ae850c4        9 minutes ago       356MB
+webapp                 7                   7ca45ae850c4        9 minutes ago       356MB
+srahulgurnule/webapp   6                   91cccf6445fc        11 minutes ago      356MB
+webapp                 6                   91cccf6445fc        11 minutes ago      356MB
+webapp                 5                   336945de93e2        14 minutes ago      356MB
+srahulgurnule/webapp   5                   336945de93e2        14 minutes ago      356MB
+webapp                 4                   0e749a52b8db        18 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/webappp:7
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push webappp:7
+The push refers to repository [docker.io/library/webappp]
+An image does not exist locally with the tag: webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push docker.io/srahulgurnule/webappp:srahulgurnule/webapp:7
+invalid reference format
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push docker.io/srahulgurnule/webappp:srahulgurnule/webapp
+invalid reference format
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push docker.io/srahulgurnule/webappp:7
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push docker.io/srahulgurnule/webappp:latest
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 8                   a4f9d89be29b        2 minutes ago       356MB
+srahulgurnule/webapp   8                   a4f9d89be29b        2 minutes ago       356MB
+webapp                 7                   7ca45ae850c4        19 minutes ago      356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        19 minutes ago      356MB
+webapp                 6                   91cccf6445fc        21 minutes ago      356MB
+srahulgurnule/webapp   6                   91cccf6445fc        21 minutes ago      356MB
+srahulgurnule/webapp   5                   336945de93e2        24 minutes ago      356MB
+webapp                 5                   336945de93e2        24 minutes ago      356MB
+webapp                 4                   0e749a52b8db        28 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$  docker image rm webapp:4
+Untagged: webapp:4
+Deleted: sha256:0e749a52b8dbd67f9885a767d78dc7ee43d68d0e00e67e9879e2f801f965f216
+Deleted: sha256:1f294de70d5e2928e799abc84d6aa23a569a7b6f1f5a8118e14d32e761a2a80d
+Deleted: sha256:9c26dce1c830375a1aa37ade4b6e7074eb6dab860e1c89b470c139f823d28fd4
+Deleted: sha256:4f9c76f6866f83e248fba561afe15d95c8d38489c287289fc37ebb6c31f5840c
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 8                   a4f9d89be29b        3 minutes ago       356MB
+srahulgurnule/webapp   8                   a4f9d89be29b        3 minutes ago       356MB
+webapp                 7                   7ca45ae850c4        20 minutes ago      356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        20 minutes ago      356MB
+webapp                 6                   91cccf6445fc        22 minutes ago      356MB
+srahulgurnule/webapp   6                   91cccf6445fc        22 minutes ago      356MB
+srahulgurnule/webapp   5                   336945de93e2        25 minutes ago      356MB
+webapp                 5                   336945de93e2        25 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:5
+Untagged: webapp:5
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:6
+Untagged: webapp:6
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 8                   a4f9d89be29b        3 minutes ago       356MB
+srahulgurnule/webapp   8                   a4f9d89be29b        3 minutes ago       356MB
+webapp                 7                   7ca45ae850c4        20 minutes ago      356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        20 minutes ago      356MB
+srahulgurnule/webapp   6                   91cccf6445fc        22 minutes ago      356MB
+srahulgurnule/webapp   5                   336945de93e2        25 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm srahulgurnule/webapp:6
+Untagged: srahulgurnule/webapp:6
+Deleted: sha256:91cccf6445fcb0f30f995dd022dbc38112677a97664740fc9c87f03ea543fbe1
+Deleted: sha256:ecc5910cc6fa1cf10d66fb378c3a749c3507c2a72b20f6c204992c457b619935
+Deleted: sha256:4532de86e9b2b8cf40da3a6a4773a176b4b347f45228997306571ae4ef5243c6
+Deleted: sha256:6bd7530544e585b5abfdd3524eb2dd0c84f460d596266292acfb14692a85143b
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm srahulgurnule/webapp:5
+Untagged: srahulgurnule/webapp:5
+Deleted: sha256:336945de93e251be618323d7a5e51100448372cbbd74096638c193ce33728d2a
+Deleted: sha256:a6c542d0d1281e692703aa3e003f4bd509176af7e459cb328e25362f2f492cd3
+Deleted: sha256:87c4824a907551205d4a57b1f89e9f3e1ff033528f42f05939b1cc262043f3b2
+Deleted: sha256:a44f1a3669dfc1435486537ba334535cffd7f2b157aa0010652e04c78f30b5b2
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 8                   a4f9d89be29b        4 minutes ago       356MB
+srahulgurnule/webapp   8                   a4f9d89be29b        4 minutes ago       356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        21 minutes ago      356MB
+webapp                 7                   7ca45ae850c4        21 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker tag webapp:8 srahulgurnule/webapp:latest
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 8                   a4f9d89be29b        6 minutes ago       356MB
+srahulgurnule/webapp   8                   a4f9d89be29b        6 minutes ago       356MB
+srahulgurnule/webapp   latest              a4f9d89be29b        6 minutes ago       356MB
+webapp                 7                   7ca45ae850c4        23 minutes ago      356MB
+srahulgurnule/webapp   7                   7ca45ae850c4        23 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push docker.io/srahulgurnule/webappp:latest
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/webappp:latest
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ sudo docker push srahulgurnule/webappp:latest
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker login
+Authenticating with existing credentials...
+WARNING! Your password will be stored unencrypted in /home/ubuntu/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+webapp                  11                  1a27003f8593        2 minutes ago       356MB
+srahulgurnule/webapp    11                  1a27003f8593        2 minutes ago       356MB
+webapp                  10                  cc97c3e6e3cc        4 minutes ago       356MB
+satyendrasingh/webapp   10                  cc97c3e6e3cc        4 minutes ago       356MB
+webapp                  9                   e5d77b35d47d        7 minutes ago       356MB
+webapp                  8                   a4f9d89be29b        19 minutes ago      356MB
+srahulgurnule/webapp    8                   a4f9d89be29b        19 minutes ago      356MB
+srahulgurnule/webapp    latest              a4f9d89be29b        19 minutes ago      356MB
+webapp                  7                   7ca45ae850c4        36 minutes ago      356MB
+srahulgurnule/webapp    7                   7ca45ae850c4        36 minutes ago      356MB
+nginx                   latest              540a289bab6c        4 weeks ago         126MB
+tomcat                  latest              882487b8be1d        4 weeks ago         507MB
+tomcat                  8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm srahulgurnule/webapp:7
+Untagged: srahulgurnule/webapp:7
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm srahulgurnule/webapp:8
+Untagged: srahulgurnule/webapp:8
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm srahulgurnule/webapp:9
+Error: No such image: srahulgurnule/webapp:9
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:9
+Untagged: webapp:9
+Deleted: sha256:e5d77b35d47df1dfa255a89952c7a6eaa3d387a10d193e494bf3bf8d82760499
+Deleted: sha256:2c7772737a64841fd0602511b68a1ed543dddc74bb8dac7a330bb56f89049adf
+Deleted: sha256:9f42a41da7b281c905c68f1feae7e8928344a55260f647878969a65132e51608
+Deleted: sha256:8d2f1b660c966564f9eed709bc53fa0f8cee18b2d6fc960e105b5f67b65d6f61
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:8
+Untagged: webapp:8
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:7
+Untagged: webapp:7
+Deleted: sha256:7ca45ae850c479bc0cf8a57d7844cfe03563a9975cb728210faa6d83f67b8386
+Deleted: sha256:1c8ad4e2dd155d72fb83e3a37d0b50f2beda122804924bbb218f0780b5bf633d
+Deleted: sha256:9cd576b5ce3de86b747540c50732e2e580230616c724cc4c26a93d1aa77128cd
+Deleted: sha256:38bc41fcdd2ad639ac7ff57ca16282624b727ccb59157fa4e26b72e25068520a
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+webapp                  11                  1a27003f8593        3 minutes ago       356MB
+srahulgurnule/webapp    11                  1a27003f8593        3 minutes ago       356MB
+webapp                  10                  cc97c3e6e3cc        5 minutes ago       356MB
+satyendrasingh/webapp   10                  cc97c3e6e3cc        5 minutes ago       356MB
+srahulgurnule/webapp    latest              a4f9d89be29b        20 minutes ago      356MB
+nginx                   latest              540a289bab6c        4 weeks ago         126MB
+tomcat                  latest              882487b8be1d        4 weeks ago         507MB
+tomcat                  8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm satyendrasingh/webapp:10
+Untagged: satyendrasingh/webapp:10
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker image rm webapp:10
+Untagged: webapp:10
+Deleted: sha256:cc97c3e6e3cc1ba33bb87c099c6a5b81105f70554623c29d993d7a51124cf9a7
+Deleted: sha256:ebe27753b432822534626dc4deed2346e587d11cbfbfbb5c8bf3c8138d376714
+Deleted: sha256:28caa224647a8f3dad274da8d2474c71678289282074c914909750017b05e469
+Deleted: sha256:8bb123dbc250c4c522f6d640abc2980219ae7150ca3e7deeb9cac526c0e734bb
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+srahulgurnule/webapp   11                  1a27003f8593        3 minutes ago       356MB
+webapp                 11                  1a27003f8593        3 minutes ago       356MB
+srahulgurnule/webapp   latest              a4f9d89be29b        20 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/webappp:11
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/tomcat:latest
+The push refers to repository [docker.io/srahulgurnule/tomcat]
+An image does not exist locally with the tag: srahulgurnule/tomcat
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push tomcat:latest
+The push refers to repository [docker.io/library/tomcat]
+65e5e74a1404: Layer already exists
+38d8d468142f: Layer already exists
+08579474bb30: Layer already exists
+a8902d6047fe: Layer already exists
+99557920a7c5: Layer already exists
+7e3c900343d0: Layer already exists
+b8f8aeff56a8: Layer already exists
+687890749166: Layer already exists
+2f77733e9824: Layer already exists
+97041f29baff: Layer already exists
+errors:
+denied: requested access to the resource is denied
+unauthorized: authentication required
+
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push webappp:11
+The push refers to repository [docker.io/library/webappp]
+An image does not exist locally with the tag: webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker tag tomcat:8.0 srahulgurnule/
+Error parsing reference: "srahulgurnule/" is not a valid repository/tag: invalid reference format
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker tag tomcat:8.0 srahulgurnule/tomcat:latest
+
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 11                  1a27003f8593        25 minutes ago      356MB
+srahulgurnule/webapp   11                  1a27003f8593        25 minutes ago      356MB
+srahulgurnule/webapp   latest              a4f9d89be29b        42 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+srahulgurnule/tomcat   latest              ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/tomcat:latest
+The push refers to repository [docker.io/srahulgurnule/tomcat]
+d0f3f4011f28: Mounted from library/tomcat
+583dc95d65c9: Mounted from library/tomcat
+f26731984f9b: Mounted from library/tomcat
+9f052711b40a: Mounted from library/tomcat
+81242e1e644e: Mounted from library/tomcat
+39a6e47c4ae6: Mounted from library/tomcat
+fc6174f0df4a: Mounted from library/tomcat
+425325c72d90: Mounted from library/tomcat
+c596d5191368: Mounted from library/tomcat
+daf45b2cad9a: Mounted from library/tomcat
+8c466bf4ca6f: Mounted from library/tomcat
+latest: digest: sha256:47274bc304687e21217ca6a33e3244c43c6d5cfaceade76c4b478023f2aca3b2 size: 2625
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 12                  1af4dbe2e47e        7 minutes ago       356MB
+srahulgurnule/webapp   12                  1af4dbe2e47e        7 minutes ago       356MB
+webapp                 11                  1a27003f8593        35 minutes ago      356MB
+srahulgurnule/webapp   11                  1a27003f8593        35 minutes ago      356MB
+srahulgurnule/webapp   latest              a4f9d89be29b        About an hour ago   356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+srahulgurnule/tomcat   latest              ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker tag webapp:12 srahulgurnule/webapp:12
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 12                  1af4dbe2e47e        7 minutes ago       356MB
+srahulgurnule/webapp   12                  1af4dbe2e47e        7 minutes ago       356MB
+webapp                 11                  1a27003f8593        36 minutes ago      356MB
+srahulgurnule/webapp   11                  1a27003f8593        36 minutes ago      356MB
+srahulgurnule/webapp   latest              a4f9d89be29b        About an hour ago   356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+srahulgurnule/tomcat   latest              ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/webappp:12
+The push refers to repository [docker.io/srahulgurnule/webappp]
+An image does not exist locally with the tag: srahulgurnule/webappp
+ubuntu@ip-172-31-41-173:/usr/lib/jvm$ docker push srahulgurnule/webapp:12
+The push refers to repository [docker.io/srahulgurnule/webapp]
+491b59f57dfa: Pushed
+d0f3f4011f28: Layer already exists
+583dc95d65c9: Layer already exists
+f26731984f9b: Layer already exists
+9f052711b40a: Layer already exists
+81242e1e644e: Layer already exists
+39a6e47c4ae6: Layer already exists
+fc6174f0df4a: Layer already exists
+425325c72d90: Layer already exists
+c596d5191368: Layer already exists
+daf45b2cad9a: Layer already exists
+8c466bf4ca6f: Layer already exists
+12: digest: sha256:a434a94ecc1ea967e8f76e7d6cd0bca987c3f7d81eb2afe726fac2d5e69462a2 size: 2833
+
+ubuntu@ip-172-31-41-173:/usr/lib/jvm/java-8-openjdk-amd64/jre$ docker images
+REPOSITORY             TAG                 IMAGE ID            CREATED             SIZE
+webapp                 13                  e884e4b049ff        17 minutes ago      356MB
+srahulgurnule/webapp   13                  e884e4b049ff        17 minutes ago      356MB
+nginx                  latest              540a289bab6c        4 weeks ago         126MB
+tomcat                 latest              882487b8be1d        4 weeks ago         507MB
+tomcat                 8.0                 ef6a7c98d192        14 months ago       356MB
+srahulgurnule/tomcat   latest              ef6a7c98d192        14 months ago       356MB
+ubuntu@ip-172-31-41-173:/usr/lib/jvm/java-8-openjdk-amd64/jre$
+
+
+We can check pushed image on https://hub.docker.com/repository/docker/srahulgurnule/webapp path
