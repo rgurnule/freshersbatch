@@ -22,7 +22,7 @@ Step1:-  I am using KataKoda for doing this assignment so that i dont need to cr
 
 First check if both the kubernets nodes are running and ready to use.
 
-master $	
+master $	kubectl get nodes	
 NAME     STATUS   ROLES    AGE   VERSION
 master   Ready    master   59m   v1.14.0
 node01   Ready    <none>   58m   v1.14.0
