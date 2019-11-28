@@ -1,0 +1,284 @@
+Learning Objectives:-
+Perform a rolling update of the container version
+Roll back to the previous working state
+
+
+Problem Statement:-
+Your company's developers have just finished developing a new version of their candy-themed mobile game. They are ready to update the backend services that are running in your Kubernetes cluster. There is a deployment in the cluster managing the replicas for this application. The deployment is called candy-deployment. You have been asked to update the image for the container named candy-ws in this deployment template to a new version, linuxacademycontent/candy-service:3.
+
+After you have updated the image using a rolling update, check on the status of the update to make sure it is working. If it is not working, perform a rollback to the previous state.
+
+=============================================================================================================================================================
+
+Step1:- Create candy-deployment.yml file for deployment
+
+candy-deployment.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: candy-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: candy-deployment-app
+  template:
+    metadata:
+      labels:
+        app: candy-deployment-app
+    spec:
+      containers:
+      - name: candy-ws
+        image: linuxacademycontent/candy-service:3
+
+
+
+
+master $ kubectl get nodes
+NAME     STATUS   ROLES    AGE   VERSION
+master   Ready    master   68m   v1.14.0
+node01   Ready    <none>   67m   v1.14.0
+master $ pwd
+/root
+master $ vi candy-deployment.yml
+master $ kubectl apply -f candy-deployment.yml
+The Deployment "candy-deployment" is invalid: spec.template.metadata.labels: Invalid value: map[string]string(nil): `selector` does not match template `labels`
+master $ vi candy-deployment.yml
+master $ kubectl apply -f candy-deployment.yml
+deployment.apps/candy-deployment created
+
+master $ kubectl get pods
+NAME                                READY   STATUS         RESTARTS   AGE
+candy-deployment-69975549f5-542hd   0/1     ErrImagePull   0          47s
+candy-deployment-69975549f5-648qz   0/1     ErrImagePull   0          47s
+candy-deployment-69975549f5-7xr8t   0/1     ErrImagePull   0          47s
+candy-deployment-69975549f5-mv5k6   0/1     ErrImagePull   0          47s
+candy-deployment-69975549f5-wkkfc   0/1     ErrImagePull   0          47s
+
+master $ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+candy-deployment   0/5     5            0           63s
+
+master $ kubectl describe candy-deployment
+error: the server doesn't have a resource type "candy-deployment"
+master $ kubectl describe e candy-deployment
+endpoints             events                events.events.k8s.io
+master $ kubectl describe deployments candy-deployment
+Name:                   candy-deployment
+Namespace:              default
+CreationTimestamp:      Wed, 27 Nov 2019 12:54:33 +0000
+Labels:                 <none>
+Annotations:            deployment.kubernetes.io/revision: 1
+                        kubectl.kubernetes.io/last-applied-configuration:
+                          {"apiVersion":"apps/v1","kind":"Deployment","metadata":{"annotations":{},"name":"candy-deployment","namespace":"default"},"spec":{"replica...
+Selector:               app=candy-deployment-app
+Replicas:               5 desired | 5 updated | 5 total | 0 available | 5 unavailable
+StrategyType:           RollingUpdate
+MinReadySeconds:        0
+RollingUpdateStrategy:  25% max unavailable, 25% max surge
+Pod Template:
+  Labels:  app=candy-deployment-app
+  Containers:
+   candy-ws:
+    Image:        linuxacademycontent/candy-service:3
+    Port:         <none>
+    Host Port:    <none>
+    Environment:  <none>
+    Mounts:       <none>
+  Volumes:        <none>
+Conditions:
+  Type           Status  Reason
+  ----           ------  ------
+  Available      False   MinimumReplicasUnavailable
+  Progressing    True    ReplicaSetUpdated
+OldReplicaSets:  <none>
+NewReplicaSet:   candy-deployment-69975549f5 (5/5 replicas created)
+Events:
+  Type    Reason             Age   From                   Message
+  ----    ------             ----  ----                   -------
+  Normal  ScalingReplicaSet  116s  deployment-controller  Scaled up replica set candy-deployment-69975549f5 to 5
+
+master $ kubectl describe pod candy-deployment-69975549f5-542hd
+Name:               candy-deployment-69975549f5-542hd
+Namespace:          default
+Priority:           0
+PriorityClassName:  <none>
+Node:               node01/172.17.0.96
+Start Time:         Wed, 27 Nov 2019 12:54:34 +0000
+Labels:             app=candy-deployment-app
+                    pod-template-hash=69975549f5
+Annotations:        <none>
+Status:             Pending
+IP:                 10.32.0.3
+Controlled By:      ReplicaSet/candy-deployment-69975549f5
+Containers:
+  candy-ws:
+    Container ID:
+    Image:          linuxacademycontent/candy-service:3
+    Image ID:
+    Port:           <none>
+    Host Port:      <none>
+    State:          Waiting
+      Reason:       ImagePullBackOff
+    Ready:          False
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-b7twh (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             False
+  ContainersReady   False
+  PodScheduled      True
+Volumes:
+  default-token-b7twh:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-b7twh
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type     Reason     Age                  From               Message
+  ----     ------     ----                 ----               -------
+  Normal   Scheduled  3m8s                 default-scheduler  Successfully assigned default/candy-deployment-69975549f5-542hd to node01
+  Normal   Pulling    90s (x4 over 2m59s)  kubelet, node01    Pulling image "linuxacademycontent/candy-service:3"
+  Warning  Failed     89s (x4 over 2m57s)  kubelet, node01    Failed to pull image "linuxacademycontent/candy-service:3": rpc error: code = Unknown desc = Error response from daemon: manifest for linuxacademycontent/candy-service:3 not found
+  Warning  Failed     89s (x4 over 2m57s)  kubelet, node01    Error: ErrImagePull
+  Normal   BackOff    75s (x6 over 2m56s)  kubelet, node01    Back-off pulling image "linuxacademycontent/candy-service:3"
+  Warning  Failed     62s (x7 over 2m56s)  kubelet, node01    Error: ImagePullBackOff
+master $
+
+ABOVE image pulling  linuxacademycontent/candy-service:3 failed hence updated image to 1 and then 2
+
+
+master $ kubectl delete pods --all
+pod "candy-deployment-69975549f5-542hd" deleted
+pod "candy-deployment-69975549f5-648qz" deleted
+pod "candy-deployment-69975549f5-7xr8t" deleted
+pod "candy-deployment-69975549f5-mv5k6" deleted
+pod "candy-deployment-69975549f5-wkkfc" deleted
+master $ kubectl delete deployments --all
+deployment.extensions "candy-deployment" deleted
+master $ ls
+candy-deployment.yml  go
+
+Step2:- ==> Update linuxacademycontent/candy-service:1 and linuxacademycontent/candy-service:2 in yaml file.
+
+master $ vi candy-deployment.yml
+master $ kubectl apply -f candy-deployment.yml
+deployment.apps/candy-deployment created
+master $ kubectl get pods
+NAME                                READY   STATUS              RESTARTS   AGE
+candy-deployment-5b4fb846cc-7rnc4   0/1     ContainerCreating   0          9s
+candy-deployment-5b4fb846cc-d9tl2   0/1     ContainerCreating   0          9s
+candy-deployment-5b4fb846cc-grhcg   0/1     ContainerCreating   0          9s
+candy-deployment-5b4fb846cc-l9c2d   0/1     ContainerCreating   0          9s
+candy-deployment-5b4fb846cc-vpmpn   0/1     ContainerCreating   0          9s
+master $ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+candy-deployment   5/5     5            5           19s
+master $ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+candy-deployment-5b4fb846cc-7rnc4   1/1     Running   0          22s
+candy-deployment-5b4fb846cc-d9tl2   1/1     Running   0          22s
+candy-deployment-5b4fb846cc-grhcg   1/1     Running   0          22s
+candy-deployment-5b4fb846cc-l9c2d   1/1     Running   0          22s
+candy-deployment-5b4fb846cc-vpmpn   1/1     Running   0          22s
+master $
+
+
+
+master $ vi candy-deployment.yml
+master $ kubectl apply -f candy-deployment.yml
+deployment.apps/candy-deployment configured
+master $ kubectl get pods
+NAME                                READY   STATUS              RESTARTS   AGE
+candy-deployment-586dfcf966-2nsqg   0/1     ContainerCreating   0          5s
+candy-deployment-586dfcf966-2r8q2   0/1     ContainerCreating   0          5s
+candy-deployment-586dfcf966-kmlvd   0/1     ContainerCreating   0          5s
+candy-deployment-5b4fb846cc-7rnc4   1/1     Running             0          2m50s
+candy-deployment-5b4fb846cc-d9tl2   0/1     Terminating         0          2m50s
+candy-deployment-5b4fb846cc-grhcg   1/1     Running             0          2m50s
+candy-deployment-5b4fb846cc-l9c2d   1/1     Running             0          2m50s
+candy-deployment-5b4fb846cc-vpmpn   1/1     Running             0          2m50s
+master $ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+candy-deployment   5/5     5            5           3m5s
+master $ kubectl get pods
+NAME                                READY   STATUS        RESTARTS   AGE
+candy-deployment-586dfcf966-2nsqg   1/1     Running       0          25s
+candy-deployment-586dfcf966-2r8q2   1/1     Running       0          25s
+candy-deployment-586dfcf966-4x8zf   1/1     Running       0          11s
+candy-deployment-586dfcf966-d7lm7   1/1     Running       0          13s
+candy-deployment-586dfcf966-kmlvd   1/1     Running       0          25s
+candy-deployment-5b4fb846cc-grhcg   0/1     Terminating   0          3m10s
+candy-deployment-5b4fb846cc-l9c2d   0/1     Terminating   0          3m10s
+candy-deployment-5b4fb846cc-vpmpn   0/1     Terminating   0          3m10s
+master $
+
+master $ kubectl get deployments
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+candy-deployment   5/5     5            5           82s
+master $ kubectl get pods
+NAME                                READY   STATUS    RESTARTS   AGE
+candy-deployment-586dfcf966-6gwtx   1/1     Running   0          33s
+candy-deployment-586dfcf966-dvnpl   1/1     Running   0          40s
+candy-deployment-586dfcf966-fllxm   1/1     Running   0          40s
+candy-deployment-586dfcf966-ft56f   1/1     Running   0          32s
+candy-deployment-586dfcf966-qzw76   1/1     Running   0          40s
+master $
+
+Step3:- Check rolling history and roll back to the previous working state
+
+master $ kubectl rollout history candy-deployment
+error: the server doesn't have a resource type "candy-deployment"
+master $ kubectl rollout history deployment/candy-deployment
+deployment.extensions/candy-deployment
+REVISION  CHANGE-CAUSE
+1         <none>
+2         <none>
+
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:3
+deployment.extensions/candy-deployment image updated
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:2
+deployment.extensions/candy-deployment image updated
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:1
+deployment.extensions/candy-deployment image updated
+master $ kubectl rollout history deployment/candy-deployment
+deployment.extensions/candy-deployment
+REVISION  CHANGE-CAUSE
+3         <none>
+4         <none>
+5         <none>
+
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:3 --record=true
+deployment.extensions/candy-deployment image updated
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:2 --record=true
+deployment.extensions/candy-deployment image updated
+master $ kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:1 --record=true
+deployment.extensions/candy-deployment image updated
+master $ kubectl rollout history deployment/candy-deployment
+deployment.extensions/candy-deployment
+REVISION  CHANGE-CAUSE
+6         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:3 --record=true
+7         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:2 --record=true
+8         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:1 --record=true
+
+master $ kubectl rollout undo deployment/candy-deployment --to-revision=2
+error: unable to find specified revision 2 in history
+master $ kubectl rollout undo deployment/candy-deployment --to-revision=7
+deployment.extensions/candy-deployment rolled back
+master $ kubectl rollout history deployment/candy-deployment
+deployment.extensions/candy-deployment
+REVISION  CHANGE-CAUSE
+6         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:3 --record=true
+8         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:1 --record=true
+9         kubectl set image deployment/candy-deployment candy-ws=linuxacademycontent/candy-service:2 --record=true
+
+master $
+
+

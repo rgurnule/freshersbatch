@@ -1,0 +1,456 @@
+Learning Objectives:-
+Create a ConfigMap containing the configuration for the HAProxy ambassador.
+Create a multi-container pod which provides access to the legacy service on port 80
+
+Problem Statement:-
+Your supermarket company is in the process of moving their infrastructure to a Kubernetes platform in the cloud. This is sometimes challenging, because some of the older, legacy portions of that infrastructure have non-standard requirements. One of these legacy applications is a web service that provides a list of the various types of fruit the company sells in its stores.
+
+This service has already been packaged into a container image, but there is one special requirement: The legacy app is hard-coded to only serve content on port 8775, but the team wants to be able to access the service using the standard port 80. Your task is to build a Kubernetes pod that runs this legacy container and uses the ambassador design pattern to expose access to the service on port 80.
+
+This setup will need to meet the following specifications:-
+
+1. The pod should have the name fruit-service.
+2. The fruit-service pod should have a container that runs the legacy fruit service image: linuxacademycontent/legacy-fruit-service:1.
+3. The fruit-service pod should have an ambassador container that runs the haproxy:1.7 image and proxies incoming traffic on port 80 to the legacy service on port 8775 (the HAProxy configuration for this is provided below).
+4. Port 80 should be exposed as a containerPort. Note that you do not need to expose port 8775.
+5. The HAProxy configuration should be stored in a ConfigMap called fruit-service-ambassador-config.
+6. The HAProxy config should be provided to the ambassador container using a volume mount that places the data from the ConfigMap in a file at /usr/local/etc/haproxy/haproxy.cfg.
+7. haproxy.cfg should contain the following configuration data:-
+
+global
+    daemon
+    maxconn 256
+
+defaults
+    mode http
+    timeout connect 5000ms
+    timeout client 50000ms
+    timeout server 50000ms
+
+listen http-in
+    bind *:80
+    server server1 127.0.0.1:8775 maxconn 32
+
+
+Once your pod is up and running, it's a good idea to test it to make sure you can access the service from within the cluster using port 80. In order to do this, you can create a busybox pod in the cluster, and then run a command to attempt to access the service from within the busybox pod.
+
+
+Create a descriptor for the busybox pod called busybox.yml.
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - name: myapp-container
+    image: radial/busyboxplus:curl
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+
+
+Create the busybox testing pod.
+
+kubectl apply -f busybox.yml
+Use this command to access fruit-service using port 80 from within the busybox pod.
+
+kubectl exec busybox -- curl $(kubectl get pod fruit-service -o=custom-columns=IP:.status.podIP --no-headers):80
+If the service is working, you should see some JSON listing various types of fruit.
+
+
+=============================================================================================================================================================
+
+Step1:- Setup  master and minion nodes first and then create haproxy.cfg config file.
+
+master $ kubectl get pods
+No resources found.
+master $ kubectl get nodes
+NAME     STATUS   ROLES    AGE   VERSION
+master   Ready    master   45m   v1.14.0
+node01   Ready    <none>   44m   v1.14.0
+
+Step2:- Creating Config map with given configuration  data for our service.
+
+master $ vi fruit-service-ambassador-config.yml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fruit-service-ambassador-config
+data:
+  config: |
+    global
+        daemon
+        maxconn 256
+
+    defaults
+        mode http
+        timeout connect 5000ms
+        timeout client 50000ms
+        timeout server 50000ms
+
+    listen http-in
+        bind *:80
+        server server1 127.0.0.1:8775 maxconn 32 
+
+
+master $ vi fruit-service-ambassador-config.yml
+master $ ls
+fruit-service-ambassador-config.yml
+master $ kubectl apply -f fruit-service-ambassador-config.yml
+configmap/fruit-service-ambassador-config created
+master $ kubectl get configmaps
+NAME                              DATA   AGE
+fruit-service-ambassador-config   1      15s
+master $
+
+
+Step3:- Creating fruit-service pod with given configuration
+
+
+master $ vi fruit-service.yml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: fruit-service
+  labels:
+    app: fruit-service-app
+spec:
+  containers:
+  - name: legacy-fruit-service
+    image: linuxacademycontent/legacy-fruit-service:1
+  - name: ambassador-service
+    image: haproxy:1.7
+    command: ["sh","-c","while true; do sleep 30; done;"]	
+    ports:
+    - containerPort: 80
+    volumeMounts:
+    - name: fruit-service-ambassador-config
+      mountPath: /usr/local/etc/haproxy/
+  volumes:
+    - name: fruit-service-ambassador-config
+      configMap:
+        name: fruit-service-ambassador-config
+        items:
+	- key: config
+	  path: haproxy.cfg 
+  restartPolicy: Never
+
+master $ kubectl apply -f  fruit-service.yml
+pod/fruit-service created
+
+
+master $ kubectl get pods
+NAME            READY   STATUS    RESTARTS   AGE
+fruit-service   2/2     Running   0          41s
+
+master $ kubectl get pods -o wide
+NAME            READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINATED NODE   READINESS GATES
+fruit-service   2/2     Running   0          77s   10.44.0.1   node01   <none>           <none>
+master $
+
+master $ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.96.0.1    <none>        443/TCP   54m
+master $
+
+
+Step 5:-  Pod fruit-service is up and running now creating busybox pod for testing.
+
+master $ vi busybox.yml
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: busybox
+spec:
+  containers:
+  - name: myapp-container
+    image: radial/busyboxplus:curl
+    command: ['sh', '-c', 'while true; do sleep 3600; done']
+
+
+
+master $ vi busybox.yml
+master $ kubectl apply -f busybox.yml
+pod/busybox created
+
+master $ kubectl get pods
+NAME            READY   STATUS    RESTARTS   AGE
+busybox         1/1     Running   0          9s
+fruit-service   2/2     Running   0          2m26s
+
+master $ kubectl get pods -o wide
+NAME            READY   STATUS    RESTARTS   AGE     IP          NODE     NOMINATED NODE   READINESS GATES
+busybox         1/1     Running   0          17s     10.44.0.2   node01   <none>           <none>
+fruit-service   2/2     Running   0          2m34s   10.44.0.1   node01   <none>           <none>
+master $
+
+Checking containers are running on cluster.
+
+node01 $ docker container ls -l
+CONTAINER ID        IMAGE                                                                                        COMMAND                  CREATED             STATUS              PORTS               NAMES
+548e655ad9d3        radial/busyboxplus@sha256:a68c05ab1112fd90ad7b14985a48520e9d26dbbe00cb9c09aa79fdc0ef46b372   "sh -c'while true..."   56 seconds ago      Up 54 seconds                           k8s_myapp-container_busybox_default_50a6a4de-1124-11ea-866f-0242ac110046_0
+
+node01 $ docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED              STATUS              PORTS               NAMES
+548e655ad9d3        radial/busyboxplus@sha256:a68c05ab1112fd90ad7b14985a48520e9d26dbbe00cb9c09aa79fdc0ef46b372               "sh -c 'while true..."   About a minute ago   Up About a minute                       k8s_myapp-container_busybox_default_50a6a4de-1124-11ea-866f-0242ac110046_0
+6e9b1e4ccce0        k8s.gcr.io/pause:3.1               "/pause"                 About a minute ago   Up About a minute                       k8s_POD_busybox_default_50a6a4de-1124-11ea-866f-0242ac110046_0
+1338198b5fbc        haproxy@sha256:035ca7c4b0815fe5c8ca0774a84f7cfc0b8b62a0b17e59c1eb19998c5a5731d2               "sh -c 'while true..."   3 minutes ago        Up 3 minutes                            k8s_ambassador-service_fruit-service_default_feaca0f0-1123-11ea-866f-0242ac110046_0
+9ef29501ad1b        linuxacademycontent/legacy-fruit-service@sha256:207ac67a8c26b619fdd591e7dc504541e4f026f1975626b16b525e65d34e8347   "nginx -g 'daemon ..."   3 minutes ago        Up 3 minutes                            k8s_legacy-fruit-service_fruit-service_default_feaca0f0-1123-11ea-866f-0242ac110046_0
+848d8e745ed9        k8s.gcr.io/pause:3.1               "/pause"                 3 minutes ago        Up 3 minutes                            k8s_POD_fruit-service_default_feaca0f0-1123-11ea-866f-0242ac110046_0
+6054b0f9e385        weaveworks/weave-kube@sha256:103e37b504631f7c762ef6baa79b3e7d2d2cf718accbf659e7cae933b6ca937c               "/home/weave/launc..."   56 minutes ago       Up 56 minutes                           k8s_weave_weave-net-w984j_kube-system_84ad4f79-111c-11ea-866f-0242ac110046_1
+2a86a7b2f4a4        weaveworks/weave-npc@sha256:e51029aa3abcada82c59b5e5161b71dc14c04ca664b53bb1cdd2ebbf850bf258               "/usr/bin/weave-npc"     56 minutes ago       Up 56 minutes                           k8s_weave-npc_weave-net-w984j_kube-system_84ad4f79-111c-11ea-866f-0242ac110046_0
+60461bc69032        k8s.gcr.io/kube-proxy@sha256:bd414b838473ee9b704ac2c5756cc3d1e536df7daaac26058909a4bdd42a1e89               "/usr/local/bin/ku..."   56 minutes ago       Up 56 minutes                           k8s_kube-proxy_kube-proxy-cj8bf_kube-system_84ad1ca5-111c-11ea-866f-0242ac110046_0
+87def3800b28        k8s.gcr.io/pause:3.1               "/pause"                 56 minutes ago       Up 56 minutes                           k8s_POD_kube-proxy-cj8bf_kube-system_84ad1ca5-111c-11ea-866f-0242ac110046_0
+40526da276c7        k8s.gcr.io/pause:3.1               "/pause"                 56 minutes ago       Up 56 minutes                           k8s_POD_weave-net-w984j_kube-system_84ad4f79-111c-11ea-866f-0242ac110046_0
+node01 
+
+
+Step 6:- Checking busy box service as below.
+
+master $ kubectl exec busybox -- curl $(kubectl get pod fruit-service -o=custom-columns=IP:.status.podIP --no-headers):80
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (7) Failed to connect to 10.44.0.1 port 80: Connection refused
+command terminated with exit code 7
+master $
+
+master $ kubectl logs busybox
+master $ kubectl logs fruit-service legacy-fruit-service
+master $ kubectl logs fruit-service haproxy-service
+
+
+master $ kubectl describe pod busybox
+Name:               busybox
+Namespace:          default
+Priority:           0
+PriorityClassName:  <none>
+Node:               node01/172.17.0.81
+Start Time:         Wed, 27 Nov 2019 14:43:46 +0000
+Labels:             <none>
+Annotations:        kubectl.kubernetes.io/last-applied-configuration:
+                      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"busybox","namespace":"default"},"spec":{"containers":[{"command":["sh...
+Status:             Running
+IP:                 10.44.0.2
+Containers:
+  myapp-container:
+    Container ID:  docker://548e655ad9d39019340f18bc31607d4c31bbe01e2d545c7171a58ff363e62b73
+    Image:         radial/busyboxplus:curl
+    Image ID:      docker-pullable://radial/busyboxplus@sha256:a68c05ab1112fd90ad7b14985a48520e9d26dbbe00cb9c09aa79fdc0ef46b372
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      sh
+      -c
+      while true; do sleep 3600; done
+    State:          Running
+      Started:      Wed, 27 Nov 2019 14:43:52 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-nmvpt (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  default-token-nmvpt:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-nmvpt
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age    From               Message
+  ----    ------     ----   ----               -------
+  Normal  Scheduled  4m3s   default-scheduler  Successfully assigned default/busybox to node01
+  Normal  Pulling    4m1s   kubelet, node01    Pulling image "radial/busyboxplus:curl"
+  Normal  Pulled     3m57s  kubelet, node01    Successfully pulled image "radial/busyboxplus:curl"
+  Normal  Created    3m56s  kubelet, node01    Created container myapp-container
+  Normal  Started    3m56s  kubelet, node01    Started container myapp-container
+master $
+
+
+master $ kubectl describe fruit-service
+error: the server doesn't have a resource type "fruit-service"
+master $ kubectl describe pod fruit-service
+Name:               fruit-service
+Namespace:          default
+Priority:           0
+PriorityClassName:  <none>
+Node:               node01/172.17.0.81
+Start Time:         Wed, 27 Nov 2019 14:41:28 +0000
+Labels:             app=fruit-service-app
+Annotations:        kubectl.kubernetes.io/last-applied-configuration:
+                      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"labels":{"app":"fruit-service-app"},"name":"fruit-service","namespace":"defa...
+Status:             Running
+IP:                 10.44.0.1
+Containers:
+  legacy-fruit-service:
+    Container ID:   docker://9ef29501ad1b167eaab413e94026fe61b268d6f4c5e3ed62ab4555630d84a83e
+    Image:          linuxacademycontent/legacy-fruit-service:1
+    Image ID:       docker-pullable://linuxacademycontent/legacy-fruit-service@sha256:207ac67a8c26b619fdd591e7dc504541e4f026f1975626b16b525e65d34e8347
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Wed, 27 Nov 2019 14:41:36 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-nmvpt (ro)
+  ambassador-service:
+    Container ID:  docker://1338198b5fbc0139cbed5d76ee7f175fd6586b89d944807ce0cd5fd4646bcd22
+    Image:         haproxy:1.7
+    Image ID:      docker-pullable://haproxy@sha256:035ca7c4b0815fe5c8ca0774a84f7cfc0b8b62a0b17e59c1eb19998c5a5731d2
+    Port:          80/TCP
+    Host Port:     0/TCP
+    Command:
+      sh
+      -c
+      while true; do sleep 30; done;
+    State:          Running
+      Started:      Wed, 27 Nov 2019 14:41:41 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /usr/local/etc/haproxy/ from fruit-service-ambassador-config (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from default-token-nmvpt (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  fruit-service-ambassador-config:
+    Type:      ConfigMap (a volume populated by a ConfigMap)
+    Name:      fruit-service-ambassador-config
+    Optional:  false
+  default-token-nmvpt:
+    Type:        Secret (a volume populated by a Secret)
+    SecretName:  default-token-nmvpt
+    Optional:    false
+QoS Class:       BestEffort
+Node-Selectors:  <none>
+Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
+                 node.kubernetes.io/unreachable:NoExecute for 300s
+Events:
+  Type    Reason     Age   From               Message
+  ----    ------     ----  ----               -------
+  Normal  Scheduled  11m   default-scheduler  Successfully assigned default/fruit-service to node01
+  Normal  Pulling    11m   kubelet, node01    Pulling image "linuxacademycontent/legacy-fruit-service:1"
+  Normal  Pulled     11m   kubelet, node01    Successfully pulled image "linuxacademycontent/legacy-fruit-service:1"
+  Normal  Created    11m   kubelet, node01    Created container legacy-fruit-service
+  Normal  Started    11m   kubelet, node01    Started container legacy-fruit-service
+  Normal  Pulling    11m   kubelet, node01    Pulling image "haproxy:1.7"
+  Normal  Pulled     11m   kubelet, node01    Successfully pulled image "haproxy:1.7"
+  Normal  Created    11m   kubelet, node01    Created container ambassador-service
+  Normal  Started    11m   kubelet, node01    Started container ambassador-service
+master $
+
+master $ kubectl exec busybox -- curl $(kubectl get pod fruit-service -o=custom-columns=IP:.status.podIP --no-headers):80
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0curl: (7) Failed to connect to 10.44.0.1 port 80: Connection refused
+command terminated with exit code 7
+
+master $ kubectl exec busybox -- curl $(kubectl get pod fruit-service -o=custom-columns=IP:.status.podIP --no-headers):8775
+{
+  "description": "A list of fruits.",
+  "fruits": [
+    "apple",
+    "apricot",
+    "avocado",
+    "banana",
+    "bell pepper",
+    "bilberry",
+    "blackberry",
+    "blackcurrant",
+    "blood orange",
+    "blueberry",
+    "boysenberry",
+    "breadfruit",
+    "canary melon",
+    "cantaloupe",
+    "cherimoya",
+    "cherry",
+    "chili pepper",
+    "clementine",
+    "cloudberry",
+    "coconut",
+    "cranberry",
+    "cucumber",
+    "currant",
+    "damson",
+    "date",
+    "dragonfruit",
+    "durian",
+    "eggplant",
+    "elderberry",
+    "feijoa",
+    "fig",
+    "goji berry",
+    "gooseberry",
+    "grape",
+    "grapefruit",
+    "guava",
+    "honeydew",
+    "huckleberry",
+    "jackfruit",
+    "jambul",
+    "jujube",
+    "kiwi fruit",
+    "kumquat",
+    "lemon",
+    "lime",
+    "loquat",
+    "lychee",
+    "mandarine",
+    "mango",
+    "mulberry",
+    "nectarine",
+    "nut",
+    "olive",
+    "orange",
+    "pamelo",
+    "papaya",
+    "passionfruit",
+    "peach",
+    "pear",
+    "persimmon",
+    "physalis",
+    "pineapple",
+    "plum",
+    "pomegranate",
+    "pomelo",
+    "purple mangosteen",
+    "quince",
+    "raisin",
+    "rambutan",
+    "raspberry",
+    "redcurrant",
+    "rock melon",
+    "salal berry",
+    "satsuma",
+    "star fruit",
+    "strawberry",
+    "tamarillo",
+    "tangerine",
+    "tomato",
+    "ugli fruit",
+    "watermelon"
+  ]
+}
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1360  100  1360    0     0  1190k      0 --:--:-- --:--:-- --:--:-- 1328k
+master $
