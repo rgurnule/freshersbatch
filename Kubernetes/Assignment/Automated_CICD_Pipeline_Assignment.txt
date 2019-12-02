@@ -1,0 +1,93 @@
+Problem statement, We need to build, create , tag , push  and push image, Deploy image to Kubernetes clusster.
+
+In cluster, we need to create two apps, one website and other business logic.
+
+============================================================================================================================================================================================================
+For above problem statement, first i have used AWS instance and katakoda combine.
+
+I have deployed and pushed images to docker hub on aws instance.
+later i have used Katakoda for kubernetes cluster.
+
+While deploying existing app https://github.com/rgurnule/flight-booking I faces issue on final steps as below.
+I did, lot of RnD, but looks like as i am trying to connect from aws instance to katakoda kuberenetes cluster, i am getting below error.
+
+Tyring to resolve below error.
+
+
+Starting Kubernetes deployment
+Loading configuration: /var/lib/jenkins/workspace/flight-booking/flight-booking-kube.yml
+Api call failed with code 0, detailed message: null
+ERROR: ERROR: java.lang.RuntimeException: io.kubernetes.client.ApiException: java.net.NoRouteToHostException: No route to host (Host unreachable)
+hudson.remoting.ProxyException: java.lang.RuntimeException: io.kubernetes.client.ApiException: java.net.NoRouteToHostException: No route to host (Host unreachable)
+	at com.microsoft.jenkins.kubernetes.wrapper.ResourceManager.handleApiExceptionExceptNotFound(ResourceManager.java:180)
+	at com.microsoft.jenkins.kubernetes.wrapper.V1ResourceManager$ServiceUpdater.getCurrentResource(V1ResourceManager.java:383)
+	at com.microsoft.jenkins.kubernetes.wrapper.V1ResourceManager$ServiceUpdater.getCurrentResource(V1ResourceManager.java:371)
+	at com.microsoft.jenkins.kubernetes.wrapper.ResourceManager$ResourceUpdater.createOrApply(ResourceManager.java:93)
+	at com.microsoft.jenkins.kubernetes.wrapper.KubernetesClientWrapper.handleResource(KubernetesClientWrapper.java:289)
+	at com.microsoft.jenkins.kubernetes.wrapper.KubernetesClientWrapper.apply(KubernetesClientWrapper.java:256)
+	at com.microsoft.jenkins.kubernetes.command.DeploymentCommand$DeploymentTask.doCall(DeploymentCommand.java:172)
+	at com.microsoft.jenkins.kubernetes.command.DeploymentCommand$DeploymentTask.call(DeploymentCommand.java:124)
+	at com.microsoft.jenkins.kubernetes.command.DeploymentCommand$DeploymentTask.call(DeploymentCommand.java:106)
+	at hudson.FilePath.act(FilePath.java:1165)
+	at com.microsoft.jenkins.kubernetes.command.DeploymentCommand.execute(DeploymentCommand.java:68)
+	at com.microsoft.jenkins.kubernetes.command.DeploymentCommand.execute(DeploymentCommand.java:45)
+	at com.microsoft.jenkins.azurecommons.command.CommandService.runCommand(CommandService.java:88)
+	at com.microsoft.jenkins.azurecommons.command.CommandService.execute(CommandService.java:96)
+	at com.microsoft.jenkins.azurecommons.command.CommandService.executeCommands(CommandService.java:75)
+	at com.microsoft.jenkins.azurecommons.command.BaseCommandContext.executeCommands(BaseCommandContext.java:77)
+	at com.microsoft.jenkins.kubernetes.KubernetesDeploy.perform(KubernetesDeploy.java:42)
+	at com.microsoft.jenkins.azurecommons.command.SimpleBuildStepExecution.run(SimpleBuildStepExecution.java:54)
+	at com.microsoft.jenkins.azurecommons.command.SimpleBuildStepExecution.run(SimpleBuildStepExecution.java:35)
+	at org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution.lambda$start$0(SynchronousNonBlockingStepExecution.java:47)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+Caused by: hudson.remoting.ProxyException: io.kubernetes.client.ApiException: java.net.NoRouteToHostException: No route to host (Host unreachable)
+	at io.kubernetes.client.ApiClient.execute(ApiClient.java:805)
+	at io.kubernetes.client.apis.CoreV1Api.readNamespacedServiceWithHttpInfo(CoreV1Api.java:26498)
+	at io.kubernetes.client.apis.CoreV1Api.readNamespacedService(CoreV1Api.java:26480)
+	at com.microsoft.jenkins.kubernetes.wrapper.V1ResourceManager$ServiceUpdater.getCurrentResource(V1ResourceManager.java:380)
+	... 23 more
+Caused by: hudson.remoting.ProxyException: java.net.NoRouteToHostException: No route to host (Host unreachable)
+	at java.net.PlainSocketImpl.socketConnect(Native Method)
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:589)
+	at com.squareup.okhttp.internal.Platform.connectSocket(Platform.java:120)
+	at com.squareup.okhttp.internal.io.RealConnection.connectSocket(RealConnection.java:141)
+	at com.squareup.okhttp.internal.io.RealConnection.connect(RealConnection.java:112)
+	at com.squareup.okhttp.internal.http.StreamAllocation.findConnection(StreamAllocation.java:184)
+	at com.squareup.okhttp.internal.http.StreamAllocation.findHealthyConnection(StreamAllocation.java:126)
+	at com.squareup.okhttp.internal.http.StreamAllocation.newStream(StreamAllocation.java:95)
+	at com.squareup.okhttp.internal.http.HttpEngine.connect(HttpEngine.java:281)
+	at com.squareup.okhttp.internal.http.HttpEngine.sendRequest(HttpEngine.java:224)
+	at com.squareup.okhttp.Call.getResponse(Call.java:286)
+	at com.squareup.okhttp.Call$ApplicationInterceptorChain.proceed(Call.java:243)
+	at com.squareup.okhttp.Call.getResponseWithInterceptorChain(Call.java:205)
+	at com.squareup.okhttp.Call.execute(Call.java:80)
+	at io.kubernetes.client.ApiClient.execute(ApiClient.java:801)
+	... 26 more
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+KATAKODA environment:- 
+
+As i got above error, i tried to work on KATAKODA completely, but i was not able to get up Jenkins app on browser.
+Hence unable to move ahead. I did RnD for this error as well, but didnt find any help to resolve the same.
+
+
+
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Play with Kubernetes environment, https://labs.play-with-k8s.com/
+
+I  tried to use this environment, i have installed kubernetes cluster, but later while installing apt-get apps, getting command not found error and stuck there as well.
+
+I did RnD for this error but could resolve yet to move ahead.
+
+
