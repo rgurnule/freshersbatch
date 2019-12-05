@@ -2850,3 +2850,296 @@ Finished Kubernetes deployment
 Finished: SUCCESS
 
 ??????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
+
+
+
+Created new Minion instance and ran below commands on master 
+
+root@ip-172-31-6-143:~# kubeadm reset
+[reset] Reading configuration from the cluster...
+[reset] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+W1205 14:26:46.215153    1706 config.go:72] Warning: No kube-proxy config is loaded. Continuing without it: configmaps "kube-proxy" not found
+W1205 14:26:46.219875    1706 reset.go:96] [reset] Unable to fetch the kubeadm-config ConfigMap from cluster: failed to get node registration: failed to get corresponding node: nodes "ip-172-31-6-143" not found
+[reset] WARNING: Changes made to this host by 'kubeadm init' or 'kubeadm join' will be reverted.
+[reset] Are you sure you want to proceed? [y/N]: y
+[preflight] Running pre-flight checks
+W1205 14:26:52.581119    1706 removeetcdmember.go:79] [reset] No kubeadm config, using etcd pod spec to get data directory
+[reset] Stopping the kubelet service
+[reset] Unmounting mounted directories in "/var/lib/kubelet"
+[reset] Deleting contents of config directories: [/etc/kubernetes/manifests /etc/kubernetes/pki]
+[reset] Deleting files: [/etc/kubernetes/admin.conf /etc/kubernetes/kubelet.conf /etc/kubernetes/bootstrap-kubelet.conf /etc/kubernetes/controller-manager.conf /etc/kubernetes/scheduler.conf]
+[reset] Deleting contents of stateful directories: [/var/lib/etcd /var/lib/kubelet /etc/cni/net.d /var/lib/dockershim /var/run/kubernetes /var/lib/cni]
+
+The reset process does not reset or clean up iptables rules or IPVS tables.
+If you wish to reset iptables, you must do so manually by using the "iptables" command.
+
+If your cluster was setup to utilize IPVS, run ipvsadm --clear (or similar)
+to reset your system's IPVS tables.
+
+The reset process does not clean your kubeconfig files and you must remove them manually.
+Please, check the contents of the $HOME/.kube/config file.
+root@ip-172-31-6-143:~# ls -la
+total 28
+drwx------  4 root root 4096 Dec  5 14:13 .
+drwxr-xr-x 23 root root 4096 Dec  5 13:33 ..
+-rw-------  1 root root  668 Dec  4 09:53 .bash_history
+-rw-r--r--  1 root root 3106 Apr  9  2018 .bashrc
+-rw-r--r--  1 root root  148 Aug 17  2015 .profile
+drwx------  2 root root 4096 Dec  4 08:29 .ssh
+drwxr-xr-x  3 root root 4096 Dec  4 08:30 snap
+root@ip-172-31-6-143:~# clear
+
+root@ip-172-31-6-143:~# kubeadm init
+[init] Using Kubernetes version: v1.16.3
+[preflight] Running pre-flight checks
+        [WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the Docker cgroup driver. The recommended driver is "systemd". Please follow the guide at https://kubernetes.io/docs/setup/cri/
+[preflight] Pulling images required for setting up a Kubernetes cluster
+[preflight] This might take a minute or two, depending on the speed of your internet connection
+[preflight] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Activating the kubelet service
+[certs] Using certificateDir folder "/etc/kubernetes/pki"
+[certs] Generating "ca" certificate and key
+[certs] Generating "apiserver" certificate and key
+[certs] apiserver serving cert is signed for DNS names [ip-172-31-6-143 kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 172.31.6.143]
+[certs] Generating "apiserver-kubelet-client" certificate and key
+[certs] Generating "front-proxy-ca" certificate and key
+[certs] Generating "front-proxy-client" certificate and key
+[certs] Generating "etcd/ca" certificate and key
+[certs] Generating "etcd/server" certificate and key
+[certs] etcd/server serving cert is signed for DNS names [ip-172-31-6-143 localhost] and IPs [172.31.6.143 127.0.0.1 ::1]
+[certs] Generating "etcd/peer" certificate and key
+[certs] etcd/peer serving cert is signed for DNS names [ip-172-31-6-143 localhost] and IPs [172.31.6.143 127.0.0.1 ::1]
+[certs] Generating "etcd/healthcheck-client" certificate and key
+[certs] Generating "apiserver-etcd-client" certificate and key
+[certs] Generating "sa" key and public key
+[kubeconfig] Using kubeconfig folder "/etc/kubernetes"
+[kubeconfig] Writing "admin.conf" kubeconfig file
+[kubeconfig] Writing "kubelet.conf" kubeconfig file
+[kubeconfig] Writing "controller-manager.conf" kubeconfig file
+[kubeconfig] Writing "scheduler.conf" kubeconfig file
+[control-plane] Using manifest folder "/etc/kubernetes/manifests"
+[control-plane] Creating static Pod manifest for "kube-apiserver"
+[control-plane] Creating static Pod manifest for "kube-controller-manager"
+[control-plane] Creating static Pod manifest for "kube-scheduler"
+[etcd] Creating static Pod manifest for local etcd in "/etc/kubernetes/manifests"
+[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory "/etc/kubernetes/manifests". This can take up to 4m0s
+[apiclient] All control plane components are healthy after 14.502197 seconds
+[upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.16" in namespace kube-system with the configuration for the kubelets in the cluster
+[upload-certs] Skipping phase. Please see --upload-certs
+[mark-control-plane] Marking the node ip-172-31-6-143 as control-plane by adding the label "node-role.kubernetes.io/master=''"
+[mark-control-plane] Marking the node ip-172-31-6-143 as control-plane by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[bootstrap-token] Using token: behzxe.2pywftekeksypmtr
+[bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
+[bootstrap-token] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstrap-token] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstrap-token] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstrap-token] Creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes control-plane has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+Then you can join any number of worker nodes by running the following on each as root:
+
+kubeadm join 172.31.6.143:6443 --token behzxe.2pywftekeksypmtr \
+    --discovery-token-ca-cert-hash sha256:0c51b4c8ad2fa892d1015f669a66c2c0d449c9a01a856fee83a39b2cb0bcffb3
+root@ip-172-31-6-143:~#
+
+
+
+
+
+ubuntu@ip-172-31-6-143:~$ docker images
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.39/images/json: dial unix /var/run/docker.sock: connect: permission denied
+ubuntu@ip-172-31-6-143:~$ sudo chmod 777 /var/run/docker.sock
+ubuntu@ip-172-31-6-143:~$ docker images
+REPOSITORY                           TAG                 IMAGE ID            CREATED             SIZE
+website                              0.14                2c30fc0cbe15        40 minutes ago      220MB
+srahulgurnule/website                0.14                2c30fc0cbe15        40 minutes ago      220MB
+search                               0.14                26aa7f52651d        40 minutes ago      228MB
+srahulgurnule/search                 0.14                26aa7f52651d        40 minutes ago      228MB
+website                              0.13                b53d26514f78        About an hour ago   220MB
+srahulgurnule/website                0.13                b53d26514f78        About an hour ago   220MB
+search                               0.13                02aa7549b42c        About an hour ago   228MB
+srahulgurnule/search                 0.13                02aa7549b42c        About an hour ago   228MB
+website                              0.11                bfd808fdfc10        29 hours ago        220MB
+srahulgurnule/website                0.11                bfd808fdfc10        29 hours ago        220MB
+search                               0.11                614a3fac6591        29 hours ago        228MB
+webapp                               2                   b574a19838fe        30 hours ago        356MB
+srahulgurnule/webapp                 2                   b574a19838fe        30 hours ago        356MB
+k8s.gcr.io/kube-proxy                v1.16.3             9b65a0f78b09        3 weeks ago         86.1MB
+k8s.gcr.io/kube-apiserver            v1.16.3             df60c7526a3d        3 weeks ago         217MB
+k8s.gcr.io/kube-controller-manager   v1.16.3             bb16442bcd94        3 weeks ago         163MB
+k8s.gcr.io/kube-scheduler            v1.16.3             98fecf43a54f        3 weeks ago         87.3MB
+calico/node                          v3.10.1             4a88ba569c29        4 weeks ago         192MB
+calico/cni                           v3.10.1             4f761b4ba7f5        4 weeks ago         163MB
+calico/kube-controllers              v3.10.1             8f87d09ab811        4 weeks ago         50.6MB
+calico/pod2daemon-flexvol            v3.10.1             5b249c03bee8        4 weeks ago         9.78MB
+k8s.gcr.io/etcd                      3.3.15-0            b2756210eeab        3 months ago        247MB
+k8s.gcr.io/coredns                   1.6.2               bf261d157914        3 months ago        44.1MB
+tomcat                               8.0                 ef6a7c98d192        14 months ago       356MB
+k8s.gcr.io/pause                     3.1                 da86e6ba6ca1        23 months ago       742kB
+abrtech/alpine-oraclejdk8            latest              90183a763a7b        2 years ago         194MB
+
+ubuntu@ip-172-31-6-143:~$ kubectl get nodes
+NAME              STATUS   ROLES    AGE   VERSION
+ip-172-31-43-95   Ready    <none>   53m   v1.16.3
+ip-172-31-6-143   Ready    master   55m   v1.16.3
+ubuntu@ip-172-31-6-143:~$ kubectl get pods
+NAME                                  READY   STATUS    RESTARTS   AGE
+search-deployment-55fd6d688b-52v9x    1/1     Running   0          3m13s
+search-deployment-55fd6d688b-6c568    1/1     Running   0          3m13s
+search-deployment-55fd6d688b-b95tv    1/1     Running   0          3m13s
+search-deployment-55fd6d688b-jwt9b    1/1     Running   0          3m13s
+search-deployment-55fd6d688b-rrnqv    1/1     Running   0          3m13s
+website-deployment-76dc57d4f5-c8c4l   1/1     Running   0          3m13s
+website-deployment-76dc57d4f5-mkxqg   1/1     Running   0          3m13s
+website-deployment-76dc57d4f5-zbppm   1/1     Running   0          3m13s
+ubuntu@ip-172-31-6-143:~$ kubectl get svc
+NAME              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)          AGE
+kubernetes        ClusterIP   10.96.0.1        <none>        443/TCP          8m46s
+search-service    NodePort    10.100.190.164   <none>        8090:30809/TCP   3m16s
+website-service   NodePort    10.98.93.217     <none>        8001:30801/TCP   3m16s
+ubuntu@ip-172-31-6-143:~$ kubectl get deployments
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+search-deployment    5/5     5            5           3m26s
+website-deployment   3/3     3            3           3m26s
+ubuntu@ip-172-31-6-143:~$ curl 10.100.190.164:8090/search
+[{"id":1,"flightNumber":"BF100","origin":"SEA","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":1,"fare":"100","currency":"USD"},"inventory":{"id":1,"count":100}},{"id":2,"flightNumber":"BF101","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":2,"fare":"101","currency":"USD"},"inventory":{"id":2,"count":100}},{"id":3,"flightNumber":"BF105","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":3,"fare":"105","currency":"USD"},"inventory":{"id":3,"count":100}},{"id":4,"flightNumber":"BF106","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":4,"fare":"106","currency":"USD"},"inventory":{"id":4,"count":100}},{"id":5,"flightNumber":"BF102","origin":"CHI","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":5,"fare":"102","currency":"USD"},"inventory":{"id":5,"count":100}},{"id":6,"flightNumber":"BF103","origin":"HOU","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":6,"fare":"103","currency":"USD"},"inventory":{"id":6,"count":100}},{"id":7,"flightNumber":"BF104","origin":"LAX","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":7,"fare":"104","currency":"USD"},"inventory":{"id":7,"count":100}}]ubuntu@ip-172-31-6-143:~$
+ubuntu@ip-172-31-6-143:~$
+ubuntu@ip-172-31-6-143:~$ curl 10.98.93.217:8001/website
+{"timestamp":1575559522717,"status":401,"error":"Unauthorized","message":"Full authentication is required to access this resource","path":"/website"}ubuntu@ip-172-31-6-143:~$
+ubuntu@ip-172-31-6-143:~$
+ubuntu@ip-172-31-6-143:~$ kubectl get nodes
+NAME              STATUS   ROLES    AGE   VERSION
+ip-172-31-43-95   Ready    <none>   60m   v1.16.3
+ip-172-31-6-143   Ready    master   63m   v1.16.3
+ubuntu@ip-172-31-6-143:~$
+
+
+http://15.206.171.182:30809/search
+
+[{"id":1,"flightNumber":"BF100","origin":"SEA","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":1,"fare":"100","currency":"USD"},"inventory":{"id":1,"count":100}},
+{"id":2,"flightNumber":"BF101","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":2,"fare":"101","currency":"USD"},"inventory":{"id":2,"count":100}},
+{"id":3,"flightNumber":"BF105","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":3,"fare":"105","currency":"USD"},"inventory":{"id":3,"count":100}},
+{"id":4,"flightNumber":"BF106","origin":"NYC","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":4,"fare":"106","currency":"USD"},"inventory":{"id":4,"count":100}},
+{"id":5,"flightNumber":"BF102","origin":"CHI","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":5,"fare":"102","currency":"USD"},"inventory":{"id":5,"count":100}},
+{"id":6,"flightNumber":"BF103","origin":"HOU","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":6,"fare":"103","currency":"USD"},"inventory":{"id":6,"count":100}},
+{"id":7,"flightNumber":"BF104","origin":"LAX","destination":"SFO","flightDate":"22-JAN-16","fares":{"id":7,"fare":"104","currency":"USD"},"inventory":{"id":7,"count":100}}]
+
+
+http://15.206.171.182:30801/website
+
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Thu Dec 05 15:23:43 GMT 2019
+There was an unexpected error (type=Not Found, status=404).
+No message available
+
+
+http://15.206.171.182:30809/book
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Thu Dec 05 15:36:26 GMT 2019
+There was an unexpected error (type=Not Found, status=404).
+No message available
+
+http://15.206.171.182:30809/checkin
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Thu Dec 05 15:36:41 GMT 2019
+There was an unexpected error (type=Not Found, status=404).
+No message available
+
+http://15.206.171.182:30809/fares
+Whitelabel Error Page
+This application has no explicit mapping for /error, so you are seeing this as a fallback.
+
+Thu Dec 05 15:39:11 GMT 2019
+There was an unexpected error (type=Not Found, status=404).
+No message available
+
+
+
+
+On Minion Node:-
+
+root@ip-172-31-43-95:~# kubeadm join 172.31.6.143:6443 --token behzxe.2pywftekeksypmtr \
+>     --discovery-token-ca-cert-hash sha256:0c51b4c8ad2fa892d1015f669a66c2c0d449c9a01a856fee83a39b2cb0bcffb3
+[preflight] Running pre-flight checks
+        [WARNING Service-Docker]: docker service is not enabled, please run 'systemctl enable docker.service'
+        [WARNING IsDockerSystemdCheck]: detected "cgroupfs" as the Docker cgroup driver. The recommended driver is "systemd". Please follow the guide at https://kubernetes.io/docs/setup/cri/
+[preflight] Reading configuration from the cluster...
+[preflight] FYI: You can look at this config file with 'kubectl -n kube-system get cm kubeadm-config -oyaml'
+[kubelet-start] Downloading configuration for the kubelet from the "kubelet-config-1.16" ConfigMap in the kube-system namespace
+[kubelet-start] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[kubelet-start] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet-start] Activating the kubelet service
+[kubelet-start] Waiting for the kubelet to perform the TLS Bootstrap...
+
+This node has joined the cluster:
+* Certificate signing request was sent to apiserver and a response was received.
+* The Kubelet was informed of the new secure connection details.
+
+Run 'kubectl get nodes' on the control-plane to see this node join the cluster.
+
+root@ip-172-31-43-95:~#
+
+
+
+ubuntu@ip-172-31-43-95:~$ docker images
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.39/images/json: dial unix /var/run/docker.sock: connect: permission denied
+ubuntu@ip-172-31-43-95:~$ sudo chmod 777 /var/run/docker.sock
+ubuntu@ip-172-31-43-95:~$ docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+srahulgurnule/website       0.14                2c30fc0cbe15        38 minutes ago      220MB
+srahulgurnule/search        0.14                26aa7f52651d        38 minutes ago      228MB
+k8s.gcr.io/kube-proxy       v1.16.3             9b65a0f78b09        3 weeks ago         86.1MB
+calico/node                 v3.10.1             4a88ba569c29        4 weeks ago         192MB
+calico/cni                  v3.10.1             4f761b4ba7f5        4 weeks ago         163MB
+calico/pod2daemon-flexvol   v3.10.1             5b249c03bee8        4 weeks ago         9.78MB
+k8s.gcr.io/pause            3.1                 da86e6ba6ca1        23 months ago       742kB
+ubuntu@ip-172-31-43-95:~$ docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+srahulgurnule/website       0.16                624000fdfe23        13 minutes ago      220MB
+srahulgurnule/search        0.16                3e14fa31be42        13 minutes ago      228MB
+srahulgurnule/website       0.14                2c30fc0cbe15        About an hour ago   220MB
+srahulgurnule/search        0.14                26aa7f52651d        About an hour ago   228MB
+k8s.gcr.io/kube-proxy       v1.16.3             9b65a0f78b09        3 weeks ago         86.1MB
+calico/node                 v3.10.1             4a88ba569c29        4 weeks ago         192MB
+calico/cni                  v3.10.1             4f761b4ba7f5        4 weeks ago         163MB
+calico/pod2daemon-flexvol   v3.10.1             5b249c03bee8        4 weeks ago         9.78MB
+k8s.gcr.io/pause            3.1                 da86e6ba6ca1        23 months ago       742kB
+ubuntu@ip-172-31-43-95:~$
+
+ubuntu@ip-172-31-43-95:~$ docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+srahulgurnule/website       0.21                e86d5079158a        3 minutes ago       220MB
+srahulgurnule/fares         0.21                0aec17f878be        3 minutes ago       227MB
+srahulgurnule/checkin       0.21                beb8b3c42dd8        4 minutes ago       229MB
+srahulgurnule/book          0.21                478c5040eb61        4 minutes ago       228MB
+srahulgurnule/search        0.21                19e799f7b78e        4 minutes ago       228MB
+srahulgurnule/website       0.17                2874a4cf9fdd        41 minutes ago      220MB
+srahulgurnule/search        0.17                2b97733282cd        41 minutes ago      228MB
+k8s.gcr.io/kube-proxy       v1.16.3             9b65a0f78b09        3 weeks ago         86.1MB
+calico/node                 v3.10.1             4a88ba569c29        4 weeks ago         192MB
+calico/cni                  v3.10.1             4f761b4ba7f5        4 weeks ago         163MB
+calico/pod2daemon-flexvol   v3.10.1             5b249c03bee8        4 weeks ago         9.78MB
+k8s.gcr.io/pause            3.1                 da86e6ba6ca1        23 months ago       742kB
+ubuntu@ip-172-31-43-95:~$
