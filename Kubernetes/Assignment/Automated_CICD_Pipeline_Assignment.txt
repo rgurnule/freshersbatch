@@ -3051,6 +3051,12 @@ There was an unexpected error (type=Not Found, status=404).
 No message available
 
 
+http://13.234.48.221:30801/
+
+After hitting above URL, getting application home page.
+
+
+
 http://15.206.171.182:30809/book
 Whitelabel Error Page
 This application has no explicit mapping for /error, so you are seeing this as a fallback.
