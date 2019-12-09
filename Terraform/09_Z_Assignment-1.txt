@@ -1,0 +1,477 @@
+Create a file called main.tf.
+Create a docker image resource and call it nginx_image.
+Set the name of the image to nginx:latest.
+Save and exit the file.
+
+Initialize Terraform.
+Plan the deploy and output a terraform plan called tf_image_plan.
+Apply the plan using tf_image_plan.
+
+========================================================================================================================================================================
+
+Step1: - Setting up environment for terraform.
+
+master $ id
+uid=0(root) gid=0(root) groups=0(root)
+master $ systemctl start docker
+master $ systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2019-12-05 09:29:09 UTC; 35min ago
+     Docs: https://docs.docker.com
+ Main PID: 962 (dockerd)
+    Tasks: 22
+   Memory: 127.0M
+      CPU: 28.949s
+   CGroup: /system.slice/docker.service
+           └─962 /usr/bin/dockerd
+
+Dec 05 09:29:14 master dockerd[962]: time="2019-12-05T09:29:14.487368050Z" level=warning msg="failed to retrieve
+Dec 05 09:29:15 master dockerd[962]: time="2019-12-05T09:29:15.751067086Z" level=warning msg="failed to retrieve
+Dec 05 09:29:27 master dockerd[962]: time="2019-12-05T09:29:27.675182151Z" level=warning msg="failed to retrieve
+Dec 05 09:29:27 master dockerd[962]: time="2019-12-05T09:29:27.689126964Z" level=warning msg="failed to retrieve
+Dec 05 09:29:27 master dockerd[962]: time="2019-12-05T09:29:27.810581272Z" level=warning msg="failed to retrieve
+Dec 05 09:29:27 master dockerd[962]: time="2019-12-05T09:29:27.825159521Z" level=warning msg="failed to retrieve
+Dec 05 09:29:27 master dockerd[962]: time="2019-12-05T09:29:27.884445556Z" level=warning msg="failed to retrieve
+Dec 05 09:30:31 master dockerd[962]: time="2019-12-05T09:30:31.210742738Z" level=warning msg="648f819350638d59881
+Dec 05 09:30:31 master dockerd[962]: time="2019-12-05T09:30:31.213994709Z" level=info msg="ignoring event" module
+Dec 05 10:04:17 master systemd[1]: Started Docker Application Container Engine.
+master $
+master $
+master $ docker --version
+Docker version 18.09.7, build 2d0083d
+master $ docker info
+Containers: 14
+ Running: 13
+ Paused: 0
+ Stopped: 1
+Images: 37
+Server Version: 18.09.7
+Storage Driver: overlay
+ Backing Filesystem: extfs
+ Supports d_type: true
+Logging Driver: json-file
+Cgroup Driver: systemd
+Plugins:
+ Volume: local
+ Network: bridge host macvlan null overlay
+ Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+Swarm: inactive
+Runtimes: runc
+Default Runtime: runc
+Init Binary: docker-init
+containerd version:
+runc version: N/A
+init version: v0.18.0 (expected: fec3683b971d9c3ef73f284f176672c44b448662)
+Security Options:
+ apparmor
+ seccomp
+  Profile: default
+Kernel Version: 4.4.0-157-generic
+Operating System: Ubuntu 16.04.6 LTS
+OSType: linux
+Architecture: x86_64
+CPUs: 2
+Total Memory: 1.953GiB
+Name: master
+ID: ZH2M:2Z2J:P2WY:6CS4:ZSCF:2LRY:6IOL:E455:ZSRI:ZWF4:IRZ6:A2PH
+Docker Root Dir: /var/lib/docker
+Debug Mode (client): false
+Debug Mode (server): false
+Registry: https://index.docker.io/v1/
+Labels:
+Experimental: false
+Insecure Registries:
+ registry.test.training.katacoda.com:4567
+ 127.0.0.0/8
+Live Restore Enabled: false
+
+WARNING: API is accessible on http://0.0.0.0:2375 without encryption.
+         Access to the remote API is equivalent to root access on the host. Refer
+         to the 'Docker daemon attack surface' section in the documentation for
+         more information: https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+WARNING: API is accessible on http://0.0.0.0:2345 without encryption.
+         Access to the remote API is equivalent to root access on the host. Refer
+         to the 'Docker daemon attack surface' section in the documentation for
+         more information: https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+WARNING: No swap limit support
+WARNING: the overlay storage-driver is deprecated, and will be removed in a future release.
+master $
+master $
+master $ docker swarm  init --advertise-addr localhost
+Error response from daemon: advertise address must be a non-zero IP address or network interface (with optional port number)
+master $ ifconfig
+datapath  Link encap:Ethernet  HWaddr f2:b3:6e:a1:e1:c8
+          inet6 addr: fe80::f0b3:6eff:fea1:e1c8/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1376  Metric:1
+          RX packets:27 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:8 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:1692 (1.6 KB)  TX bytes:648 (648.0 B)
+
+docker0   Link encap:Ethernet  HWaddr 02:42:ea:26:45:65
+          inet addr:172.18.0.1  Bcast:172.18.0.255  Mask:255.255.255.0
+          UP BROADCAST MULTICAST  MTU:1500  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+ens3      Link encap:Ethernet  HWaddr 02:42:ac:11:00:64
+          inet addr:172.17.0.100  Bcast:172.17.255.255  Mask:255.255.0.0
+          inet6 addr: fe80::42:acff:fe11:64/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:32703 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:33492 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:4899017 (4.8 MB)  TX bytes:20241771 (20.2 MB)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:302298 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:302298 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1
+          RX bytes:63379457 (63.3 MB)  TX bytes:63379457 (63.3 MB)
+
+vethwe-bridge Link encap:Ethernet  HWaddr aa:46:ec:86:dd:b0
+          inet6 addr: fe80::a846:ecff:fe86:ddb0/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1376  Metric:1
+          RX packets:24 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:19 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1848 (1.8 KB)  TX bytes:1518 (1.5 KB)
+
+vethwe-datapath Link encap:Ethernet  HWaddr 56:5b:db:19:ef:d9
+          inet6 addr: fe80::545b:dbff:fe19:efd9/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1376  Metric:1
+          RX packets:19 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:24 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:1518 (1.5 KB)  TX bytes:1848 (1.8 KB)
+
+vxlan-6784 Link encap:Ethernet  HWaddr 2a:4f:cd:b9:76:b3
+          inet6 addr: fe80::284f:cdff:feb9:76b3/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:65485  Metric:1
+          RX packets:234 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:228 errors:0 dropped:8 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:310116 (310.1 KB)  TX bytes:312380 (312.3 KB)
+
+weave     Link encap:Ethernet  HWaddr 4e:f0:30:17:94:96
+          inet addr:10.32.0.1  Bcast:10.47.255.255  Mask:255.240.0.0
+          inet6 addr: fe80::4cf0:30ff:fe17:9496/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1376  Metric:1
+          RX packets:23 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:11 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:1436 (1.4 KB)  TX bytes:870 (870.0 B)
+
+master $ docker swarm  init --advertise-addr 172.17.0.100
+Swarm initialized: current node (7hp2ionuq9tf49rxd3lqbhtur) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-2a1alii6ahy1f8n0pdbd7th4nnl1j9l78q49zywyubt7oe4tph-cm71dognrtt07td3qk2wfq9no 172.17.0.100:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+master $ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+7hp2ionuq9tf49rxd3lqbhtur *   master              Ready               Active              Leader              18.09.7
+rojjp1dhp13cjaoekl1oi22l2     node01              Ready               Active                                  18.09.5
+master $ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+7hp2ionuq9tf49rxd3lqbhtur *   master              Ready               Active              Leader              18.09.7
+rojjp1dhp13cjaoekl1oi22l2     node01              Ready               Active                                  18.09.5
+master $
+
+
+
+Step2:- Installing Terraform onto docker cluster.
+
+master $ curl -O https://releases.hashicorp.com/terraform/0.11.13/terrform_0.11.13_linux_amd64.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   303  100   303    0     0   1079      0 --:--:-- --:--:-- --:--:--  1082
+master $ ls
+go  terrform_0.11.13_linux_amd64.zip
+master $ apt install -y unzip
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+unzip is already the newest version (6.0-20ubuntu1).
+The following package was automatically installed and is no longer required:
+  libuv1
+Use 'apt autoremove' to remove it.
+0 to upgrade, 0 to newly install, 0 to remove and 3 not to upgrade.
+master $ ls
+go  terrform_0.11.13_linux_amd64.zip
+master $ unzip terrform_0.11.13_linux_amd64.zip -d /usr/local/bin/
+Archive:  terrform_0.11.13_linux_amd64.zip
+  End-of-central-directory signature not found.  Either this file is not
+  a zipfile, or it constitutes one disk of a multi-part archive.  In the
+  latter case the central directory and zipfile comment will be found on
+  the last disk(s) of this archive.
+unzip:  cannot find zipfile directory in one of terrform_0.11.13_linux_amd64.zip or
+        terrform_0.11.13_linux_amd64.zip.zip, and cannot find terrform_0.11.13_linux_amd64.zip.ZIP, period.
+master $ terraform version
+terraform: command not found
+
+
+master $ curl -O https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.7M  100 15.7M    0     0  31.0M      0 --:--:-- --:--:-- --:--:-- 31.0M
+master $ ls -la
+total 16148
+drwx------  6 root root     4096 Dec  5 10:54 .
+drwxr-xr-x 25 root root     4096 Aug  8 10:24 ..
+-rw-r--r--  1 root root     3291 Aug  8 13:08 .bashrc
+drwx------  2 root root     4096 Dec  5 10:09 .cache
+drwxr-xr-x  4 root root     4096 Aug  8 13:07 go
+-rw-r--r--  1 root root        0 Aug  8 13:07 .hushlogin
+drwxr-xr-x  4 root root     4096 Dec  5 10:10 .kube
+-rw-r--r--  1 root root      148 Aug 17  2015 .profile
+drwxr-xr-x  2 root root     4096 Aug  8 13:07 .ssh
+-rw-r--r--  1 root root      303 Dec  5 10:53 terraform_0.12.17_linux_amd64
+-rw-r--r--  1 root root 16494567 Dec  5 10:55 terraform_0.12.17_linux_amd64.zip
+-rwxrwxrwx  1 root root      303 Dec  5 10:34 terrform_0.11.13_linux_amd64.zip
+master $ unzip terraform_0.12.17_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.17_linux_amd64.zip
+  inflating: /usr/local/bin/terraform
+master $ pwd
+/root
+master $ cd /usr/local/bin/
+master $ ls -lta
+total 253192
+drwxr-xr-x  2 root   root       4096 Dec  5 10:55 .
+-rwxr-xr-x  1 root   root   51175008 Dec  2 18:22 terraform
+-rwxrwxr-x  1 packer packer 41261993 Aug  8 13:10 fluxctl
+-rwxrwxr-x  1 packer packer  3068010 Aug  8 13:09 kubed-sh
+-rwxr-xr-x  1 root   root    8247136 Aug  8 13:07 docker-compose
+-rwxr-xr-x  1 root   root   48236662 Aug  8 10:26 odo
+drwxr-xr-x 11 root   root       4096 Aug  8 10:25 ..
+-rwxr-xr-x  1 root   root        233 Aug  8 10:25 easy_install
+-rwxr-xr-x  1 root   root        233 Aug  8 10:25 easy_install-3.5
+-rwxr-xr-x  1 root   root        215 Aug  8 10:25 pip
+-rwxr-xr-x  1 root   root        215 Aug  8 10:25 pip3
+-rwxr-xr-x  1 root   root        215 Aug  8 10:25 pip3.5
+-rwxr-xr-x  1 root   root        217 Aug  8 10:25 pip3.7
+-rwxr-xr-x  1 root   root        211 Aug  8 10:24 virtualenv
+-rwxr-xr-x  1 root   root        214 Aug  8 10:24 pip2
+-rwxr-xr-x  1 root   root        214 Aug  8 10:24 pip2.7
+-rwxr-xr-x  1 packer packer 37161248 Mar 21  2019 helm
+-rwxr-xr-x  1 packer packer 70060987 May 31  2018 ks
+master $ terraform version
+Terraform v0.12.17
+master $
+
+
+
+Step3:- Creating main.tf file with nginx_image as docker image 
+
+
+
+master $ mkdir -p terraform/basic
+master $ cd terraform/basic/
+master $ touch main.tf
+master $ vi main.tf
+
+master $ terraform  init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "docker" (terraform-providers/docker) 2.6.0...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 2.6"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+master $
+master $ ls -la
+total 16
+drwxr-xr-x 3 root root 4096 Dec  5 11:05 .
+drwxr-xr-x 3 root root 4096 Dec  5 10:59 ..
+-rw-r--r-- 1 root root   96 Dec  5 11:05 main.tf
+drwxr-xr-x 3 root root 4096 Dec  5 11:05 .terraform
+master $
+
+master $ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "nginx:latest"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+master $
+master $
+
+
+Step4:- Exporting terraform plan into tf_image_plan file and applying onto terraform.
+
+master $ terraform plan -out tf_image_plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "nginx:latest"
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tf_image_plan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tf_image_plan"
+
+master $ ls -ltr
+total 8
+-rw-r--r-- 1 root root   96 Dec  5 11:05 main.tf
+-rw-r--r-- 1 root root 1033 Dec  5 11:15 tf_image_plan
+
+master $ terraform apply -var-file=tf_image_plan -auto-approve
+
+
+
+master $ terraform apply tf_image_plan
+docker_image.image_id: Creating...
+docker_image.image_id: Creation complete after 6s [id=sha256:231d40e811cd970168fb0c4770f2161aa30b9ba6fe8e68527504df69643aa145nginx:latest]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+master $ docker images  -a
+REPOSITORY                                            TAG                 IMAGE ID            CREATED             SIZE
+nginx                                                 latest              231d40e811cd        12 days ago         126MB
+k8s.gcr.io/kube-proxy                                 v1.14.5             468c6baf864b        4 months ago        82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.5             3129b0ba0920        4 months ago        210MB
+k8s.gcr.io/kube-scheduler                             v1.14.5             ed5a937cb6f8        4 months ago        81.6MB
+k8s.gcr.io/kube-controller-manager                    v1.14.5             b8ab6b6b42c9        4 months ago        158MB
+redis                                                 latest              857c4ab5f029        4 months ago        98.2MB
+docker                                                latest              9a38a85b1e4e        4 months ago        216MB
+weaveworks/scope                                      1.11.4              a082d48f0b39        4 months ago        78.5MB
+ubuntu                                                latest              3556258649b2        4 months ago        64.2MB
+alpine                                                latest              b7b28af77ffe        4 months ago        5.58MB
+katacoda/katacoda-cloud-provider                      0.0.1               74188596f8cb        5 months ago        116MB
+weaveworks/flux                                       1.12.0              8bb853f52985        7 months ago        165MB
+k8s.gcr.io/kube-proxy                                 v1.14.0             5cd54e388aba        8 months ago        82.1MB
+k8s.gcr.io/kube-apiserver                             v1.14.0             ecf910f40d6e        8 months ago        210MB
+k8s.gcr.io/kube-controller-manager                    v1.14.0             b95b1efa0436        8 months ago        158MB
+k8s.gcr.io/kube-scheduler                             v1.14.0             00638a24688b        8 months ago        81.6MB
+gcr.io/kubernetes-helm/tiller                         v2.13.1             cb5aea7d0466        8 months ago        82.1MB
+alpine                                                3.7                 6d1ef012b567        9 months ago        4.2MB
+alpine                                                3.8                 dac705114996        9 months ago        4.41MB
+ruby                                                  2.5-alpine3.7       d1851fcb9251        10 months ago       43.7MB
+python                                                3.6-alpine3.7       28f54a6b0f1a        10 months ago       74.2MB
+weaveworks/weave-npc                                  2.5.1               789b7f496034        10 months ago       49.6MB
+weaveworks/weave-kube                                 2.5.1               1f394ae9e226        10 months ago       148MB
+k8s.gcr.io/coredns                                    1.3.1               eb516548c180        10 months ago       40.3MB
+k8s.gcr.io/etcd                                       3.3.10              2c4adeb21b4f        12 months ago       258MB
+weaveworks/scope                                      1.10.1              b0d8090d0e91        12 months ago       75.7MB
+k8s.gcr.io/kubernetes-dashboard-amd64                 v1.10.0             0dab2435c100        15 months ago       122MB
+weaveworks/scope                                      1.9.1               4b07159e407b        16 months ago       68MB
+quay.io/coreos/etcd                                   latest              61ad63875109        17 months ago       39.4MB
+prom/prometheus                                       v2.2.1              cc866859f8df        21 months ago       113MB
+node                                                  9.4-alpine          b5f94997f35f        23 months ago       68MB
+k8s.gcr.io/k8s-dns-kube-dns-amd64                     1.14.8              80cc5ea4b547        23 months ago       50.5MB
+k8s.gcr.io/pause                                      3.1                 da86e6ba6ca1        23 months ago       742kB
+prom/node-exporter                                    v0.15.2             ff5ecdcfc4a2        24 months ago       22.8MB
+prom/prometheus                                       v1.7.1              4da113bb6ae3        2 years ago         74.5MB
+prom/node-exporter                                    v0.14.0             bb4a6b774658        2 years ago         18.9MB
+gcr.io/google_containers/kubernetes-dashboard-amd64   v1.6.0              416701f962f2        2 years ago         109MB
+gcr.io/google_containers/kube-keepalived-vip          0.9                 959a1b4b8b0f        3 years ago         142MB
+master $ docker images nginx
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              231d40e811cd        12 days ago         126MB
+master $
+
+
+master $ ls
+main.tf  terraform.tfstate  tf_image_plan
+master $ cat main.tf
+#Download the latest nginx-image
+resource "docker_image" "image_id" {
+        name = "nginx:latest"
+}
+master $ cat tf_image_plan
+�Y�O    tfplanUT���]�`���(œ����Z���������3S��
+                                             ���2SR��
+�B8����e�\a`X���Z������Sy`YNbIjq��%y���k��3�*� �k
+Jsr�K�2��S��E�V��K-�O�()J�/���U�������b�%ִ� �$�������������̢R�)�i��9%E�z�Fz��U:\l�
+)q)|���<��S����3�lc���g�!S�y�Wxe ��P2�Ǐ���Y�O   tfstateUT���]D��
+!��>�0�� �U"Bb
+���ѽ������t�&.�v�\I$~X~�����j�ס$)f
+                                  ��T(~inG�V��*�c       !�&o���4����P޹$�cy�Y�O  tfconfig/m-/main.tfUT���]Rv�/���OLQ(�HU�I,I-.Q�K�̫���MLOU�*J-�/JNUPJ�O�N-��+)(����%�j.μ��T[%�V+�9J\�\���P�I�HY`�Y�O    tfconfig/modules.jsonUT���]��RP��RPPPP�N�T�RPRҁp]2�@\=%.�Z�X@��P��k))�Y�O2�Ǐ��  tfplanUT���]�Y�O޹$�cy  )tfstateUT���]�Y�O�I�HY`        �tfconfig/m-/main.tfUT���]�Y�O��k))     mtfconfig/modules.jsonUT���]PK�master $
+
+
+
+
+node01 $  docker swarm join --token SWMTKN-1-2a1alii6ahy1f8n0pdbd7th4nnl1j9l78q49zywyubt7oe4tph-cm71dognrtt07td3qk2wfq9no 172.17.0.100:2377
+This node joined a swarm as a worker.
+node01 $
+node01 $ docker node ls
+Error response from daemon: This node is not a swarm manager. Worker nodes can't be used to view or modify cluster state. Please run this command on a manager node or promote the current node to a manager.
+node01 $
+

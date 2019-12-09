@@ -1,0 +1,524 @@
+Create a new Terraform file called main.tf.
+Create three variables.
+The first variable, called image_name, needs to be set to ghost:latest.
+The second variable is called container_name with a default of ghost_blog.
+The final variable is called ext_port and set the default to port 80.
+
+Create a Docker image resource called ghost_image that uses the image_name variable.
+
+Create a Docker container resource called ghost_container.
+The name will use the container_name variable.
+The image will use the ghost_image resource.
+The internal port will be set to 2368.
+The external port will use ext_port variable.
+
+Initialize Terraform.
+
+Create a Terraform plan that uses the following variables:
+
+container_name = ghost_blog1
+image_name = ghost:alpine
+ext_port = 8080
+Output the plan to a file called tfplan.
+
+Then apply the plan using tfplan and make sure that the apply doesn’t prompt for input.
+
+========================================================================================================================================================================
+
+Step 0 :- Creating Terraform environment
+master $
+master $ docker swarm  init
+Swarm initialized: current node (trap1hlv8tzihjb9m1gh18cxh) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join \
+    --token SWMTKN-1-1u1dumrd1lnodvmh641dse3gyorbtpxuzt80g754u8xtep8lwy-au15jage3en1uspeuzhi3puv5 \
+    172.17.0.9:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+master $ docker node ls
+ID                           HOSTNAME  STATUS  AVAILABILITY  MANAGER STATUS
+bz4pjcaudupbxslfz920h9e04    node01    Ready   Active
+trap1hlv8tzihjb9m1gh18cxh *  master    Ready   Active        Leader
+master $ curl -O https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.7M  100 15.7M    0     0  9681k      0  0:00:01  0:00:01 --:--:-- 9680k
+master $ unzip terraform_0.12.17_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.17_linux_amd64.zip
+  inflating: /usr/local/bin/terraform
+master $ terraform version
+Terraform v0.12.17
+
+
+
+
+
+Step1:-  Creating main.tf with 3 varibales, docker image and docker container resources in it.
+
+
+==> main.tf
+
+master $ cat main.tf
+resource "docker_image" "image_id" {
+  name = var.ghost_image
+}
+
+resource "docker_container" "container_id" {
+  name = var.ghost_container
+  image = docker_image.image_id.latest
+  ports {
+    internal = "2368"
+    external = var.ext_port
+  }
+}
+
+variable "ghost_image" {
+  description = "Name of an Image"
+  default = "ghost:latest"
+}
+
+variable "ghost_container" {
+  description = "Name of the Container"
+  default = "ghost_blog"
+}
+
+variable "int_port" {
+  description = "Internal port for a container"
+  default = "2368"
+}
+
+variable "ext_port" {
+  description = "External port for a container"
+  default = "80"
+}
+master $
+
+
+
+master $ vi main.tf
+master $ ls
+main.tf  terraform_0.12.17_linux_amd64.zip
+
+master $ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "docker" (terraform-providers/docker) 2.6.0...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 2.6"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+master $ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "ghost_blog"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 80
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+master $ terraform validate
+Success! The configuration is valid.
+
+
+master $ terraform apply
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "ghost_blog"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 80
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+docker_image.image_id: Creating...
+docker_image.image_id: Still creating... [10s elapsed]
+docker_image.image_id: Creation complete after 19s [id=sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest]
+docker_container.container_id: Creating...
+docker_container.container_id: Creation complete after 0s [id=dda667173da9ae141a68ae5fa187380aa8bfdd1708d15b0181b8e25b15f40908]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+master $ docker images ghost:latest
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ghost               latest              eadda45eb5e4        4 days ago          394 MB
+master $ docker container ls -l
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+dda667173da9        eadda45eb5e4        "docker-entrypoint..."   17 seconds ago      Up 16 seconds       0.0.0.0:80->2368/tcp   ghost_blog
+
+master $ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+docker_image.image_id: Refreshing state... [id=sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest]
+docker_container.container_id: Refreshing state... [id=dda667173da9ae141a68ae5fa187380aa8bfdd1708d15b0181b8e25b15f40908]
+
+------------------------------------------------------------------------
+
+No changes. Infrastructure is up-to-date.
+
+This means that Terraform did not detect any differences between your
+configuration and real physical resources that exist. As a result, no
+actions need to be performed.
+master $
+
+
+
+Step2:- Creating output varibales file for terraform plan
+
+**********************************************************************************************
+
+==> output.tf
+
+output "ghost_container" {
+  value = "${docker_container.container_id.name}"
+  description = "This is just container name"
+}
+
+output "ghost_image" {
+  value = "${docker_image.image_id.name}"
+  description = "This is container image name "
+}
+
+
+**********************************************************************************************
+
+
+terraform apply -var 'container_name=ghost_blog1' -var 'ext_port=8080' -var 'image_name=ghost:alpine'  OR  terraform plan -out=tfplan
+
+master $ vi output.tf
+master $ terraform validate
+Success! The configuration is valid.
+
+
+master $ terraform plan -out=tfplan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+docker_image.image_id: Refreshing state... [id=sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest]
+docker_container.container_id: Refreshing state... [id=dda667173da9ae141a68ae5fa187380aa8bfdd1708d15b0181b8e25b15f40908]
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  ~ update in-place
+-/+ destroy and then create replacement
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id must be replaced
+-/+ resource "docker_container" "container_id" {
+        attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      ~ gateway          = "172.18.0.1" -> (known after apply)
+      ~ id               = "dda667173da9ae141a68ae5fa187380aa8bfdd1708d15b0181b8e25b15f40908" -> (known after apply)
+        image            = "sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6e"
+      ~ ip_address       = "172.18.0.2" -> (known after apply)
+      ~ ip_prefix_length = 24 -> (known after apply)
+        log_driver       = "json-file"
+        logs             = false
+        must_run         = true
+      ~ name             = "ghost_blog" -> "ghost_blog1" # forces replacement
+      ~ network_data     = [
+          - {
+              - gateway          = "172.18.0.1"
+              - ip_address       = "172.18.0.2"
+              - ip_prefix_length = 24
+              - network_name     = "bridge"
+            },
+        ] -> (known after apply)
+        read_only        = false
+        restart          = "no"
+        rm               = false
+        start            = true
+
+      ~ ports {
+          ~ external = 80 -> 8080 # forces replacement
+            internal = 2368
+            ip       = "0.0.0.0"
+            protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be updated in-place
+  ~ resource "docker_image" "image_id" {
+        id     = "sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest"
+        latest = "sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6e"
+      ~ name   = "ghost:latest" -> "ghost:alpine"
+    }
+
+Plan: 1 to add, 1 to change, 1 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+
+master $ ls
+main.tf  output.tf  terraform_0.12.17_linux_amd64.zip  terraform.tfstate  tfplan
+master $
+
+
+
+
+master $ terraform plan -out=tfplan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+docker_image.image_id: Refreshing state... [id=sha256:7a562dfa21a3d6aa7e2ad74d1301b849c5ab13504df6607682f1ea2831626583ghost:alpine]
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = "sha256:7a562dfa21a3d6aa7e2ad74d1301b849c5ab13504df6607682f1ea2831626583"
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "ghost_blog1"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 8080
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+Plan: 1 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+
+master $ terraform apply "tfplan"
+docker_container.container_id: Creating...
+docker_container.container_id: Creation complete after 1s [id=996aa4f971e07d525168838b44e2482473db6d6b5175f3408cfe91b6d8184376]
+
+Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+Outputs:
+
+ghost_container = ghost_blog1
+ghost_image = ghost:alpine
+master $
+
+master $ ls -ltr
+total 16128
+-rw-r--r-- 1 root root 16494567 Dec  9 11:22 terraform_0.12.17_linux_amd64.zip
+-rw-r--r-- 1 root root      616 Dec  9 11:36 main.tf
+-rw-r--r-- 1 root root      242 Dec  9 11:39 output.tf
+-rw-r--r-- 1 root root     2462 Dec  9 11:52 tfplan
+-rw-r--r-- 1 root root      949 Dec  9 11:52 terraform.tfstate.backup
+-rw-r--r-- 1 root root     3666 Dec  9 11:52 terraform.tfstate
+master $
+
+master $ cat output.tf
+output "ghost_container" {
+  value = "${docker_container.container_id.name}"
+  description = "This is just container name"
+}
+
+output "ghost_image" {
+  value = "${docker_image.image_id.name}"
+  description = "This is container image name "
+}
+
+master $ cat main.tf
+resource "docker_image" "image_id" {
+  name = var.ghost_image
+}
+
+resource "docker_container" "container_id" {
+  name = var.ghost_container
+  image = docker_image.image_id.latest
+  ports {
+    internal = "2368"
+    external = var.ext_port
+  }
+}
+
+variable "ghost_image" {
+  description = "Name of an Image"
+  default = "ghost:alpine"
+}
+
+variable "ghost_container" {
+  description = "Name of the Container"
+  default = "ghost_blog1"
+}
+
+variable "int_port" {
+  description = "Internal port for a container"
+  default = "2368"
+}
+
+variable "ext_port" {
+  description = "External port for a container"
+  default = "8080"
+}
+master $
+
+master $ cat output.tf
+output "ghost_container" {
+  value = docker_container.container_id.name
+  description = "This is just container name"
+}
+
+output "ext_port" {
+  value = docker_container.container_id.ports[0]
+  description = "This is just external port of a container"
+}
+
+output "ghost_image" {
+  value = docker_image.image_id.name
+  description = "This is container image name "
+}

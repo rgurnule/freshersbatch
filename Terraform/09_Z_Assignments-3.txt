@@ -1,0 +1,684 @@
+Adding Maps and Lookups in your Terraform files
+The lab files can be found @ https://github.com/satyensingh/terraform-assignment-resources.git
+In the repo you will find main.tf, outputs.tf, and variables.tf.
+Add a new variable called env. Set a description to “env: dev or prod”.
+Convert the type from image_name to map.
+
+Change the default to use key/value pairs. Set dev to ghost:latest and prod to ghost:alpine.
+
+Convert container_name to a map. Change the default to use key/value pairs. Set dev to blog_dev and prod to blog_prod.
+
+Convert ext_port to a map. Change the default to use key/value pairs. Set dev to 8080 and prod to 80.
+
+Now initialize Terraform.
+
+Setup the Development environment
+Create a workspace called dev.
+Generate a Terraform plan. Output the plan and call it tfdev_plan. Pass in a variable called env and set it to dev.
+Apply tfdev_plan.
+
+Setup the Production environment
+Create a workspace called prod.
+Generate a Terraform plan. Output the plan and call it tfprod_plan. Pass in a variable called env and set it to prod.
+Apply tfprod_plan.
+
+Verify both environments work
+Open a browser and navigate to the public IP. This should pull up the production environment.
+Open a browser tab and navigate to the public IP on port 8080. This should pull up the development environment.
+
+========================================================================================================================================================================
+
+Step0:- Setting up Terraform envionment.
+
+ubuntu@ip-172-31-41-173:~$ curl -O https://releases.hashicorp.com/terraform/0.12.17/terraform_0.12.17_linux_amd64.zip
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.7M  100 15.7M    0     0  75.6M      0 --:--:-- --:--:-- --:--:-- 75.6M
+ubuntu@ip-172-31-41-173:~$ sudo apt install unzip
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+Suggested packages:
+  zip
+The following NEW packages will be installed:
+  unzip
+0 upgraded, 1 newly installed, 0 to remove and 30 not upgraded.
+Need to get 167 kB of archives.
+After this operation, 558 kB of additional disk space will be used.
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 unzip amd64 6.0-21ubuntu1 [167 kB]
+Fetched 167 kB in 1s (250 kB/s)
+Selecting previously unselected package unzip.
+(Reading database ... 128942 files and directories currently installed.)
+Preparing to unpack .../unzip_6.0-21ubuntu1_amd64.deb ...
+Unpacking unzip (6.0-21ubuntu1) ...
+Setting up unzip (6.0-21ubuntu1) ...
+Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+
+ubuntu@ip-172-31-41-173:~$ unzip terraform_0.12.17_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.17_linux_amd64.zip
+error:  cannot create /usr/local/bin/terraform
+        Permission denied
+ubuntu@ip-172-31-41-173:~$ sudo unzip terraform_0.12.17_linux_amd64.zip -d /usr/local/bin/
+Archive:  terraform_0.12.17_linux_amd64.zip
+  inflating: /usr/local/bin/terraform
+
+ubuntu@ip-172-31-41-173:~$ terraform version
+Terraform v0.12.17
+
+******************************************************************************************************************************************************************************************************
+
+Step2:- Creating terraform files with  Maps and Lookups
+
+ubuntu@ip-172-31-41-173:~$ ls
+terraform_0.12.17_linux_amd64.zip  terrform_0.11.13_linux_amd64.zip
+ubuntu@ip-172-31-41-173:~$ mkdir terrform-lab
+ubuntu@ip-172-31-41-173:~$ cd terrform-lab/
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls
+ubuntu@ip-172-31-41-173:~/terrform-lab$ git clone https://github.com/satyensingh/terraform-assignment-resources.git
+Cloning into 'terraform-assignment-resources'...
+remote: Enumerating objects: 9, done.
+remote: Counting objects: 100% (9/9), done.
+remote: Compressing objects: 100% (8/8), done.
+remote: Total 9 (delta 0), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (9/9), done.
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls
+terraform-assignment-resources
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cd terraform-assignment-resources/
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ ls -ltr
+total 12
+-rw-rw-r-- 1 ubuntu ubuntu 302 Dec  9 06:11 variables.tf
+-rw-rw-r-- 1 ubuntu ubuntu 300 Dec  9 06:11 outputs.tf
+-rw-rw-r-- 1 ubuntu ubuntu 319 Dec  9 06:11 main.tf
+
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ pwd
+/home/ubuntu/terrform-lab/terraform-assignment-resources
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ cp variables.tf ../
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ cp outputs.tf ../
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ cp main.tf ../
+ubuntu@ip-172-31-41-173:~/terrform-lab/terraform-assignment-resources$ cd -
+/home/ubuntu/terrform-lab
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls -ltr
+total 16
+drwxrwxr-x 3 ubuntu ubuntu 4096 Dec  9 06:11 terraform-assignment-resources
+-rw-rw-r-- 1 ubuntu ubuntu  302 Dec  9 06:13 variables.tf
+-rw-rw-r-- 1 ubuntu ubuntu  300 Dec  9 06:13 outputs.tf
+-rw-rw-r-- 1 ubuntu ubuntu  319 Dec  9 06:13 main.tf
+
+
+ubuntu@ip-172-31-41-173:~$ ls -ltr
+total 16112
+drwxr-xr-x 3 ubuntu ubuntu     4096 Nov 25 07:15 snap
+-rw-rw-r-- 1 ubuntu ubuntu 16494567 Dec  9 12:30 terraform_0.12.17_linux_amd64.zip
+ubuntu@ip-172-31-41-173:~$ mkdir terrform-lab
+ubuntu@ip-172-31-41-173:~$ cd terrform-lab/
+ubuntu@ip-172-31-41-173:~/terrform-lab$ vi main.tf
+ubuntu@ip-172-31-41-173:~/terrform-lab$ vi varible.tf
+ubuntu@ip-172-31-41-173:~/terrform-lab$ vi outputs.tf
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform validate
+
+Error: Could not satisfy plugin requirements
+
+
+Plugin reinitialization required. Please run "terraform init".
+
+Plugins are external binaries that Terraform uses to access and manipulate
+resources. The configuration provided requires plugins which can't be located,
+don't satisfy the version constraints, or are otherwise incompatible.
+
+Terraform automatically discovers provider requirements from your
+configuration, including providers used in child modules. To see the
+requirements and constraints from each module, run "terraform providers".
+
+
+
+Error: provider.docker: no suitable version installed
+  version requirements: "(any version)"
+  versions installed: none
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform init
+
+Initializing the backend...
+
+Initializing provider plugins...
+- Checking for available provider plugins...
+- Downloading plugin for provider "docker" (terraform-providers/docker) 2.6.0...
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 2.6"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+Error: Error pinging Docker server: Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/_ping: dial unix /var/run/docker.sock: connect: permission denied
+
+  on <empty> line 0:
+  (source code not available)
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ sudo chmod 777 /var/run/docker.sock
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform plan
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "blog_dev"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 8080
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform apply
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "blog_dev"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 8080
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+Do you want to perform these actions?
+  Terraform will perform the actions described above.
+  Only 'yes' will be accepted to approve.
+
+  Enter a value: yes
+
+docker_image.image_id: Creating...
+docker_image.image_id: Still creating... [10s elapsed]
+docker_image.image_id: Still creating... [20s elapsed]
+docker_image.image_id: Creation complete after 21s [id=sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest]
+docker_container.container_id: Creating...
+docker_container.container_id: Creation complete after 2s [id=165d398300a3b8f9a20cfbdf3c502dc5d8465a8e1d49355f69efff28e14959f8]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+container_name = blog_dev
+ip_address = 172.17.0.2
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+ghost                       latest              eadda45eb5e4        4 days ago          394MB
+website                     0.7                 4676a8041803        7 days ago          220MB
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker images ghost:latest
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ghost               latest              eadda45eb5e4        4 days ago          394MB
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform validate
+Success! The configuration is valid.
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+ubuntu@ip-172-31-41-173:~/terrform-lab$ vi variables.tf
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform validate
+Success! The configuration is valid.
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat main.tf
+# Download the latest Ghost Image
+resource "docker_image" "image_id" {
+  name = var.image_name
+}
+
+# Start the Container
+resource "docker_container" "container_id" {
+  name  = var.container_name
+  image = docker_image.image_id.latest
+  ports {
+    internal = "2368"
+    external = var.ext_port
+  }
+}
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat outputs.tf
+#Output the IP Address of the Container
+output "ip_address" {
+  value       = "${docker_container.container_id.ip_address}"
+  description = "The IP for the container."
+}
+
+output "container_name" {
+  value       = "${docker_container.container_id.name}"
+  description = "The name of the container."
+}
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat variables.tf
+#Define variables
+variable "image_name" {
+  description = "Image for container."
+  default     = "ghost:latest"
+}
+
+variable "container_name" {
+  description = "Name of the container."
+  default     = "blog"
+}
+
+variable "ext_port" {
+  description = "External port for container."
+  default     = "80"
+}
+
+variable "env" {
+  description = "env: dev or prod"
+  default     = "dev"
+}
+
+
+
+
+
+Step 2:- Setup the Development and Production Workspace environments
+
+***********************************************************************
+DEVLOPMENT WORKSPACE SETUP					      *	
+***********************************************************************
+
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace show
+default
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace list
+* default
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace new dev
+Created and switched to workspace "dev"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace list
+  default
+* dev
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform plan -out=tfdev_plan -var 'env=dev'
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "blog_dev"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 8080
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:latest"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfdev_plan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfdev_plan"
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls -ltr
+total 24
+-rw-rw-r-- 1 ubuntu ubuntu  342 Dec  9 12:31 main.tf
+-rw-rw-r-- 1 ubuntu ubuntu  571 Dec  9 12:31 varible.tf
+-rw-rw-r-- 1 ubuntu ubuntu  300 Dec  9 12:32 outputs.tf
+-rw-rw-r-- 1 ubuntu ubuntu 3656 Dec  9 12:34 terraform.tfstate
+drwxr-xr-x 3 ubuntu ubuntu 4096 Dec  9 12:36 terraform.tfstate.d
+-rw-rw-r-- 1 ubuntu ubuntu 2463 Dec  9 12:36 tfdev_plan
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform apply "tfdev_plan"
+docker_image.image_id: Creating...
+docker_image.image_id: Creation complete after 0s [id=sha256:eadda45eb5e4c4dde5ef2bbb16f7e6754183d4e6fab6025f44fe1c214a5efc6eghost:latest]
+docker_container.container_id: Creating...
+
+Error: Unable to create container: Error response from daemon: Conflict. The container name "/blog_dev" is already in use by container "165d398300a3b8f9a20cfbdf3c502dc5d8465a8e1d49355f69efff28e14959f8". You have to remove (or rename) that container to be able to reuse that name.
+
+  on main.tf line 8, in resource "docker_container" "container_id":
+   8: resource "docker_container" "container_id" {
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker container ls  -f name=blog_dev
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+165d398300a3        eadda45eb5e4        "docker-entrypoint.s…"   4 minutes ago       Up 4 minutes        0.0.0.0:8080->2368/tcp   blog_dev
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker images ghost:latest
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ghost               latest              eadda45eb5e4        4 days ago          394MB
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+
+
+
+
+***********************************************************************
+PRODUCTION WORKSPACE SETUP					      *	
+***********************************************************************
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace new prod
+Created and switched to workspace "prod"!
+
+You're now on a new, empty workspace. Workspaces isolate their state,
+so if you run "terraform plan" Terraform will not see any existing state
+for this configuration.
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform workspace list
+  default
+  dev
+* prod
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform plan -out=tfprod_plan -var 'env=prod'
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+
+Terraform will perform the following actions:
+
+  # docker_container.container_id will be created
+  + resource "docker_container" "container_id" {
+      + attach           = false
+      + bridge           = (known after apply)
+      + container_logs   = (known after apply)
+      + exit_code        = (known after apply)
+      + gateway          = (known after apply)
+      + id               = (known after apply)
+      + image            = (known after apply)
+      + ip_address       = (known after apply)
+      + ip_prefix_length = (known after apply)
+      + log_driver       = "json-file"
+      + logs             = false
+      + must_run         = true
+      + name             = "blog_prod"
+      + network_data     = (known after apply)
+      + read_only        = false
+      + restart          = "no"
+      + rm               = false
+      + start            = true
+
+      + ports {
+          + external = 80
+          + internal = 2368
+          + ip       = "0.0.0.0"
+          + protocol = "tcp"
+        }
+    }
+
+  # docker_image.image_id will be created
+  + resource "docker_image" "image_id" {
+      + id     = (known after apply)
+      + latest = (known after apply)
+      + name   = "ghost:alpine"
+    }
+
+Plan: 2 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfprod_plan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfprod_plan"
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls
+main.tf  outputs.tf  terraform.tfstate  terraform.tfstate.d  tfdev_plan  tfprod_plan  varible.tf
+ubuntu@ip-172-31-41-173:~/terrform-lab$ terraform apply "tfprod_plan"
+docker_image.image_id: Creating...
+docker_image.image_id: Still creating... [10s elapsed]
+docker_image.image_id: Still creating... [20s elapsed]
+docker_image.image_id: Creation complete after 20s [id=sha256:7a562dfa21a3d6aa7e2ad74d1301b849c5ab13504df6607682f1ea2831626583ghost:alpine]
+docker_container.container_id: Creating...
+docker_container.container_id: Creation complete after 2s [id=ab8e79984e376de7504d67d2285f31c2683a9202ad09cb09b925262668fd1537]
+
+Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate
+
+Outputs:
+
+container_name = blog_prod
+ip_address = 172.17.0.3
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker container ls  -f name=blog_prod
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                  NAMES
+ab8e79984e37        7a562dfa21a3        "docker-entrypoint.s…"   16 seconds ago      Up 13 seconds       0.0.0.0:80->2368/tcp   blog_prod
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker images ghost:alpine
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ghost               alpine              7a562dfa21a3        4 days ago          327MB
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker container ls  -f name=blog_dev
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+165d398300a3        eadda45eb5e4        "docker-entrypoint.s…"   15 minutes ago      Up 15 minutes       0.0.0.0:8080->2368/tcp   blog_dev
+ubuntu@ip-172-31-41-173:~/terrform-lab$ docker images ghost:latest
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ghost               latest              eadda45eb5e4        4 days ago          394MB
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ ls -ltr
+total 28
+-rw-rw-r-- 1 ubuntu ubuntu  342 Dec  9 12:31 main.tf
+-rw-rw-r-- 1 ubuntu ubuntu  571 Dec  9 12:31 varible.tf
+-rw-rw-r-- 1 ubuntu ubuntu  300 Dec  9 12:32 outputs.tf
+-rw-rw-r-- 1 ubuntu ubuntu 3656 Dec  9 12:34 terraform.tfstate
+-rw-rw-r-- 1 ubuntu ubuntu 2463 Dec  9 12:36 tfdev_plan
+drwxr-xr-x 4 ubuntu ubuntu 4096 Dec  9 12:39 terraform.tfstate.d
+-rw-rw-r-- 1 ubuntu ubuntu 2465 Dec  9 12:39 tfprod_plan
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat outputs.tf
+#Output the IP Address of the Container
+output "ip_address" {
+  value       = "${docker_container.container_id.ip_address}"
+  description = "The IP for the container."
+}
+
+output "container_name" {
+  value       = "${docker_container.container_id.name}"
+  description = "The name of the container."
+}
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat varible.tf
+#Define variables
+variable "image_name" {
+  type = map
+  description = "Image for container."
+  default     = {
+        dev = "ghost:latest"
+        prod = "ghost:alpine"
+     }
+}
+
+variable "container_name" {
+  type = map
+  description = "Name of the container."
+  default     = {
+        dev = "blog_dev"
+        prod = "blog_prod"
+     }
+}
+
+variable "ext_port" {
+  type = map
+  description = "External port for container."
+  default     = {
+        dev = "8080"
+        prod = "80"
+     }
+}
+
+variable "env" {
+  description = "env: dev or prod"
+  default     = "dev"
+}
+
+ubuntu@ip-172-31-41-173:~/terrform-lab$ cat main.tf
+# Download the latest Ghost Image
+resource "docker_image" "image_id" {
+  name = var.image_name["${var.env}"]
+
+}
+
+# Start the Container
+resource "docker_container" "container_id" {
+  name  = var.container_name["${var.env}"]
+  image = docker_image.image_id.latest
+  ports {
+    internal = "2368"
+    external = var.ext_port["${var.env}"]
+  }
+}
+ubuntu@ip-172-31-41-173:~/terrform-lab$
+
+
+
+
+
+Finale step:-
+
+After hitting  http://15.206.123.234:8080/  URL in browser i am getting ghost web page.(DEV Environment)
+
+Ater hitting http://15.206.123.234/ URL in browser, i am getting ghost web page (PROD Environment) 
