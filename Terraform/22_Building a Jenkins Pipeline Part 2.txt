@@ -1,0 +1,920 @@
+In this lesson, we will create a Jenkins Pipeline to deploy out a Swarm service.
+
+In the Jenkins dashboard, click New Item Enter an item name of PipelinePart2, and select Pipeline. Click Ok.
+
+Check the box for This project is parameterized. Click Add Parameter and select Choice Parameter. Give it a Name of action. For Choices, enter Deploy and Destroy, and make sure they are on separate lines. Enter The action that will be executed as the Description.
+
+Click Add Parameter and select Choice Parameter again. This time, name it image_name/ghost_image. Enter ghost:latest and ghost:alpine in the Choices box, making sure they are on separate lines. Enter The image Ghost Blog will deploy as a Description.
+
+Click Add Parameter a third time, and select String Parameter. Give it a Name of ghost_ext_port. Set the Default Value to 80. Enter The Public Port as the Description.
+
+Down in the Pipeline section, give a Definition of Pipeline script, and add the following to the Script:
+
+node {
+  git 'https://github.com/satyensingh/terraform-docker-service.git'
+  if(action == 'Deploy') {
+    stage('init') {
+      sh label: 'terraform init', script: "terraform init"
+    }
+    stage('plan') {
+      sh label: 'terraform plan', script: "terraform plan -out=tfplan -input=false -var ghost_image=${ghost_image} -var ghost_ext_port=${ghost_ext_port}"
+      script {
+          timeout(time: 10, unit: 'MINUTES') {
+            input(id: "Deploy Gate", message: "Deploy environment?", ok: 'Deploy')
+          }
+      }
+    }
+    stage('apply') {
+      sh label: 'terraform apply', script: "terraform apply -lock=false -input=false tfplan"
+    }
+    stage('show') {
+      sh label: 'terraform show', script: "terraform show"
+    }
+  }
+
+  if(action == 'Destroy') {
+    stage('plan_destroy') {
+      sh label: 'terraform plan', script: "terraform plan -destroy -out=tfdestroyplan -input=false -var ghost_image=${ghost_image} -var ghost_ext_port=${ghost_ext_port}"
+    }
+    stage('destroy') {
+      script {
+          timeout(time: 10, unit: 'MINUTES') {
+              input(id: "Destroy Gate", message: "Destroy environment?", ok: 'Destroy')
+          }
+      }
+      sh label: 'terraform apply', script: "terraform apply -lock=false -input=false tfdestroyplan"
+    }
+    stage('cleanup') {
+      sh label: 'cleanup', script: "rm -rf terraform.tfstat"
+    }
+  }
+}
+Click Save
+
+============================================================================================================================================================================================================
+
+
+ubuntu@ip-172-31-39-236:~$ docker swarm init
+Swarm initialized: current node (o88dgh60id1q4x7wxuf7q309w) is now a manager.
+
+To add a worker to this swarm, run the following command:
+
+    docker swarm join --token SWMTKN-1-2jgtx3bsakwx2qp9zuie9knf9rth5o0t0pxsv3nzn8e077ubq7-0riyc848qsw9cmrnnla3wabcw 172.31.39.236:2377
+
+To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+
+ubuntu@ip-172-31-39-236:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+o88dgh60id1q4x7wxuf7q309w *   ip-172-31-39-236    Ready               Active              Leader              18.09.9
+ubuntu@ip-172-31-39-236:~$
+ubuntu@ip-172-31-39-236:~$ docker node ls
+ID                            HOSTNAME            STATUS              AVAILABILITY        MANAGER STATUS      ENGINE VERSION
+o88dgh60id1q4x7wxuf7q309w *   ip-172-31-39-236    Ready               Active              Leader              18.09.9
+j3ucgkegf1lpn5ffx658fsts3     ip-172-31-41-173    Ready               Active                                  18.09.7
+ubuntu@ip-172-31-39-236:~$
+
+=================================================================================================================================================
+
+For Deploy action:-
+
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/PipelinePart2
+[Pipeline] {
+[Pipeline] git
+No credentials specified
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/rgurnule/terraform-docker-service.git # timeout=10
+Fetching upstream changes from https://github.com/rgurnule/terraform-docker-service.git
+ > git --version # timeout=10
+ > git fetch --tags --progress -- https://github.com/rgurnule/terraform-docker-service.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 405037882671e5a6c15140167eb2235f3f077a19 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D master # timeout=10
+ > git checkout -b master 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+Commit message: "Update main.tf"
+ > git rev-list --no-walk 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+[Pipeline] stage
+[Pipeline] { (init)
+[Pipeline] sh (terraform init)
++ terraform init
+
+[0m[1mInitializing the backend...[0m
+
+[0m[1mInitializing provider plugins...[0m
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.docker: version = "~> 2.6"
+
+[0m[1m[32mTerraform has been successfully initialized![0m[32m[0m
+[0m[32m
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.[0m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (plan)
+[Pipeline] sh (terraform plan)
++ terraform plan -out=tfplan -input=false -var ghost_image=ghost:alpine -var ghost_ext_port=80
+[0m[1mRefreshing Terraform state in-memory prior to plan...[0m
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+[0m
+[0m[1mdocker_network.public_bridge_network: Refreshing state... [id=tkb59fd1g61ow5x9ooet9daro][0m
+[0m[1mdocker_network.private_bridge_network: Refreshing state... [id=xgqcqyc3niimiax4mi61grzvc][0m
+[0m[1mdocker_volume.mysql_data_volume: Refreshing state... [id=ghost_mysql_data][0m
+[0m[1mdocker_service.mysql-service: Refreshing state... [id=096z743112otdv27tbog97ygm][0m
+[0m[1mdocker_service.ghost-service: Refreshing state... [id=oie2o3bsikdvgmjlv84up6tn3][0m
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  [33m~[0m update in-place
+[0m
+Terraform will perform the following actions:
+
+[1m  # docker_service.ghost-service[0m will be updated in-place[0m[0m
+[0m[33m  ~[0m [0mresource "docker_service" "ghost-service" {
+        [1m[0mid[0m[0m     = "oie2o3bsikdvgmjlv84up6tn3"
+        [1m[0mlabels[0m[0m = {}
+        [1m[0mname[0m[0m   = "ghost"
+
+        endpoint_spec {
+            [1m[0mmode[0m[0m = "vip"
+
+            ports {
+                [1m[0mprotocol[0m[0m       = "tcp"
+                [1m[0mpublish_mode[0m[0m   = "ingress"
+                [1m[0mpublished_port[0m[0m = 80
+                [1m[0mtarget_port[0m[0m    = 2368
+            }
+        }
+
+        mode {
+            [1m[0mglobal[0m[0m = false
+
+            replicated {
+                [1m[0mreplicas[0m[0m = 1
+            }
+        }
+
+      [33m~[0m [0mtask_spec {
+            [1m[0mforce_update[0m[0m   = 0
+          [33m~[0m [0m[1m[0mnetworks[0m[0m       = [
+              [32m+[0m [0m"ghost_mysql_internal_network",
+              [32m+[0m [0m"ghost_public_network",
+              [31m-[0m [0m"tkb59fd1g61ow5x9ooet9daro",
+              [31m-[0m [0m"xgqcqyc3niimiax4mi61grzvc",
+            ]
+            [1m[0mrestart_policy[0m[0m = {
+                "condition"    = "any"
+                "max_attempts" = "0"
+            }
+            [1m[0mruntime[0m[0m        = "container"
+
+          [33m~[0m [0mcontainer_spec {
+                [1m[0margs[0m[0m              = []
+                [1m[0mcommand[0m[0m           = []
+                [1m[0menv[0m[0m               = {
+                    "database__client"               = "mysql"
+                    "database__connection__database" = "ghost"
+                    "database__connection__host"     = "db"
+                    "database__connection__password" = "P4sSw0rd0!"
+                    "database__connection__user"     = "root"
+                }
+                [1m[0mgroups[0m[0m            = []
+              [33m~[0m [0m[1m[0mimage[0m[0m             = "ghost:alpine@sha256:92ccd65240f66ad5835e554186b294006fee7dac9eceea0cbe13f7182eacfcb2" [33m->[0m [0m"ghost:alpine"
+                [1m[0misolation[0m[0m         = "default"
+                [1m[0mlabels[0m[0m            = {}
+                [1m[0mread_only[0m[0m         = false
+                [1m[0mstop_grace_period[0m[0m = "0s"
+
+                dns_config {}
+
+                healthcheck {
+                    [1m[0minterval[0m[0m     = "0s"
+                    [1m[0mretries[0m[0m      = 0
+                    [1m[0mstart_period[0m[0m = "0s"
+                    [1m[0mtest[0m[0m         = []
+                    [1m[0mtimeout[0m[0m      = "0s"
+                }
+            }
+
+            placement {
+                [1m[0mconstraints[0m[0m = []
+                [1m[0mprefs[0m[0m       = []
+
+                platforms {
+                    [1m[0marchitecture[0m[0m = "amd64"
+                    [1m[0mos[0m[0m           = "linux"
+                }
+            }
+
+            resources {
+            }
+        }
+    }
+
+[1m  # docker_service.mysql-service[0m will be updated in-place[0m[0m
+[0m[33m  ~[0m [0mresource "docker_service" "mysql-service" {
+        [1m[0mid[0m[0m     = "096z743112otdv27tbog97ygm"
+        [1m[0mlabels[0m[0m = {}
+        [1m[0mname[0m[0m   = "db"
+
+        endpoint_spec {
+            [1m[0mmode[0m[0m = "vip"
+        }
+
+        mode {
+            [1m[0mglobal[0m[0m = false
+
+            replicated {
+                [1m[0mreplicas[0m[0m = 1
+            }
+        }
+
+      [33m~[0m [0mtask_spec {
+            [1m[0mforce_update[0m[0m   = 0
+          [33m~[0m [0m[1m[0mnetworks[0m[0m       = [
+              [32m+[0m [0m"ghost_mysql_internal_network",
+              [31m-[0m [0m"xgqcqyc3niimiax4mi61grzvc",
+            ]
+            [1m[0mrestart_policy[0m[0m = {
+                "condition"    = "any"
+                "max_attempts" = "0"
+            }
+            [1m[0mruntime[0m[0m        = "container"
+
+          [33m~[0m [0mcontainer_spec {
+                [1m[0margs[0m[0m              = []
+                [1m[0mcommand[0m[0m           = []
+                [1m[0menv[0m[0m               = {
+                    "MYSQL_ROOT_PASSWORD" = "P4sSw0rd0!"
+                }
+                [1m[0mgroups[0m[0m            = []
+              [33m~[0m [0m[1m[0mimage[0m[0m             = "mysql:5.7@sha256:5779c71a4730da36f013a23a437b5831198e68e634575f487d37a0639470e3a8" [33m->[0m [0m"mysql:5.7"
+                [1m[0misolation[0m[0m         = "default"
+                [1m[0mlabels[0m[0m            = {}
+                [1m[0mread_only[0m[0m         = false
+                [1m[0mstop_grace_period[0m[0m = "0s"
+
+                dns_config {}
+
+                healthcheck {
+                    [1m[0minterval[0m[0m     = "0s"
+                    [1m[0mretries[0m[0m      = 0
+                    [1m[0mstart_period[0m[0m = "0s"
+                    [1m[0mtest[0m[0m         = []
+                    [1m[0mtimeout[0m[0m      = "0s"
+                }
+
+                mounts {
+                    [1m[0mread_only[0m[0m = false
+                    [1m[0msource[0m[0m    = "ghost_mysql_data"
+                    [1m[0mtarget[0m[0m    = "/var/lib/mysql"
+                    [1m[0mtype[0m[0m      = "volume"
+                }
+            }
+
+            placement {
+                [1m[0mconstraints[0m[0m = []
+                [1m[0mprefs[0m[0m       = []
+
+                platforms {
+                    [1m[0marchitecture[0m[0m = "amd64"
+                    [1m[0mos[0m[0m           = "linux"
+                }
+            }
+
+            resources {
+            }
+        }
+    }
+
+[0m[1mPlan:[0m 0 to add, 2 to change, 0 to destroy.[0m
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfplan"
+
+[Pipeline] script
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 10 min
+[Pipeline] {
+[Pipeline] input
+Deploy environment?
+Deploy or Abort
+Approved by admin
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (apply)
+[Pipeline] sh (terraform apply)
++ terraform apply -lock=false -input=false tfplan
+[0m[1mdocker_service.mysql-service: Modifying... [id=096z743112otdv27tbog97ygm][0m[0m
+[0m[1mdocker_service.ghost-service: Modifying... [id=oie2o3bsikdvgmjlv84up6tn3][0m[0m
+[0m[1mdocker_service.mysql-service: Modifications complete after 3s [id=096z743112otdv27tbog97ygm][0m[0m
+[0m[1mdocker_service.ghost-service: Modifications complete after 3s [id=oie2o3bsikdvgmjlv84up6tn3][0m[0m
+[0m[1m[32m
+Apply complete! Resources: 0 added, 2 changed, 0 destroyed.[0m
+[0m
+The state of your infrastructure has been saved to the path
+below. This state is required to modify and destroy your
+infrastructure, so keep it safe. To inspect the complete state
+use the `terraform show` command.
+
+State path: terraform.tfstate[0m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (show)
+[Pipeline] sh (terraform show)
++ terraform show
+[0m# docker_network.private_bridge_network:
+resource "docker_network" "private_bridge_network" {
+    [1m[0mattachable[0m[0m  = false
+    [1m[0mdriver[0m[0m      = "overlay"
+    [1m[0mid[0m[0m          = "xgqcqyc3niimiax4mi61grzvc"
+    [1m[0mingress[0m[0m     = false
+    [1m[0minternal[0m[0m    = true
+    [1m[0mipam_driver[0m[0m = "default"
+    [1m[0mipv6[0m[0m        = false
+    [1m[0mlabels[0m[0m      = {}
+    [1m[0mname[0m[0m        = "ghost_mysql_internal_network"
+    [1m[0moptions[0m[0m     = {
+        "com.docker.network.driver.overlay.vxlanid_list" = "4097"
+    }
+    [1m[0mscope[0m[0m       = "swarm"
+
+    ipam_config {
+        [1m[0maux_address[0m[0m = {}
+        [1m[0mgateway[0m[0m     = "10.0.0.1"
+        [1m[0msubnet[0m[0m      = "10.0.0.0/24"
+    }
+}
+
+# docker_network.public_bridge_network:
+resource "docker_network" "public_bridge_network" {
+    [1m[0mattachable[0m[0m  = false
+    [1m[0mdriver[0m[0m      = "overlay"
+    [1m[0mid[0m[0m          = "tkb59fd1g61ow5x9ooet9daro"
+    [1m[0mingress[0m[0m     = false
+    [1m[0minternal[0m[0m    = false
+    [1m[0mipam_driver[0m[0m = "default"
+    [1m[0mipv6[0m[0m        = false
+    [1m[0mlabels[0m[0m      = {}
+    [1m[0mname[0m[0m        = "ghost_public_network"
+    [1m[0moptions[0m[0m     = {
+        "com.docker.network.driver.overlay.vxlanid_list" = "4098"
+    }
+    [1m[0mscope[0m[0m       = "swarm"
+
+    ipam_config {
+        [1m[0maux_address[0m[0m = {}
+        [1m[0mgateway[0m[0m     = "10.0.1.1"
+        [1m[0msubnet[0m[0m      = "10.0.1.0/24"
+    }
+}
+
+# docker_service.ghost-service:
+resource "docker_service" "ghost-service" {
+    [1m[0mid[0m[0m     = "oie2o3bsikdvgmjlv84up6tn3"
+    [1m[0mlabels[0m[0m = {}
+    [1m[0mname[0m[0m   = "ghost"
+
+    endpoint_spec {
+        [1m[0mmode[0m[0m = "vip"
+
+        ports {
+            [1m[0mprotocol[0m[0m       = "tcp"
+            [1m[0mpublish_mode[0m[0m   = "ingress"
+            [1m[0mpublished_port[0m[0m = 80
+            [1m[0mtarget_port[0m[0m    = 2368
+        }
+    }
+
+    mode {
+        [1m[0mglobal[0m[0m = false
+
+        replicated {
+            [1m[0mreplicas[0m[0m = 1
+        }
+    }
+
+    task_spec {
+        [1m[0mforce_update[0m[0m   = 0
+        [1m[0mnetworks[0m[0m       = [
+            "ghost_mysql_internal_network",
+            "ghost_public_network",
+        ]
+        [1m[0mrestart_policy[0m[0m = {
+            "condition"    = "any"
+            "max_attempts" = "0"
+        }
+        [1m[0mruntime[0m[0m        = "container"
+
+        container_spec {
+            [1m[0margs[0m[0m              = []
+            [1m[0mcommand[0m[0m           = []
+            [1m[0menv[0m[0m               = {
+                "database__client"               = "mysql"
+                "database__connection__database" = "ghost"
+                "database__connection__host"     = "db"
+                "database__connection__password" = "P4sSw0rd0!"
+                "database__connection__user"     = "root"
+            }
+            [1m[0mgroups[0m[0m            = []
+            [1m[0mimage[0m[0m             = "ghost:alpine"
+            [1m[0misolation[0m[0m         = "default"
+            [1m[0mlabels[0m[0m            = {}
+            [1m[0mread_only[0m[0m         = false
+            [1m[0mstop_grace_period[0m[0m = "0s"
+
+            dns_config {}
+
+            healthcheck {
+                [1m[0minterval[0m[0m     = "0s"
+                [1m[0mretries[0m[0m      = 0
+                [1m[0mstart_period[0m[0m = "0s"
+                [1m[0mtest[0m[0m         = []
+                [1m[0mtimeout[0m[0m      = "0s"
+            }
+        }
+
+        placement {
+            [1m[0mconstraints[0m[0m = []
+            [1m[0mprefs[0m[0m       = []
+
+            platforms {
+                [1m[0marchitecture[0m[0m = "amd64"
+                [1m[0mos[0m[0m           = "linux"
+            }
+        }
+
+        resources {
+        }
+    }
+}
+
+# docker_service.mysql-service:
+resource "docker_service" "mysql-service" {
+    [1m[0mid[0m[0m     = "096z743112otdv27tbog97ygm"
+    [1m[0mlabels[0m[0m = {}
+    [1m[0mname[0m[0m   = "db"
+
+    endpoint_spec {
+        [1m[0mmode[0m[0m = "vip"
+    }
+
+    mode {
+        [1m[0mglobal[0m[0m = false
+
+        replicated {
+            [1m[0mreplicas[0m[0m = 1
+        }
+    }
+
+    task_spec {
+        [1m[0mforce_update[0m[0m   = 0
+        [1m[0mnetworks[0m[0m       = [
+            "ghost_mysql_internal_network",
+        ]
+        [1m[0mrestart_policy[0m[0m = {
+            "condition"    = "any"
+            "max_attempts" = "0"
+        }
+        [1m[0mruntime[0m[0m        = "container"
+
+        container_spec {
+            [1m[0margs[0m[0m              = []
+            [1m[0mcommand[0m[0m           = []
+            [1m[0menv[0m[0m               = {
+                "MYSQL_ROOT_PASSWORD" = "P4sSw0rd0!"
+            }
+            [1m[0mgroups[0m[0m            = []
+            [1m[0mimage[0m[0m             = "mysql:5.7"
+            [1m[0misolation[0m[0m         = "default"
+            [1m[0mlabels[0m[0m            = {}
+            [1m[0mread_only[0m[0m         = false
+            [1m[0mstop_grace_period[0m[0m = "0s"
+
+            dns_config {}
+
+            healthcheck {
+                [1m[0minterval[0m[0m     = "0s"
+                [1m[0mretries[0m[0m      = 0
+                [1m[0mstart_period[0m[0m = "0s"
+                [1m[0mtest[0m[0m         = []
+                [1m[0mtimeout[0m[0m      = "0s"
+            }
+
+            mounts {
+                [1m[0mread_only[0m[0m = false
+                [1m[0msource[0m[0m    = "ghost_mysql_data"
+                [1m[0mtarget[0m[0m    = "/var/lib/mysql"
+                [1m[0mtype[0m[0m      = "volume"
+            }
+        }
+
+        placement {
+            [1m[0mconstraints[0m[0m = []
+            [1m[0mprefs[0m[0m       = []
+
+            platforms {
+                [1m[0marchitecture[0m[0m = "amd64"
+                [1m[0mos[0m[0m           = "linux"
+            }
+        }
+
+        resources {
+        }
+    }
+}
+
+# docker_volume.mysql_data_volume:
+resource "docker_volume" "mysql_data_volume" {
+    [1m[0mdriver[0m[0m      = "local"
+    [1m[0mdriver_opts[0m[0m = {}
+    [1m[0mid[0m[0m          = "ghost_mysql_data"
+    [1m[0mlabels[0m[0m      = {}
+    [1m[0mmountpoint[0m[0m  = "/var/snap/docker/common/var-lib-docker/volumes/ghost_mysql_data/_data"
+    [1m[0mname[0m[0m        = "ghost_mysql_data"
+}[0m[0m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
+*********************************************************************************************************************************************************************************************************
+ubuntu@ip-172-31-41-173:~$ docker images
+REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
+jenkins                     terraform           235215a089e5        21 hours ago        1.38GB
+ghost                       alpine              7a562dfa21a3        6 days ago          327MB
+website                     0.7                 4676a8041803        8 days ago          220MB
+srahulgurnule/website       0.7                 4676a8041803        8 days ago          220MB
+fares                       0.7                 52432dec3964        8 days ago          227MB
+srahulgurnule/fares         0.7                 52432dec3964        8 days ago          227MB
+checkin                     0.7                 4fa787d1f7df        8 days ago          229MB
+srahulgurnule/checkin       0.7                 4fa787d1f7df        8 days ago          229MB
+book                        0.7                 8853a85f130b        8 days ago          228MB
+srahulgurnule/book          0.7                 8853a85f130b        8 days ago          228MB
+search                      0.7                 160a4695844d        8 days ago          228MB
+srahulgurnule/search        0.7                 160a4695844d        8 days ago          228MB
+mysql                       <none>              1e4405fe1ea9        2 weeks ago         437MB
+webapp                      17                  7088eed15eda        2 weeks ago         356MB
+srahulgurnule/webapp        17                  7088eed15eda        2 weeks ago         356MB
+webapp                      15                  a9874a7c6ba8        2 weeks ago         356MB
+jenkins/jenkins             lts                 22b8b9a84dbe        2 weeks ago         568MB
+nginx                       latest              540a289bab6c        7 weeks ago         126MB
+tomcat                      latest              882487b8be1d        7 weeks ago         507MB
+tomcat                      8.0                 ef6a7c98d192        15 months ago       356MB
+abrtech/alpine-oraclejdk8   latest              90183a763a7b        2 years ago         194MB
+ubuntu@ip-172-31-41-173:~$
+
+
+
+
+*********************************************************************************************************************************************************************************************************
+
+For Destroy action:-
+
+Started by user admin
+Running in Durability level: MAX_SURVIVABILITY
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/jenkins_home/workspace/PipelinePart2
+[Pipeline] {
+[Pipeline] git
+No credentials specified
+ > git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/rgurnule/terraform-docker-service.git # timeout=10
+Fetching upstream changes from https://github.com/rgurnule/terraform-docker-service.git
+ > git --version # timeout=10
+ > git fetch --tags --progress -- https://github.com/rgurnule/terraform-docker-service.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+ > git rev-parse refs/remotes/origin/origin/master^{commit} # timeout=10
+Checking out Revision 405037882671e5a6c15140167eb2235f3f077a19 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git branch -D master # timeout=10
+ > git checkout -b master 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+Commit message: "Update main.tf"
+ > git rev-list --no-walk 405037882671e5a6c15140167eb2235f3f077a19 # timeout=10
+[Pipeline] stage
+[Pipeline] { (plan_destroy)
+[Pipeline] sh (terraform plan)
++ terraform plan -destroy -out=tfdestroyplan -input=false -var ghost_image=ghost:alpine -var ghost_ext_port=80
+[0m[1mRefreshing Terraform state in-memory prior to plan...[0m
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+[0m
+[0m[1mdocker_network.private_bridge_network: Refreshing state... [id=xgqcqyc3niimiax4mi61grzvc][0m
+[0m[1mdocker_volume.mysql_data_volume: Refreshing state... [id=ghost_mysql_data][0m
+[0m[1mdocker_network.public_bridge_network: Refreshing state... [id=tkb59fd1g61ow5x9ooet9daro][0m
+[0m[1mdocker_service.ghost-service: Refreshing state... [id=oie2o3bsikdvgmjlv84up6tn3][0m
+[0m[1mdocker_service.mysql-service: Refreshing state... [id=096z743112otdv27tbog97ygm][0m
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  [31m-[0m destroy
+[0m
+Terraform will perform the following actions:
+
+[1m  # docker_network.private_bridge_network[0m will be [1m[31mdestroyed[0m[0m
+[0m[31m  -[0m [0mresource "docker_network" "private_bridge_network" {
+      [31m-[0m [0m[1m[0mattachable[0m[0m  = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mdriver[0m[0m      = "overlay" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mid[0m[0m          = "xgqcqyc3niimiax4mi61grzvc" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mingress[0m[0m     = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0minternal[0m[0m    = true [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mipam_driver[0m[0m = "default" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mipv6[0m[0m        = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mlabels[0m[0m      = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mname[0m[0m        = "ghost_mysql_internal_network" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0moptions[0m[0m     = {
+          [31m-[0m [0m"com.docker.network.driver.overlay.vxlanid_list" = "4097"
+        } [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mscope[0m[0m       = "swarm" [90m->[0m [0m[90mnull[0m[0m
+
+      [31m-[0m [0mipam_config {
+          [31m-[0m [0m[1m[0maux_address[0m[0m = {} [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mgateway[0m[0m     = "10.0.0.1" [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0msubnet[0m[0m      = "10.0.0.0/24" [90m->[0m [0m[90mnull[0m[0m
+        }
+    }
+
+[1m  # docker_network.public_bridge_network[0m will be [1m[31mdestroyed[0m[0m
+[0m[31m  -[0m [0mresource "docker_network" "public_bridge_network" {
+      [31m-[0m [0m[1m[0mattachable[0m[0m  = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mdriver[0m[0m      = "overlay" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mid[0m[0m          = "tkb59fd1g61ow5x9ooet9daro" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mingress[0m[0m     = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0minternal[0m[0m    = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mipam_driver[0m[0m = "default" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mipv6[0m[0m        = false [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mlabels[0m[0m      = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mname[0m[0m        = "ghost_public_network" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0moptions[0m[0m     = {
+          [31m-[0m [0m"com.docker.network.driver.overlay.vxlanid_list" = "4098"
+        } [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mscope[0m[0m       = "swarm" [90m->[0m [0m[90mnull[0m[0m
+
+      [31m-[0m [0mipam_config {
+          [31m-[0m [0m[1m[0maux_address[0m[0m = {} [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mgateway[0m[0m     = "10.0.1.1" [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0msubnet[0m[0m      = "10.0.1.0/24" [90m->[0m [0m[90mnull[0m[0m
+        }
+    }
+
+[1m  # docker_service.ghost-service[0m will be [1m[31mdestroyed[0m[0m
+[0m[31m  -[0m [0mresource "docker_service" "ghost-service" {
+      [31m-[0m [0m[1m[0mid[0m[0m     = "oie2o3bsikdvgmjlv84up6tn3" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mlabels[0m[0m = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mname[0m[0m   = "ghost" [90m->[0m [0m[90mnull[0m[0m
+
+      [31m-[0m [0mendpoint_spec {
+          [31m-[0m [0m[1m[0mmode[0m[0m = "vip" [90m->[0m [0m[90mnull[0m[0m
+
+          [31m-[0m [0mports {
+              [31m-[0m [0m[1m[0mprotocol[0m[0m       = "tcp" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mpublish_mode[0m[0m   = "ingress" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mpublished_port[0m[0m = 80 [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mtarget_port[0m[0m    = 2368 [90m->[0m [0m[90mnull[0m[0m
+            }
+        }
+
+      [31m-[0m [0mmode {
+          [31m-[0m [0m[1m[0mglobal[0m[0m = false [90m->[0m [0m[90mnull[0m[0m
+
+          [31m-[0m [0mreplicated {
+              [31m-[0m [0m[1m[0mreplicas[0m[0m = 1 [90m->[0m [0m[90mnull[0m[0m
+            }
+        }
+
+      [31m-[0m [0mtask_spec {
+          [31m-[0m [0m[1m[0mforce_update[0m[0m   = 0 [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mnetworks[0m[0m       = [
+              [31m-[0m [0m"tkb59fd1g61ow5x9ooet9daro",
+              [31m-[0m [0m"xgqcqyc3niimiax4mi61grzvc",
+            ] [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mrestart_policy[0m[0m = {
+              [31m-[0m [0m"condition"    = "any"
+              [31m-[0m [0m"max_attempts" = "0"
+            } [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mruntime[0m[0m        = "container" [90m->[0m [0m[90mnull[0m[0m
+
+          [31m-[0m [0mcontainer_spec {
+              [31m-[0m [0m[1m[0margs[0m[0m              = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mcommand[0m[0m           = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0menv[0m[0m               = {
+                  [31m-[0m [0m"database__client"               = "mysql"
+                  [31m-[0m [0m"database__connection__database" = "ghost"
+                  [31m-[0m [0m"database__connection__host"     = "db"
+                  [31m-[0m [0m"database__connection__password" = "P4sSw0rd0!"
+                  [31m-[0m [0m"database__connection__user"     = "root"
+                } [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mgroups[0m[0m            = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mimage[0m[0m             = "ghost:alpine" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0misolation[0m[0m         = "default" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mlabels[0m[0m            = {} [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mread_only[0m[0m         = false [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mstop_grace_period[0m[0m = "0s" [90m->[0m [0m[90mnull[0m[0m
+
+              [31m-[0m [0mdns_config {}
+
+              [31m-[0m [0mhealthcheck {
+                  [31m-[0m [0m[1m[0minterval[0m[0m     = "0s" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mretries[0m[0m      = 0 [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mstart_period[0m[0m = "0s" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtest[0m[0m         = [] [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtimeout[0m[0m      = "0s" [90m->[0m [0m[90mnull[0m[0m
+                }
+            }
+
+          [31m-[0m [0mplacement {
+              [31m-[0m [0m[1m[0mconstraints[0m[0m = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mprefs[0m[0m       = [] [90m->[0m [0m[90mnull[0m[0m
+
+              [31m-[0m [0mplatforms {
+                  [31m-[0m [0m[1m[0marchitecture[0m[0m = "amd64" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mos[0m[0m           = "linux" [90m->[0m [0m[90mnull[0m[0m
+                }
+            }
+
+          [31m-[0m [0mresources {
+            }
+        }
+    }
+
+[1m  # docker_service.mysql-service[0m will be [1m[31mdestroyed[0m[0m
+[0m[31m  -[0m [0mresource "docker_service" "mysql-service" {
+      [31m-[0m [0m[1m[0mid[0m[0m     = "096z743112otdv27tbog97ygm" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mlabels[0m[0m = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mname[0m[0m   = "db" [90m->[0m [0m[90mnull[0m[0m
+
+      [31m-[0m [0mendpoint_spec {
+          [31m-[0m [0m[1m[0mmode[0m[0m = "vip" [90m->[0m [0m[90mnull[0m[0m
+        }
+
+      [31m-[0m [0mmode {
+          [31m-[0m [0m[1m[0mglobal[0m[0m = false [90m->[0m [0m[90mnull[0m[0m
+
+          [31m-[0m [0mreplicated {
+              [31m-[0m [0m[1m[0mreplicas[0m[0m = 1 [90m->[0m [0m[90mnull[0m[0m
+            }
+        }
+
+      [31m-[0m [0mtask_spec {
+          [31m-[0m [0m[1m[0mforce_update[0m[0m   = 0 [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mnetworks[0m[0m       = [
+              [31m-[0m [0m"xgqcqyc3niimiax4mi61grzvc",
+            ] [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mrestart_policy[0m[0m = {
+              [31m-[0m [0m"condition"    = "any"
+              [31m-[0m [0m"max_attempts" = "0"
+            } [90m->[0m [0m[90mnull[0m[0m
+          [31m-[0m [0m[1m[0mruntime[0m[0m        = "container" [90m->[0m [0m[90mnull[0m[0m
+
+          [31m-[0m [0mcontainer_spec {
+              [31m-[0m [0m[1m[0margs[0m[0m              = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mcommand[0m[0m           = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0menv[0m[0m               = {
+                  [31m-[0m [0m"MYSQL_ROOT_PASSWORD" = "P4sSw0rd0!"
+                } [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mgroups[0m[0m            = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mimage[0m[0m             = "mysql:5.7" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0misolation[0m[0m         = "default" [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mlabels[0m[0m            = {} [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mread_only[0m[0m         = false [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mstop_grace_period[0m[0m = "0s" [90m->[0m [0m[90mnull[0m[0m
+
+              [31m-[0m [0mdns_config {}
+
+              [31m-[0m [0mhealthcheck {
+                  [31m-[0m [0m[1m[0minterval[0m[0m     = "0s" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mretries[0m[0m      = 0 [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mstart_period[0m[0m = "0s" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtest[0m[0m         = [] [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtimeout[0m[0m      = "0s" [90m->[0m [0m[90mnull[0m[0m
+                }
+
+              [31m-[0m [0mmounts {
+                  [31m-[0m [0m[1m[0mread_only[0m[0m = false [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0msource[0m[0m    = "ghost_mysql_data" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtarget[0m[0m    = "/var/lib/mysql" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mtype[0m[0m      = "volume" [90m->[0m [0m[90mnull[0m[0m
+                }
+            }
+
+          [31m-[0m [0mplacement {
+              [31m-[0m [0m[1m[0mconstraints[0m[0m = [] [90m->[0m [0m[90mnull[0m[0m
+              [31m-[0m [0m[1m[0mprefs[0m[0m       = [] [90m->[0m [0m[90mnull[0m[0m
+
+              [31m-[0m [0mplatforms {
+                  [31m-[0m [0m[1m[0marchitecture[0m[0m = "amd64" [90m->[0m [0m[90mnull[0m[0m
+                  [31m-[0m [0m[1m[0mos[0m[0m           = "linux" [90m->[0m [0m[90mnull[0m[0m
+                }
+            }
+
+          [31m-[0m [0mresources {
+            }
+        }
+    }
+
+[1m  # docker_volume.mysql_data_volume[0m will be [1m[31mdestroyed[0m[0m
+[0m[31m  -[0m [0mresource "docker_volume" "mysql_data_volume" {
+      [31m-[0m [0m[1m[0mdriver[0m[0m      = "local" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mdriver_opts[0m[0m = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mid[0m[0m          = "ghost_mysql_data" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mlabels[0m[0m      = {} [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mmountpoint[0m[0m  = "/var/snap/docker/common/var-lib-docker/volumes/ghost_mysql_data/_data" [90m->[0m [0m[90mnull[0m[0m
+      [31m-[0m [0m[1m[0mname[0m[0m        = "ghost_mysql_data" [90m->[0m [0m[90mnull[0m[0m
+    }
+
+[0m[1mPlan:[0m 0 to add, 0 to change, 5 to destroy.[0m
+
+------------------------------------------------------------------------
+
+This plan was saved to: tfdestroyplan
+
+To perform exactly these actions, run the following command to apply:
+    terraform apply "tfdestroyplan"
+
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (destroy)
+[Pipeline] script
+[Pipeline] {
+[Pipeline] timeout
+Timeout set to expire in 10 min
+[Pipeline] {
+[Pipeline] input
+Destroy environment?
+Destroy or Abort
+Approved by admin
+[Pipeline] }
+[Pipeline] // timeout
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] sh (terraform apply)
++ terraform apply -lock=false -input=false tfdestroyplan
+[0m[1mdocker_service.ghost-service: Destroying... [id=oie2o3bsikdvgmjlv84up6tn3][0m[0m
+[0m[1mdocker_service.mysql-service: Destroying... [id=096z743112otdv27tbog97ygm][0m[0m
+[0m[1mdocker_service.ghost-service: Destruction complete after 0s[0m[0m
+[0m[1mdocker_network.public_bridge_network: Destroying... [id=tkb59fd1g61ow5x9ooet9daro][0m[0m
+[0m[1mdocker_service.mysql-service: Destruction complete after 0s[0m[0m
+[0m[1mdocker_volume.mysql_data_volume: Destroying... [id=ghost_mysql_data][0m[0m
+[0m[1mdocker_network.private_bridge_network: Destroying... [id=xgqcqyc3niimiax4mi61grzvc][0m[0m
+[0m[1mdocker_network.public_bridge_network: Destruction complete after 2s[0m[0m
+[0m[1mdocker_network.private_bridge_network: Destruction complete after 2s[0m[0m
+[0m[1mdocker_volume.mysql_data_volume: Destruction complete after 2s[0m[0m
+[0m[1m[32m
+Apply complete! Resources: 0 added, 0 changed, 5 destroyed.[0m
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (cleanup)
+[Pipeline] sh (cleanup)
++ rm -rf terraform.tfstat
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+*********************************************************************************************************************************************************************************************************
