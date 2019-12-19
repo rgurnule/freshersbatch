@@ -78,69 +78,6 @@ After we accept the license agreement then another chef-client run will occur co
 
 ======================================================================================================================================================================
 
-    - execute the ruby block print reconfigure warnings
-Recipe: private-chef::postgresql
-  * component_runit_service[postgresql] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[postgresql] action nothing (skipped due to action :nothing)
-    * runit_service[postgresql] action restart (up to date)
-     (up to date)
-Recipe: private-chef::oc_bifrost
-  * component_runit_service[oc_bifrost] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[oc_bifrost] action nothing (skipped due to action :nothing)
-    * runit_service[oc_bifrost] action restart (up to date)
-     (up to date)
-Recipe: private-chef::oc_id
-  * component_runit_service[oc_id] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[oc_id] action nothing (skipped due to action :nothing)
-    * runit_service[oc_id] action restart (up to date)
-     (up to date)
-Recipe: private-chef::nginx
-  * component_runit_service[nginx] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[nginx] action nothing (skipped due to action :nothing)
-    * runit_service[nginx] action restart (up to date)
-     (up to date)
-Recipe: private-chef::opscode-solr4
-  * component_runit_service[opscode-solr4] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[opscode-solr4] action nothing (skipped due to action :nothing)
-    * runit_service[opscode-solr4] action restart (up to date)
-     (up to date)
-Recipe: private-chef::opscode-expander
-  * component_runit_service[opscode-expander] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[opscode-expander] action nothing (skipped due to action :nothing)
-    * runit_service[opscode-expander] action restart (up to date)
-     (up to date)
-Recipe: private-chef::bookshelf
-  * component_runit_service[bookshelf] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[bookshelf] action nothing (skipped due to action :nothing)
-    * runit_service[bookshelf] action restart (up to date)
-     (up to date)
-Recipe: private-chef::opscode-erchef
-  * component_runit_service[opscode-erchef] action restart
-  Recipe: <Dynamically Defined Resource>
-    * service[opscode-erchef] action nothing (skipped due to action :nothing)
-    * runit_service[opscode-erchef] action restart (up to date)
-     (up to date)
-Recipe: private-chef::partybus
-  * execute[set initial migration level] action run
-    - execute cd /opt/opscode/embedded/service/partybus && ./bin/partybus init
-  * ruby_block[migration-level file sanity check] action run (skipped due to not_if)
-Recipe: private-chef::rabbitmq
-  * script[hard_kill_rabbitmq] action run
-    - execute "bash"  "/tmp/chef-script20191217-3981-1hdc8ft"
-
-Running handlers:
-Running handlers complete
-Chef Infra Client finished, 482/1032 resources updated in 02 minutes 57 seconds
-Chef Server Reconfigured!
-master $
-
 
 root@ip-172-31-38-218:/tmp# curl -O  https://packages.chef.io/files/stable/chef-server/13.1.13/ubuntu/16.04/chef-server-core_13.1.13-1_amd64.deb
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
