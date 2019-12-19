@@ -1,0 +1,654 @@
+With a Chef server setup, we're now ready to configure our workstation so that we can communicate with the server by installing the "Chef Developer Kit" (ChefDK). This will be the cloud server that we use for all of our Chef development throughout this course.
+
+
+Installing the ChefDK:-
+We'll continue utilizing CentOS 7 servers through this course, including our workstation. Once the server is running, we're ready to download the ChefDK rpm and install it. Since we're preparing for the exam, we'll be using the most recent stable release of the ChefDK (which is 2.5.3 at this time):
+
+$ cd /tmp
+$ curl -O https://packages.chef.io/files/stable/chefdk/2.5.3/el/7/chefdk-2.5.3-1.el7.x86_64.rpm
+$ sudo rpm -Uvh chefdk-2.5.3-1.el7.x86_64.rpm
+
+sudo curl -O https://packages.chef.io/files/stable/chefdk/4.6.35/ubuntu/18.04/chefdk_4.6.35-1_amd64.deb
+sudo dpkg -i chefdk_4.6.35-1_amd64.deb
+
+Now we have access to quite a few different tools that will be used in developing and testing our Chef code aswell as deploying things. We can see the top level tools and their versions by using the chef --version command.
+
+
+$ chef --version
+Chef Development Kit Version: 2.5.3
+chef-client version: 13.8.5
+delivery version: master (73ebb72a6c42b3d2ff5370c476be800fee7e5427)
+berks version: 6.3.1
+kitchen version: 1.20.0
+inspec version: 1.51.21
+
+Note: chef-client version 14 has been released, but is not what the test is currently based around, so make sure you're using version 13.x.
+
+
+Most of the tooling around Chef is written in Ruby, and this can be a source of issues when working with Chef locally sometimes because we might already have a version of Ruby installed. Before we continue let's look at what version we might be using and see how to explicitly use the ChefDK version of these packages:
+
+$ which ruby
+/usr/local/rvm/rubies/ruby-2.4.1/bin/ruby
+The version that you see might not exactly match, but what we want to do when we're working with Chef is initialize our shell with all of the chef values using a subcommand off of the chef utility:
+
+$ chef shell-init bash
+export PATH="/opt/chefdk/bin:/home/user/.chefdk/gem/ruby/2.4.0/bin:/opt/chefdk/embedded/bin:/usr/local/rvm/gems/ruby-2.4.1/bin:/usr/local/rvm/gems/ruby-2.4.1@global/bin:/usr/local/rvm/rubies/ruby-2.4.1/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/usr/local/rvm/bin:/home/user/.local/bin:/home/user/bin:/opt/chefdk/gitbin"
+export GEM_ROOT="/opt/chefdk/embedded/lib/ruby/gems/2.4.0"
+export GEM_HOME="/home/user/.chefdk/gem/ruby/2.4.0"
+export GEM_PATH="/home/user/.chefdk/gem/ruby/2.4.0:/opt/chefdk/embedded/lib/ruby/gems/2.4.0"
+_chef_comp() {
+    local COMMANDS="exec env gem generate shell-init install update push push-archive show-policy diff provision export clean-policy-revisions clean-policy-cookbooks delete-policy-group delete-policy undelete verify"
+    COMPREPLY=($(compgen -W "$COMMANDS" -- ${COMP_WORDS[COMP_CWORD]} ))
+}
+complete -F _chef_comp chef
+
+That prints out what this command does, and we can see that it modifies various environment variables so that the gems and ruby version used are the ones that come packaged with ChefDK. We'll eval this output to set these values:
+
+$ eval "$(chef shell-init bash)"
+$ which ruby
+/opt/chefdk/embedded/bin/ruby
+
+Now we know that we're using the proper version of ruby. Since our workstation is always going to want this set, let's customize our .bash_profile to do this by default.
+
+$ echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+
+
+Generating a chef-repo:-
+When developing with Chef we'll usually be working from within a "chef-repo" that holds onto our cookbooks and dependencies and is shared amongst our team(s). There are a few different ways to get started with a chef-repo and we're going to take a look at both of them. The first way is to generate one using the chef utility. Let's create one now:
+
+$ cd ~
+$ chef generate repo generated-chef-repo
+$ cd generated-chef-repo
+$ ls -al
+total 28
+drwxrwxr-x.  7 user user 4096 Apr 18 17:53 .
+drwx------. 10 user user 4096 Apr 18 17:53 ..
+-rw-rw-r--.  1 user user 1133 Apr 18 17:53 chefignore
+-rw-rw-r--.  1 user user  255 Apr 18 17:53 .chef-repo.txt
+drwxrwxr-x.  3 user user   36 Apr 18 17:53 cookbooks
+drwxrwxr-x.  3 user user   36 Apr 18 17:53 data_bags
+drwxrwxr-x.  2 user user   41 Apr 18 17:53 environments
+drwxrwxr-x.  6 user user   96 Apr 18 17:53 .git
+-rw-rw-r--.  1 user user 2121 Apr 18 17:53 .gitignore
+-rw-rw-r--.  1 user user   70 Apr 18 17:53 LICENSE
+-rw-rw-r--.  1 user user 1499 Apr 18 17:53 README.md
+drwxrwxr-x.  2 user user   41 Apr 18 17:53 roles
+
+Utilizing the Chef generators makes it a lot easier for us to follow standard Chef development practices as we continue through this course. The main tool that we're going to use to connect to the Chef server is going to be the knife utility. A big difference between this repository and the one that we'll let the Chef server generate for us is that it's not pre-configured to allow us to use knife to connect to our Chef server.
+
+Let's manually create a knife configuration to communicate with the server:
+
+$ knife configure
+WARNING: No knife configuration file found. See https://docs.chef.io/config_rb_knife.html for details.
+Please enter the chef server URL: [https://satyensingh5.mylabserver.com/organizations/myorg] https://satyensingh4.mylabserver.com/organizations/linuxacademy
+Please enter an existing username or clientname for the API: [user] keith
+*****
+
+You must place your client key in:
+  /home/user/.chef/keith.pem
+Before running commands with Knife
+
+*****
+Configuration file written to
+
+
+Things to note are that we need to use the hostname from our Chef server (in this case it's satyensingh4.mylabserver.com) and also substitute in our organization's "short_name" (linuxacademy in this example).
+
+Next, we need to copy over the pem file that we created when we created our user.
+
+$ scp user@satyensingh4.mylabserver.com:/home/user/keith.pem ~/.chef/
+
+Now we can connect to the Chef server using knife
+
+$ knife node list
+ERROR: SSL Validation failure connecting to host: satyensingh4.mylabserver.com - SSL_connect returned=1 errno=0 state=error: certificate verify failed
+ERROR: Could not establish a secure connection to the server.
+Use `knife ssl check` to troubleshoot your SSL configuration.
+If your Chef Server uses a self-signed certificate, you can use
+`knife ssl fetch` to make knife trust the server's certificates.
+
+Original Exception: OpenSSL::SSL::SSLError: SSL Error connecting to https://satyensingh4.mylabserver.com/organizations/linuxacademy/nodes - SSL_connect returned=1 errno=0 state=error: certificate verify failed
+
+We need to pull down the certificate as a trusted cert since it is self-signed. We'll follow the steps that the output points us to:
+
+$ knife ssl fetch
+WARNING: Certificates from satyensingh4.mylabserver.com will be fetched and placed in your trusted_cert
+directory (/home/user/.chef/trusted_certs).
+
+Knife has no means to verify these are the correct certificates. You should
+verify the authenticity of these certificates after downloading.
+
+Adding certificate for satyensingh4_mylabserver_com in /home/user/.chef/trusted_certs/satyensingh4_mylabserver_com.crt
+
+$ knife node list
+
+
+The self-signed certificate for our Chef server is based on the hostname, so we'll use that in our knife configuration so that it will be correct even beyond a server restart with a new IP address. Running knife node list doesn't output anything because we don't have any nodes yet, but it didn't error so we know the connection worked.
+
+
+Utilizing a Starter Kit from the Chef Server:-
+The alternative way that we can go about setting up a chef-repo is by downloading it from our Chef server as a "starter kit". To get to this download we need to log into the chef-manage UI to the path /organizations/[ORGANIZATION_NAME]/getting_started. From there, we need to select "Starter Kit" from the sidebar, and then click "Download Starter Kit".
+
+A few things to note about this download:
+
+1. By downloading this it regenerates our key file and packages the new one with the starter kit. Running knife node list after this download has starter will now fail on our workstation.
+2. This will download to our local machine so we'll need to use scp to move the file to our workstation server.
+
+[localmachine] $ scp chef-starter.zip user@satyensingh5.mylabserver.com:/home/user/
+
+Now from the workstation, we'll need to unzip the package to be the chef-repo that we'll use moving forward:
+
+[workstation] $ sudo yum install -y unzip
+[workstation] $ unzip chef-starter.zip
+Archive:  chef-starter.zip
+  inflating: chef-repo/README.md
+   creating: chef-repo/cookbooks/
+  inflating: chef-repo/cookbooks/chefignore
+   creating: chef-repo/cookbooks/starter/
+   creating: chef-repo/cookbooks/starter/attributes/
+  inflating: chef-repo/cookbooks/starter/attributes/default.rb
+   creating: chef-repo/cookbooks/starter/files/
+   creating: chef-repo/cookbooks/starter/files/default/
+  inflating: chef-repo/cookbooks/starter/files/default/sample.txt
+  inflating: chef-repo/cookbooks/starter/metadata.rb
+   creating: chef-repo/cookbooks/starter/recipes/
+  inflating: chef-repo/cookbooks/starter/recipes/default.rb
+   creating: chef-repo/cookbooks/starter/templates/
+   creating: chef-repo/cookbooks/starter/templates/default/
+  inflating: chef-repo/cookbooks/starter/templates/default/sample.erb
+  inflating: chef-repo/.gitignore
+   creating: chef-repo/.chef/
+   creating: chef-repo/roles/
+  inflating: chef-repo/.chef/knife.rb
+  inflating: chef-repo/roles/starter.rb
+  inflating: chef-repo/.chef/keith.pem
+
+
+The big difference between this repo and our generated repository is that it includes a .chef directory that is configured to speak with our Chef server, but it only works when our current working directory is within the chef-repo. Let's utilize it to connect to the Chef server.
+
+[workstation] $ cd chef-repo
+[workstation] $ knife ssl fetch
+[workstation] $ knife node list
+
+
+Now we're ready to move forward to use our workstation.
+====================================================================================================================================================================
+
+
+
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# cd sudo curl -O https://packages.chef.io/files/stable/chefdk/4.6.35/ubuntu/18.04/chefdk_4.6.35-1_amd64.deb[1P[1P[1P
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+100 89.7M  100 89.7M    0     0   102M      0 --:--:-- --:--:-- --:--:--  102M
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# sudo dpkg -i chefdk_4.6.35-1_amd64.deb
+Selecting previously unselected package chefdk.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 229290 files and directories currently installed.)
+Preparing to unpack chefdk_4.6.35-1_amd64.deb ...
+Unpacking chefdk (4.6.35-1) ...
+Setting up chefdk (4.6.35-1) ...
+Thank you for installing ChefDK!
+You can find some tips on getting started at https://learn.chef.io
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# chef --version
+ChefDK version: 4.6.35
+Chef Infra Client version: 15.5.17
+Chef InSpec version: 4.18.39
+Test Kitchen version: 2.3.4
+Foodcritic version: 16.2.0
+Cookstyle version: 5.13.7
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# sudo install ruby
+install: missing destination file operand after 'ruby'
+Try 'install --help' for more information.
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# which ruby
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# chef shell-init bash
+export PATH="/opt/chefdk/bin:/root/.chefdk/gem/ruby/2.6.0/bin:/opt/chefdk/embedded/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/opt/chefdk/gitbin"
+export GEM_ROOT="/opt/chefdk/embedded/lib/ruby/gems/2.6.0"
+export GEM_HOME="/root/.chefdk/gem/ruby/2.6.0"
+export GEM_PATH="/root/.chefdk/gem/ruby/2.6.0:/opt/chefdk/embedded/lib/ruby/gems/2.6.0"
+_chef_comp() {
+    local COMMANDS="exec env gem generate shell-init install update push push-archive show-policy diff export clean-policy-revisions clean-policy-cookbooks delete-policy-group delete-policy undelete describe-cookbook verify provision"
+    COMPREPLY=($(compgen -W "$COMMANDS" -- ${COMP_WORDS[COMP_CWORD]} ))
+}
+complete -F _chef_comp chef
+
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# eval "$(chef shell-init bash)"
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# which ruby
+/opt/chefdk/embedded/bin/ruby
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# sudo apt install ruby
+
+Reading package lists... 0%
+
+Reading package lists... 0%
+
+Reading package lists... 13%
+
+Reading package lists... Done
+
+
+Building dependency tree... 0%
+
+Building dependency tree... 0%
+
+Building dependency tree... 50%
+
+Building dependency tree... 50%
+
+Building dependency tree       
+
+
+Reading state information... 0%
+
+Reading state information... 0%
+
+Reading state information... Done
+
+The following additional packages will be installed:
+  fonts-lato javascript-common libjs-jquery libruby2.5 rake ruby-did-you-mean ruby-minitest ruby-net-telnet ruby-power-assert ruby-test-unit ruby2.5 rubygems-integration unzip
+  zip
+Suggested packages:
+  apache2 | lighttpd | httpd ri ruby-dev bundler
+The following NEW packages will be installed:
+  fonts-lato javascript-common libjs-jquery libruby2.5 rake ruby ruby-did-you-mean ruby-minitest ruby-net-telnet ruby-power-assert ruby-test-unit ruby2.5 rubygems-integration
+  unzip zip
+0 upgraded, 15 newly installed, 0 to remove and 40 not upgraded.
+Need to get 6494 kB of archives.
+After this operation, 29.0 MB of additional disk space will be used.
+Do you want to continue? [Y/n] y
+[33m
+0% [Working][0m
+            
+Get:1 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 fonts-lato all 2.0-2 [2698 kB]
+[33m
+0% [1 fonts-lato 14.1 kB/2698 kB 1%][0m[33m
+                                    
+3% [1 fonts-lato 217 kB/2698 kB 8%][0m[33m
+22% [1 fonts-lato 1818 kB/2698 kB 67%][0m[33m
+                                      
+35% [Working][0m
+             
+Get:2 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 javascript-common all 11 [6066 B]
+[33m
+35% [2 javascript-common 6066 B/6066 B 100%][0m[33m
+                                            
+36% [Waiting for headers][0m
+                         
+Get:3 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 libjs-jquery all 3.2.1-1 [152 kB]
+[33m
+36% [3 libjs-jquery 20.5 kB/152 kB 13%][0m[33m
+                                       
+39% [Waiting for headers][0m
+                         
+Get:4 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 rubygems-integration all 1.11 [4994 B]
+[33m
+39% [4 rubygems-integration 4994 B/4994 B 100%][0m[33m
+                                               
+41% [Waiting for headers][0m
+                         
+Get:5 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 ruby2.5 amd64 2.5.1-1ubuntu1.6 [48.6 kB]
+[33m
+41% [5 ruby2.5 6833 B/48.6 kB 14%][0m[33m
+                                  
+43% [Waiting for headers][0m
+                         
+Get:6 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby amd64 1:2.5.1 [5712 B]
+[33m
+43% [6 ruby 0 B/5712 B 0%][0m[33m
+                          
+44% [Working][0m
+             
+Get:7 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 rake all 12.3.1-1 [45.1 kB]
+[33m
+44% [7 rake 0 B/45.1 kB 0%][0m[33m
+                           
+46% [Working][0m
+             
+Get:8 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby-did-you-mean all 1.2.0-2 [9700 B]
+[33m
+46% [8 ruby-did-you-mean 0 B/9700 B 0%][0m[33m
+                                       
+47% [Working][0m
+             
+Get:9 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby-minitest all 5.10.3-1 [38.6 kB]
+[33m
+47% [9 ruby-minitest 15.5 kB/38.6 kB 40%][0m[33m
+                                         
+49% [Waiting for headers][0m
+                         
+Get:10 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby-net-telnet all 0.1.1-2 [12.6 kB]
+[33m
+49% [10 ruby-net-telnet 12.6 kB/12.6 kB 100%][0m[33m
+                                             
+51% [Waiting for headers][0m
+                         
+Get:11 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby-power-assert all 0.3.0-1 [7952 B]
+[33m
+51% [11 ruby-power-assert 7952 B/7952 B 100%][0m[33m
+                                             
+52% [Waiting for headers][0m
+                         
+Get:12 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 ruby-test-unit all 3.2.5-1 [61.1 kB]
+[33m
+52% [12 ruby-test-unit 25.3 kB/61.1 kB 41%][0m[33m
+                                           
+54% [Working][0m
+             
+Get:13 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic-updates/main amd64 libruby2.5 amd64 2.5.1-1ubuntu1.6 [3069 kB]
+[33m
+54% [13 libruby2.5 12.6 kB/3069 kB 0%][0m[33m
+                                      
+93% [Waiting for headers][0m
+                         
+Get:14 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 unzip amd64 6.0-21ubuntu1 [167 kB]
+[33m
+94% [14 unzip 54.0 kB/167 kB 32%][0m[33m
+                                 
+97% [Waiting for headers][0m
+                         
+Get:15 http://ap-south-1.ec2.archive.ubuntu.com/ubuntu bionic/main amd64 zip amd64 3.0-11build1 [167 kB]
+[33m
+97% [15 zip 5293 B/167 kB 3%][0m[33m
+                             
+100% [Working][0m
+              
+Fetched 6494 kB in 2s (2839 kB/s)
+
+7[0;51r8[1ASelecting previously unselected package fonts-lato.
+(Reading database ... 
+(Reading database ... 5%
+(Reading database ... 10%
+(Reading database ... 15%
+(Reading database ... 20%
+(Reading database ... 25%
+(Reading database ... 30%
+(Reading database ... 35%
+(Reading database ... 40%
+(Reading database ... 45%
+(Reading database ... 50%
+(Reading database ... 55%
+(Reading database ... 60%
+(Reading database ... 65%
+(Reading database ... 70%
+(Reading database ... 75%
+(Reading database ... 80%
+(Reading database ... 85%
+(Reading database ... 90%
+(Reading database ... 95%
+(Reading database ... 100%
+(Reading database ... 273077 files and directories currently installed.)
+Preparing to unpack .../00-fonts-lato_2.0-2_all.deb ...
+7[52;0f[42m[30mProgress: [  0%][49m[39m [...........................................................................................................................................................] 87[52;0f[42m[30mProgress: [  1%][49m[39m [##.........................................................................................................................................................] 8Unpacking fonts-lato (2.0-2) ...
+7[52;0f[42m[30mProgress: [  3%][49m[39m [####.......................................................................................................................................................] 87[52;0f[42m[30mProgress: [  4%][49m[39m [######.....................................................................................................................................................] 8Selecting previously unselected package javascript-common.
+Preparing to unpack .../01-javascript-common_11_all.deb ...
+7[52;0f[42m[30mProgress: [  5%][49m[39m [########...................................................................................................................................................] 8Unpacking javascript-common (11) ...
+7[52;0f[42m[30mProgress: [  7%][49m[39m [##########.................................................................................................................................................] 87[52;0f[42m[30mProgress: [  8%][49m[39m [############...............................................................................................................................................] 8Selecting previously unselected package libjs-jquery.
+Preparing to unpack .../02-libjs-jquery_3.2.1-1_all.deb ...
+7[52;0f[42m[30mProgress: [  9%][49m[39m [##############.............................................................................................................................................] 8Unpacking libjs-jquery (3.2.1-1) ...
+7[52;0f[42m[30mProgress: [ 11%][49m[39m [################...........................................................................................................................................] 87[52;0f[42m[30mProgress: [ 12%][49m[39m [##################.........................................................................................................................................] 8Selecting previously unselected package rubygems-integration.
+Preparing to unpack .../03-rubygems-integration_1.11_all.deb ...
+7[52;0f[42m[30mProgress: [ 13%][49m[39m [####################.......................................................................................................................................] 8Unpacking rubygems-integration (1.11) ...
+7[52;0f[42m[30mProgress: [ 14%][49m[39m [######################.....................................................................................................................................] 87[52;0f[42m[30mProgress: [ 16%][49m[39m [########################...................................................................................................................................] 8Selecting previously unselected package ruby2.5.
+Preparing to unpack .../04-ruby2.5_2.5.1-1ubuntu1.6_amd64.deb ...
+7[52;0f[42m[30mProgress: [ 17%][49m[39m [##########################.................................................................................................................................] 8Unpacking ruby2.5 (2.5.1-1ubuntu1.6) ...
+7[52;0f[42m[30mProgress: [ 18%][49m[39m [############################...............................................................................................................................] 87[52;0f[42m[30mProgress: [ 20%][49m[39m [##############################.............................................................................................................................] 8Selecting previously unselected package ruby.
+Preparing to unpack .../05-ruby_1%3a2.5.1_amd64.deb ...
+7[52;0f[42m[30mProgress: [ 21%][49m[39m [################################...........................................................................................................................] 8Unpacking ruby (1:2.5.1) ...
+7[52;0f[42m[30mProgress: [ 22%][49m[39m [##################################.........................................................................................................................] 87[52;0f[42m[30mProgress: [ 24%][49m[39m [####################################.......................................................................................................................] 8Selecting previously unselected package rake.
+Preparing to unpack .../06-rake_12.3.1-1_all.deb ...
+7[52;0f[42m[30mProgress: [ 25%][49m[39m [######################################.....................................................................................................................] 8Unpacking rake (12.3.1-1) ...
+7[52;0f[42m[30mProgress: [ 26%][49m[39m [########################################...................................................................................................................] 87[52;0f[42m[30mProgress: [ 28%][49m[39m [##########################################.................................................................................................................] 8Selecting previously unselected package ruby-did-you-mean.
+Preparing to unpack .../07-ruby-did-you-mean_1.2.0-2_all.deb ...
+7[52;0f[42m[30mProgress: [ 29%][49m[39m [############################################...............................................................................................................] 8Unpacking ruby-did-you-mean (1.2.0-2) ...
+7[52;0f[42m[30mProgress: [ 30%][49m[39m [##############################################.............................................................................................................] 87[52;0f[42m[30mProgress: [ 32%][49m[39m [################################################...........................................................................................................] 8Selecting previously unselected package ruby-minitest.
+Preparing to unpack .../08-ruby-minitest_5.10.3-1_all.deb ...
+7[52;0f[42m[30mProgress: [ 33%][49m[39m [##################################################.........................................................................................................] 8Unpacking ruby-minitest (5.10.3-1) ...
+7[52;0f[42m[30mProgress: [ 34%][49m[39m [#####################################################......................................................................................................] 87[52;0f[42m[30mProgress: [ 36%][49m[39m [#######################################################....................................................................................................] 8Selecting previously unselected package ruby-net-telnet.
+Preparing to unpack .../09-ruby-net-telnet_0.1.1-2_all.deb ...
+7[52;0f[42m[30mProgress: [ 37%][49m[39m [#########################################################..................................................................................................] 8Unpacking ruby-net-telnet (0.1.1-2) ...
+7[52;0f[42m[30mProgress: [ 38%][49m[39m [###########################################################................................................................................................] 87[52;0f[42m[30mProgress: [ 39%][49m[39m [#############################################################..............................................................................................] 8Selecting previously unselected package ruby-power-assert.
+Preparing to unpack .../10-ruby-power-assert_0.3.0-1_all.deb ...
+7[52;0f[42m[30mProgress: [ 41%][49m[39m [###############################################################............................................................................................] 8Unpacking ruby-power-assert (0.3.0-1) ...
+7[52;0f[42m[30mProgress: [ 42%][49m[39m [#################################################################..........................................................................................] 87[52;0f[42m[30mProgress: [ 43%][49m[39m [###################################################################........................................................................................] 8Selecting previously unselected package ruby-test-unit.
+Preparing to unpack .../11-ruby-test-unit_3.2.5-1_all.deb ...
+7[52;0f[42m[30mProgress: [ 45%][49m[39m [#####################################################################......................................................................................] 8Unpacking ruby-test-unit (3.2.5-1) ...
+7[52;0f[42m[30mProgress: [ 46%][49m[39m [#######################################################################....................................................................................] 87[52;0f[42m[30mProgress: [ 47%][49m[39m [#########################################################################..................................................................................] 8Selecting previously unselected package libruby2.5:amd64.
+Preparing to unpack .../12-libruby2.5_2.5.1-1ubuntu1.6_amd64.deb ...
+7[52;0f[42m[30mProgress: [ 49%][49m[39m [###########################################################################................................................................................] 8Unpacking libruby2.5:amd64 (2.5.1-1ubuntu1.6) ...
+7[52;0f[42m[30mProgress: [ 50%][49m[39m [#############################################################################..............................................................................] 87[52;0f[42m[30mProgress: [ 51%][49m[39m [###############################################################################............................................................................] 8Selecting previously unselected package unzip.
+Preparing to unpack .../13-unzip_6.0-21ubuntu1_amd64.deb ...
+7[52;0f[42m[30mProgress: [ 53%][49m[39m [#################################################################################..........................................................................] 8Unpacking unzip (6.0-21ubuntu1) ...
+7[52;0f[42m[30mProgress: [ 54%][49m[39m [###################################################################################........................................................................] 87[52;0f[42m[30mProgress: [ 55%][49m[39m [#####################################################################################......................................................................] 8Selecting previously unselected package zip.
+Preparing to unpack .../14-zip_3.0-11build1_amd64.deb ...
+7[52;0f[42m[30mProgress: [ 57%][49m[39m [#######################################################################################....................................................................] 8Unpacking zip (3.0-11build1) ...
+7[52;0f[42m[30mProgress: [ 58%][49m[39m [#########################################################################################..................................................................] 87[52;0f[42m[30mProgress: [ 59%][49m[39m [###########################################################################################................................................................] 8Setting up libjs-jquery (3.2.1-1) ...
+7[52;0f[42m[30mProgress: [ 61%][49m[39m [#############################################################################################..............................................................] 87[52;0f[42m[30mProgress: [ 62%][49m[39m [###############################################################################################............................................................] 8Setting up unzip (6.0-21ubuntu1) ...
+7[52;0f[42m[30mProgress: [ 63%][49m[39m [#################################################################################################..........................................................] 87[52;0f[42m[30mProgress: [ 64%][49m[39m [###################################################################################################........................................................] 8Setting up zip (3.0-11build1) ...
+7[52;0f[42m[30mProgress: [ 66%][49m[39m [#####################################################################################################......................................................] 87[52;0f[42m[30mProgress: [ 67%][49m[39m [########################################################################################################...................................................] 8Setting up fonts-lato (2.0-2) ...
+7[52;0f[42m[30mProgress: [ 68%][49m[39m [##########################################################################################################.................................................] 87[52;0f[42m[30mProgress: [ 70%][49m[39m [############################################################################################################...............................................] 8Setting up ruby-did-you-mean (1.2.0-2) ...
+7[52;0f[42m[30mProgress: [ 71%][49m[39m [##############################################################################################################.............................................] 87[52;0f[42m[30mProgress: [ 72%][49m[39m [################################################################################################################...........................................] 8Setting up ruby-net-telnet (0.1.1-2) ...
+7[52;0f[42m[30mProgress: [ 74%][49m[39m [##################################################################################################################.........................................] 87[52;0f[42m[30mProgress: [ 75%][49m[39m [####################################################################################################################.......................................] 8Setting up rubygems-integration (1.11) ...
+7[52;0f[42m[30mProgress: [ 76%][49m[39m [######################################################################################################################.....................................] 87[52;0f[42m[30mProgress: [ 78%][49m[39m [########################################################################################################################...................................] 8Setting up javascript-common (11) ...
+7[52;0f[42m[30mProgress: [ 79%][49m[39m [##########################################################################################################################.................................] 87[52;0f[42m[30mProgress: [ 80%][49m[39m [############################################################################################################################...............................] 8Setting up ruby-minitest (5.10.3-1) ...
+7[52;0f[42m[30mProgress: [ 82%][49m[39m [##############################################################################################################################.............................] 87[52;0f[42m[30mProgress: [ 83%][49m[39m [################################################################################################################################...........................] 8Setting up ruby-power-assert (0.3.0-1) ...
+7[52;0f[42m[30mProgress: [ 84%][49m[39m [##################################################################################################################################.........................] 87[52;0f[42m[30mProgress: [ 86%][49m[39m [####################################################################################################################################.......................] 8Setting up ruby2.5 (2.5.1-1ubuntu1.6) ...
+7[52;0f[42m[30mProgress: [ 87%][49m[39m [######################################################################################################################################.....................] 87[52;0f[42m[30mProgress: [ 88%][49m[39m [########################################################################################################################################...................] 8Setting up ruby (1:2.5.1) ...
+7[52;0f[42m[30mProgress: [ 89%][49m[39m [##########################################################################################################################################.................] 87[52;0f[42m[30mProgress: [ 91%][49m[39m [############################################################################################################################################...............] 8Setting up ruby-test-unit (3.2.5-1) ...
+7[52;0f[42m[30mProgress: [ 92%][49m[39m [##############################################################################################################################################.............] 87[52;0f[42m[30mProgress: [ 93%][49m[39m [################################################################################################################################################...........] 8Setting up rake (12.3.1-1) ...
+7[52;0f[42m[30mProgress: [ 95%][49m[39m [##################################################################################################################################################.........] 87[52;0f[42m[30mProgress: [ 96%][49m[39m [####################################################################################################################################################.......] 8Setting up libruby2.5:amd64 (2.5.1-1ubuntu1.6) ...
+7[52;0f[42m[30mProgress: [ 97%][49m[39m [######################################################################################################################################################.....] 87[52;0f[42m[30mProgress: [ 99%][49m[39m [########################################################################################################################################################...] 8Processing triggers for mime-support (3.60ubuntu1) ...
+Processing triggers for libc-bin (2.27-3ubuntu1) ...
+Processing triggers for man-db (2.8.3-2ubuntu0.1) ...
+Processing triggers for fontconfig (2.12.6-0ubuntu2) ...
+
+7[0;52r8[1A[J]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# sudo apt install ruby[11Pwhich[C[C[C[C[Ceval "$(chef shell-init bash)"
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[10Pchef shell-init bash[10Pwhich ruby[7@sudo install[C[C[C[C[C[3Pchef --versionsudo dpkg -i chefdk_4.6.35-1_amd64.deb
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[24Pchef --versionsudo dpkg -i chefdk_4.6.35-1_amd64.debcurl -O https://packages.chef.io/files/stable/chefdk/4.6.35/ubuntu/18.04/chefdk_4.6.35-1_amd64.deb
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccurl 35.154.173.14[Ksudo chef-manage-ctl reconfigureserver[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[K[Kwhich ruby
+/opt/chefdk/embedded/bin/ruby
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# ruby ==v[K[K[K--version
+ruby 2.6.5p114 (2019-10-01 revision 67812) [x86_64-linux]
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+]0;root@ip-172-31-6-143: /tmproot@ip-172-31-6-143:/tmp# cd ~
+]0;root@ip-172-31-6-143: ~root@ip-172-31-6-143:~# chef generate repo generated-chef-repo[1@s[1@u[1@d[1@o[1@ 
++---------------------------------------------+
+            Chef License Acceptance
+
+Before you can continue, 1 product license
+must be accepted. View the license at
+https://www.chef.io/end-user-license-agreement/
+
+License that need accepting:
+  * Chef Development Kit
+
+Do you accept the 1 product license ([32;1myes[0m/no)?
+
+> [2K[1G> y[2K[1G> ye[2K[1G> yes[2K[1G> yes
+[1A[2K[1G> [1myes[0m
+
+Persisting 1 product license...
+[32m✔[0m 1 product license persisted.
+
++---------------------------------------------+
+Generating Chef Infra repo generated-chef-repo
+- Ensuring correct Chef Infra repo file content[0m
+
+Your new Chef Infra repo is ready! Type `cd generated-chef-repo` to enter it.
+]0;root@ip-172-31-6-143: ~root@ip-172-31-6-143:~# cd generated-chef-repo
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# ls -al
+total 44
+drwxr-xr-x 6 root root 4096 Dec 18 06:14 [0m[01;34m.[0m
+drwx------ 7 root root 4096 Dec 18 06:14 [01;34m..[0m
+-rw-r--r-- 1 root root  275 Dec 18 06:14 .chef-repo.txt
+drwxr-xr-x 7 root root 4096 Dec 18 06:14 [01;34m.git[0m
+-rw-r--r-- 1 root root 2057 Dec 18 06:14 .gitignore
+-rw-r--r-- 1 root root   70 Dec 18 06:14 LICENSE
+-rw-r--r-- 1 root root 1338 Dec 18 06:14 README.md
+-rw-r--r-- 1 root root 1176 Dec 18 06:14 chefignore
+drwxr-xr-x 3 root root 4096 Dec 18 06:14 [01;34mcookbooks[0m
+drwxr-xr-x 3 root root 4096 Dec 18 06:14 [01;34mdata_bags[0m
+drwxr-xr-x 2 root root 4096 Dec 18 06:14 [01;34mpolicyfiles[0m
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# knife configure
+WARNING: No knife configuration file found. See https://docs.chef.io/config_rb_knife.html for details.
+Please enter the chef server URL: [https://ip-172-31-6-143.ap-south-1.compute.internal/organizations/myorg] https://35.154.173.14/
+Please enter an existing username or clientname for the API: [ubuntu] rgurnule
+*****
+
+You must place your client key in:
+  /root/.chef/rgurnule.pem
+Before running commands with Knife
+
+*****
+Knife configuration file written to /root/.chef/credentials
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# ls -ltr /root/.chef/credentials
+-rw-r--r-- 1 root root 127 Dec 18 06:20 /root/.chef/credentials
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# ls -la /root/.chef/
+total 16
+drwxr-xr-x 2 root root 4096 Dec 18 06:20 [0m[01;34m.[0m
+drwx------ 7 root root 4096 Dec 18 06:14 [01;34m..[0m
+-rw-r--r-- 1 root root   36 Dec 18 06:14 chef_guid
+-rw-r--r-- 1 root root  127 Dec 18 06:20 credentials
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# cp /home/rahul/rahul.pem /root/.chef/
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# cp /home/rahul/rahul.pem /root/.chef/[18Pls -la[C[C[C[C[C[C[C[C[C[C[C[C[C
+total 20
+drwxr-xr-x 2 root root 4096 Dec 18 06:23 [0m[01;34m.[0m
+drwx------ 7 root root 4096 Dec 18 06:14 [01;34m..[0m
+-rw-r--r-- 1 root root   36 Dec 18 06:14 chef_guid
+-rw-r--r-- 1 root root  127 Dec 18 06:20 credentials
+-rw-r--r-- 1 root root 1674 Dec 18 06:23 rahul.pem
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# knife node list
+WARN: Failed to read the private key /root/.chef/rgurnule.pem: #<Errno::ENOENT: No such file or directory @ rb_sysopen - /root/.chef/rgurnule.pem>
+[31m[1mERROR:[0m Your private key could not be loaded from /root/.chef/rgurnule.pem
+Check your configuration file and ensure that your private key is readable
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# cp /home/rahul/rahul.pem /root/.chef/rgurnule.pem
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# cp /home/rahul/rahul.pem /root/.chef/rgurnule.pem
+[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cknife node list[K
+ERROR: SSL Validation failure connecting to host: 35.154.173.14 - SSL_connect returned=1 errno=0 state=error: certificate verify failed (self signed certificate)
+[31m[1mERROR:[0m Could not establish a secure connection to the server.
+Use `knife ssl check` to troubleshoot your SSL configuration.
+If your server uses a self-signed certificate, you can use
+`knife ssl fetch` to make knife trust the server's certificates.
+
+Original Exception: OpenSSL::SSL::SSLError: SSL Error connecting to https://35.154.173.14/nodes - SSL_connect returned=1 errno=0 state=error: certificate verify failed (self signed certificate)
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo# knife ssl fetch
+[33m[1mWARNING:[0m Certificates from 35.154.173.14 will be fetched and placed in your trusted_cert
+         directory (/root/.chef/trusted_certs).
+         
+         Knife has no means to verify these are the correct certificates. You should
+         verify the authenticity of these certificates after downloading.
+Adding certificate for ip-172-31-6-143_ap-south-1_compute_internal in /root/.chef/trusted_certs/ip-172-31-6-143_ap-south-1_compute_internal.crt
+]0;root@ip-172-31-6-143: ~/generated-chef-reporoot@ip-172-31-6-143:~/generated-chef-repo#  knife node list
+ERROR: SSL Validation failure connecting to host: 35.154.173.14 - SSL_connect returned=1 errno=0 state=error: certificate verify failed (error number 1)
+[31m[1mERROR:[0m Could not establish a secure connection to the server.
+Use `knife ssl check` to troubleshoot your SSL configuration.
+If your server uses a self-signed certificate, you can use
+`knife ssl fetch` to make knife trust the server's certificates.
+
+Original Exception: OpenSSL::SSL::SSLError: SSL Error connecting to https://35.154.173.14/nodes - SSL_connect returned=1 errno=0 state=error: certificate verify failed (error number 1)
+]0;root@ip-172-31-6-143: ~/generated-chef-repo
+root@ip-172-31-6-143:~/generated-chef-repo# 
+
+	
+root@ip-172-31-6-143:~# ls -ltr
+total 8
+drwxr-xr-x 3 root root 4096 Dec  4 08:30 snap
+drwxr-xr-x 6 root root 4096 Dec 18 06:14 generated-chef-repo
+root@ip-172-31-6-143:~# cd generated-chef-repo/
+root@ip-172-31-6-143:~/generated-chef-repo# [wd
+p
+Command '[wd' not found, did you mean:
+
+  command 'pwd' from deb coreutils
+  command 'gwd' from deb geneweb
+  command 'xwd' from deb x11-apps
+
+Try: apt install <deb name>
+
+root@ip-172-31-6-143:~/generated-chef-repo# pwd
+/root/generated-chef-repo
+root@ip-172-31-6-143:~/generated-chef-repo# ls -ltr
+total 24
+-rw-r--r-- 1 root root   70 Dec 18 06:14 LICENSE
+-rw-r--r-- 1 root root 1338 Dec 18 06:14 README.md
+-rw-r--r-- 1 root root 1176 Dec 18 06:14 chefignore
+drwxr-xr-x 3 root root 4096 Dec 18 06:14 data_bags
+drwxr-xr-x 2 root root 4096 Dec 18 06:14 policyfiles
+drwxr-xr-x 3 root root 4096 Dec 18 06:14 cookbooks
+root@ip-172-31-6-143:~/generated-chef-repo# sudo knife node list
+ERROR: Error connecting to https://35.154.173.14/nodes, retry 1/5
+^Croot@ip-172-31-6-143:~/generated-chef-repo# cd /home/ubuntu/
+root@ip-172-31-6-143:/home/ubuntu# ls -ltr
+total 8
+-rw-rw-r-- 1 ubuntu ubuntu 7858 Dec 19 05:30 chef-starter.zip
+root@ip-172-31-6-143:/home/ubuntu# sudo yum install -y unzip
+sudo: yum: command not found
+root@ip-172-31-6-143:/home/ubuntu# sudo apt install unzip
+Reading package lists... Done
+Building dependency tree
+Reading state information... Done
+unzip is already the newest version (6.0-21ubuntu1).
+unzip set to manually installed.
+0 upgraded, 0 newly installed, 0 to remove and 40 not upgraded.
+root@ip-172-31-6-143:/home/ubuntu# unzip chef-starter.zip
+Archive:  chef-starter.zip
+  inflating: chef-repo/README.md
+   creating: chef-repo/cookbooks/
+   creating: chef-repo/cookbooks/starter/
+   creating: chef-repo/cookbooks/starter/recipes/
+  inflating: chef-repo/cookbooks/starter/recipes/default.rb
+  inflating: chef-repo/cookbooks/starter/metadata.rb
+   creating: chef-repo/cookbooks/starter/templates/
+   creating: chef-repo/cookbooks/starter/templates/default/
+  inflating: chef-repo/cookbooks/starter/templates/default/sample.erb
+   creating: chef-repo/cookbooks/starter/files/
+   creating: chef-repo/cookbooks/starter/files/default/
+  inflating: chef-repo/cookbooks/starter/files/default/sample.txt
+   creating: chef-repo/cookbooks/starter/attributes/
+  inflating: chef-repo/cookbooks/starter/attributes/default.rb
+  inflating: chef-repo/cookbooks/chefignore
+  inflating: chef-repo/.gitignore
+   creating: chef-repo/.chef/
+   creating: chef-repo/roles/
+  inflating: chef-repo/.chef/knife.rb
+  inflating: chef-repo/roles/starter.rb
+  inflating: chef-repo/.chef/rgurnule.pem
+root@ip-172-31-6-143:/home/ubuntu# ls -ltr
+total 12
+-rw-rw-r-- 1 ubuntu ubuntu 7858 Dec 19 05:30 chef-starter.zip
+drwxr-xr-x 5 root   root   4096 Dec 19 05:31 chef-repo
+root@ip-172-31-6-143:/home/ubuntu# cd cd chef-repo
+-su: cd: too many arguments
+root@ip-172-31-6-143:/home/ubuntu# cd chef-repo
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife ssl fetch
+WARNING: Certificates from ip-172-31-6-143.ap-south-1.compute.internal will be fetched and placed in your trusted_cert
+         directory (/home/ubuntu/chef-repo/.chef/trusted_certs).
+
+         Knife has no means to verify these are the correct certificates. You should
+         verify the authenticity of these certificates after downloading.
+Adding certificate for ip-172-31-6-143_ap-south-1_compute_internal in /home/ubuntu/chef-repo/.chef/trusted_certs/ip-172-31-6-143_ap-south-1_compute_internal.crt
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node list
+
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#
+
+

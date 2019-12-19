@@ -1,0 +1,420 @@
+With our introduction to roles and environments, we've seen that we can set attributes, but we don't know how those are used. In this lesson, we'll dive into attributes.
+
+Documentation:-
+The Chef attribute documentation - https://docs.chef.io/attributes.html
+Ohai - https://docs.chef.io/ohai.html
+
+What is an Attribute?
+Attributes are variable pieces of data that are associated with a node or set when a recipe is run. These attributes can be used to within recipes to change how resources are applied.
+
+The Types of Attributes
+Attributes are a little more complicated than some of the aspects of Chef that we've looked at thus far because there are multiple ways that they can be set and they have different levels of precedence. Here's the order of precedence and where each attribute type is set.
+
+default - Attributes automatically set during the chef-client run.
+force_default - Attribute type guaranteed to override default values. Set in cookbooks.
+normal - Attribute type that persists with the node object at the end of a chef-client run.
+override - Attribute type reset at the start of a chef-client run. Used in cookbooks, roles, and environments. Limit use in cookbooks unless it can't be avoided.
+force_override - Attribute type used by cookbooks to have precedence over override attributes.
+automatic - Attribute type determined by Ohai at the start of the chef-client run. Can't be overridden.
+
+In addition to there being multiple types/levels of attributes, there are numerous ways for attributes to be set.
+
+By the Node (collected by Ohai, on chef-client run)
+Attribute files (in cookbooks)
+Recipes (in cookbooks)
+Environments
+Roles
+
+The combination of attribute types and ways that attributes can be set gives us 15 tiers of attribute overrides. This image sums the order up the best:
+	
+	Refer Image: 16_Attributes.png
+
+Now that we know a little about how attributes are collected and the value finalized, let's take a look at how we can use and set these values.
+
+
+
+Reading Attributes
+To dig into attributes, we're going to create a "Message of the Day" cookbook (called bcf_motd) and gradually see how we can read and write attributes. Let's generate our cookbook first:
+
+[workstation] chef-repo $ chef generate cookbook cookbooks/bcf_motd
+[workstation] chef-repo $ cd cookbooks/bcf_motd
+We're going to use a single resource for the time being within our default recipe that populates the /etc/motd file with some information.
+
+~/chef-repo/cookbooks/bcf_motd/recipes/default.rb
+
+file "/etc/motd" do
+  content "IP Address: #{node['ipaddress']}
+Catch Phrase: #{node['catch_phrase']}
+"
+end
+There are a few new things here:
+
+The #{node['ipaddress']} is an example of string interpolation in Ruby which allows us to exercise some Ruby code within the #{...} and have that value written into the output string. One thing to note is that the string must use double-quotes (") for this feature to work.
+We're interacting with the node object, which is a key-value pair object that we can read information from.
+Let's run our recipe on our workstation, and see what we actually write out to the /etc/motd file.
+
+[workstation] bcf_motd $ sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+...
+[workstation] chef-repo $ cat /etc/motd
+IP Address: 172.31.120.31
+Catch Phrase:
+The node object is built up during the chef-client run, and the ipaddress value is one of the values determined by Ohai. The catch_phrase attribute is not set at all, so nothing is put into the file, but no error occurs. The ipaddress attribute is one of the "automatic" attributes.
+
+Setting Attributes
+We know the ways that attributes can be set, but let's see them in action. To start, let's manually set the catch_phrase and ipaddress attributes within our recipe:
+
+~/chef-repo/cookbooks/bcf_motd/recipes/default.rb
+
+node.force_override['ipaddress'] = '127.0.0.1'
+node.normal['catch_phrase'] = 'Welcome to the kitchen'
+node.force_default['catch_phrase'] = 'Cooking with Gas!'
+
+file "/etc/motd" do
+  content "
+IP Address: #{node['ipaddress']}
+Catch Phrase: #{node['catch_phrase']}
+"
+end
+Now we'll run this recipe locally yet again:
+
+[workstation] bcf_motd $ sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+...
+[workstation] bcf_motd $ cat /etc/motd
+
+IP Address: 172.31.120.31
+Catch Phrase: Welcome to the kitchen
+Notice that the IP address didn't change because the ipaddress attribute is an "automatic" attribute. Additionally, even though we would have set the catch_phrase to "Cooking with Gas!" after we set it to "Welcome to the kitchen" it wasn' changed because normal has precedence over force_default.
+
+Using an Attributes Files
+Another way that we're able to set attributes is through attributes files in our cookbooks. Let's generate one now and move our attribute settings into that file:
+
+Note: We're currently in the bcf_motd directory so the path of . will work.
+
+[workstation] bcf_motd $ chef generate attribute . default
+Recipe: code_generator::attribute
+  * directory[././attributes] action create
+    - create new directory ././attributes
+    - restore selinux security context
+  * template[././attributes/default.rb] action create
+    - create new file ././attributes/default.rb
+    - update content in file ././attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+    - restore selinux security context
+
+~/chef-repo/cookbooks/bcf_motd/attributes/default.rb
+
+node.normal['catch_phrase'] = 'Welcome to the kitchen'
+node.force_default['catch_phrase'] = 'Cooking with Gas!'
+
+
+We'll also remove setting those attributes from the recipe:
+
+~/chef-repo/cookbooks/bcf_motd/recipes/default.rb
+
+file "/etc/motd" do
+  content "IP Address: #{node['ipaddress']}
+Catch Phrase: #{node['catch_phrase']}
+"
+end
+
+
+
+Running chef-client once again, we should see no changes because we only moved where we were setting these values.
+
+[workstation] bcf_motd $ sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+...
+Chef Client finished, 0/1 resources updated in 02 seconds
+Setting Attributes in Roles/Environments/Node Objects
+We've looked at the nodes, roles, and environments up to this point, and we know that we can edit them as JSON using knife [type] edit -F json [item_name], but we've never set attributes. How do we set attributes using JSON? To see this in action we're going to need to use the Chef server, so we need to run our cookbook on a node. To accomplish this we'll need to do the following:
+
+1. Upload our cookbook.
+2. Add it to the base role.
+3. Edit our staging environment attributes.
+4. Run chef-client on the node.
+
+We already know how to do most of this so, the output is abbreviated:
+
+[workstation] bcf_motd $ cd ../../
+[workstation] chef-repo $ knife upload cookbook cookbooks/bcf_motd
+Created cookbooks/bcf_motd
+[workstation] chef-repo $ knife role run_list add base 'bcf_motd'
+chef_type:           role
+default_attributes:
+description:         Sets up the essential tools and users. Should be used by all nodes.
+env_run_lists:
+json_class:          Chef::Role
+name:                base
+override_attributes:
+  catch_phrase: Cooking with Gas!
+run_list:
+  recipe[bcf_essentials]
+  recipe[bcf_users]
+  recipe[bcf_motd]
+[workstation] chef-repo $ knife environment edit -F json staging
+Saved staging
+
+
+Here's the contents of our updated staging environment's JSON:
+
+{
+  "name": "staging",
+  "description": "Pre-production, staging environment for internal access only.",
+  "cookbook_versions": {
+
+  },
+  "json_class": "Chef::Environment",
+  "chef_type": "environment",
+  "default_attributes": {
+
+  },
+  "override_attributes": {
+    "catch_phrase": "Delivering in Staging"
+  }
+}
+
+
+We can expect that since this is set as an override attribute that it should be used instead of the force_default set in our cookbook. Let's run chef-client now:
+
+[workstation] chef-repo $ knife ssh 'name:web-node1' 'sudo chef-client'
+...
+satyensingh3.mylabserver.com Chef Client finished, 1/8 resources updated in 07 seconds
+
+
+Finally, we need to see what is in the /etc/motd file:
+
+[workstation] chef-repo $ knife ssh 'name:web-node1' 'cat /etc/motd'
+user@satyensingh3.mylabserver.com's password:
+satyensingh3.mylabserver.com IP Address: 172.31.29.208
+satyensingh3.mylabserver.com Catch Phrase: Delivering in Staging
+
+
+The attribute precedence can get a little complicated, so try to use the lowest precedence that you can in cookbooks so that the values can be tuned for more fine-grained sections of your infrastructure.
+
+==========================================================================================================================================================
+
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# chef generate cookbook cookbooks/bcf_motd
+Generating cookbook bcf_motd
+- Ensuring correct cookbook content
+- Committing cookbook files to git
+
+Your cookbook is ready. Type `cd cookbooks/bcf_motd` to enter it.
+
+There are several commands you can run to get started locally developing and testing your cookbook.
+Type `delivery local --help` to see a full list of local testing commands.
+
+Why not start by writing an InSpec test? Tests for the default recipe are stored at:
+
+test/integration/default/default_test.rb
+
+If you'd prefer to dive right in, the default recipe can be found at:
+
+recipes/default.rb
+
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cd cookbooks/bcf_motd
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+[2019-12-19T08:43:23+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T08:43:23+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T08:43:23+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T08:43:23+00:00] INFO: Chef-client pid: 28288
+[2019-12-19T08:43:25+00:00] INFO: Setting the run_list to [#<Chef::RunList::RunListItem:0x00000000028528c8 @version=nil, @type=:recipe, @name="bcf_motd">] from CLI options
+[2019-12-19T08:43:25+00:00] INFO: Run List is [recipe[bcf_motd]]
+[2019-12-19T08:43:25+00:00] INFO: Run List expands to [bcf_motd]
+[2019-12-19T08:43:25+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T08:43:25+00:00] INFO: Running start handlers
+[2019-12-19T08:43:25+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["bcf_motd"]
+[2019-12-19T08:43:25+00:00] INFO: Loading cookbooks [bcf_motd@0.1.0]
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/README.md from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/recipes/vim.rb from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/recipes/default.rb from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/LICENSE from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/metadata.rb from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/files/vimrc from the cache; its cookbook is no longer needed on this client.
+[2019-12-19T08:43:25+00:00] INFO: Removing cookbooks/bcf_essentials/chefignore from the cache; its cookbook is no longer needed on this client.
+Synchronizing Cookbooks:
+[2019-12-19T08:43:25+00:00] INFO: Storing updated cookbooks/bcf_motd/metadata.rb in the cache.
+[2019-12-19T08:43:25+00:00] INFO: Storing updated cookbooks/bcf_motd/LICENSE in the cache.
+[2019-12-19T08:43:25+00:00] INFO: Storing updated cookbooks/bcf_motd/README.md in the cache.
+[2019-12-19T08:43:25+00:00] INFO: Storing updated cookbooks/bcf_motd/chefignore in the cache.
+[2019-12-19T08:43:25+00:00] INFO: Storing updated cookbooks/bcf_motd/recipes/default.rb in the cache.
+  - bcf_motd (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 0 resources
+[2019-12-19T08:43:25+00:00] INFO: Chef Infra Client Run complete in 0.185940269 seconds
+
+Running handlers:
+[2019-12-19T08:43:25+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T08:43:25+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 0/0 resources updated in 02 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# cat /etc/motd
+cat: /etc/motd: No such file or directory
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# cat etc/motd
+cat: etc/motd: No such file or directory
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# cat motd
+cat: motd: No such file or directory
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# vi cookbooks/bcf_motd/recipes/default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd# cd recipes/
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd/recipes# ls -ltr
+total 4
+-rw-r--r-- 1 root root 99 Dec 19 08:43 default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/cookbooks/bcf_motd/recipes# cd /home/ubuntu/chef-repo/
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# vi cookbooks/bcf_motd/recipes/default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+[2019-12-19T08:46:51+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T08:46:51+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T08:46:51+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T08:46:51+00:00] INFO: Chef-client pid: 29103
+[2019-12-19T08:46:53+00:00] INFO: Setting the run_list to [#<Chef::RunList::RunListItem:0x0000000002bc4df8 @version=nil, @type=:recipe, @name="bcf_motd">] from CLI options
+[2019-12-19T08:46:53+00:00] INFO: Run List is [recipe[bcf_motd]]
+[2019-12-19T08:46:53+00:00] INFO: Run List expands to [bcf_motd]
+[2019-12-19T08:46:53+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T08:46:53+00:00] INFO: Running start handlers
+[2019-12-19T08:46:53+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["bcf_motd"]
+[2019-12-19T08:46:53+00:00] INFO: Loading cookbooks [bcf_motd@0.1.0]
+Synchronizing Cookbooks:
+[2019-12-19T08:46:53+00:00] INFO: Storing updated cookbooks/bcf_motd/recipes/default.rb in the cache.
+  - bcf_motd (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 1 resources
+Recipe: bcf_motd::default
+  * file[/etc/motd] action create[2019-12-19T08:46:53+00:00] INFO: Processing file[/etc/motd] action create (bcf_motd::default line 6)
+[2019-12-19T08:46:53+00:00] INFO: file[/etc/motd] created file /etc/motd
+
+    - create new file /etc/motd[2019-12-19T08:46:53+00:00] INFO: file[/etc/motd] updated file contents /etc/motd
+
+    - update content in file /etc/motd from none to 4acc71
+    --- /etc/motd       2019-12-19 08:46:53.355527397 +0000
+    +++ /etc/.chef-motd20191219-29103-168e8yk   2019-12-19 08:46:53.355527397 +0000
+    @@ -1 +1,3 @@
+    +IP Address: 172.31.6.143
+    +Catch Phrase:
+[2019-12-19T08:46:53+00:00] INFO: Chef Infra Client Run complete in 0.166356225 seconds
+
+Running handlers:
+[2019-12-19T08:46:53+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T08:46:53+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 1/1 resources updated in 01 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cat /etc/motd
+IP Address: 172.31.6.143
+Catch Phrase:
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# vi cookbooks/bcf_motd/recipes/default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#  sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+[2019-12-19T08:47:41+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T08:47:41+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T08:47:41+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T08:47:41+00:00] INFO: Chef-client pid: 29410
+[2019-12-19T08:47:43+00:00] INFO: Setting the run_list to [#<Chef::RunList::RunListItem:0x00000000013dc038 @version=nil, @type=:recipe, @name="bcf_motd">] from CLI options
+[2019-12-19T08:47:43+00:00] INFO: Run List is [recipe[bcf_motd]]
+[2019-12-19T08:47:43+00:00] INFO: Run List expands to [bcf_motd]
+[2019-12-19T08:47:43+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T08:47:43+00:00] INFO: Running start handlers
+[2019-12-19T08:47:43+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["bcf_motd"]
+[2019-12-19T08:47:43+00:00] INFO: Loading cookbooks [bcf_motd@0.1.0]
+Synchronizing Cookbooks:
+[2019-12-19T08:47:43+00:00] INFO: Storing updated cookbooks/bcf_motd/recipes/default.rb in the cache.
+  - bcf_motd (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 1 resources
+Recipe: bcf_motd::default
+  * file[/etc/motd] action create[2019-12-19T08:47:43+00:00] INFO: Processing file[/etc/motd] action create (bcf_motd::default line 11)
+[2019-12-19T08:47:43+00:00] INFO: file[/etc/motd] backed up to /home/ubuntu/chef-repo/.chef/local-mode-cache/backup/etc/motd.chef-20191219084743.542948
+[2019-12-19T08:47:43+00:00] INFO: file[/etc/motd] updated file contents /etc/motd
+
+    - update content in file /etc/motd from 4acc71 to b0dbb3
+    --- /etc/motd       2019-12-19 08:46:53.355527397 +0000
+    +++ /etc/.chef-motd20191219-29410-1awkb9e   2019-12-19 08:47:43.539711016 +0000
+    @@ -1,3 +1,3 @@
+     IP Address: 172.31.6.143
+    -Catch Phrase:
+    +Catch Phrase: Welcome to the kitchen
+[2019-12-19T08:47:43+00:00] INFO: Chef Infra Client Run complete in 0.166525906 seconds
+
+Running handlers:
+[2019-12-19T08:47:43+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T08:47:43+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 1/1 resources updated in 01 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cat /etc/motd
+IP Address: 172.31.6.143
+Catch Phrase: Welcome to the kitchen
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# chef generate attribute . default
+Recipe: code_generator::attribute
+  * directory[././attributes] action create
+    - create new directory ././attributes
+  * template[././attributes/default.rb] action create
+    - create new file ././attributes/default.rb
+    - update content in file ././attributes/default.rb from none to e3b0c4
+    (diff output suppressed by config)
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# vi cookbooks/bcf_motd/recipes/default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#  sudo chef-client --local-mode -r 'recipe[bcf_motd]'
+[2019-12-19T08:49:22+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T08:49:22+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T08:49:22+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T08:49:22+00:00] INFO: Chef-client pid: 29879
+[2019-12-19T08:49:24+00:00] INFO: Setting the run_list to [#<Chef::RunList::RunListItem:0x0000000003e31a90 @version=nil, @type=:recipe, @name="bcf_motd">] from CLI options
+[2019-12-19T08:49:24+00:00] INFO: Run List is [recipe[bcf_motd]]
+[2019-12-19T08:49:24+00:00] INFO: Run List expands to [bcf_motd]
+[2019-12-19T08:49:24+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T08:49:24+00:00] INFO: Running start handlers
+[2019-12-19T08:49:24+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: ["bcf_motd"]
+[2019-12-19T08:49:24+00:00] INFO: Loading cookbooks [bcf_motd@0.1.0]
+Synchronizing Cookbooks:
+[2019-12-19T08:49:24+00:00] INFO: Storing updated cookbooks/bcf_motd/recipes/default.rb in the cache.
+  - bcf_motd (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 0 resources
+[2019-12-19T08:49:24+00:00] INFO: Chef Infra Client Run complete in 0.153586133 seconds
+
+Running handlers:
+[2019-12-19T08:49:24+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T08:49:24+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 0/0 resources updated in 01 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cd ../../
+root@ip-172-31-6-143:/home# cd -
+/home/ubuntu/chef-repo
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife upload cookbook cookbooks/bcf_motd
+Created cookbooks/bcf_motd
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife role run_list add base 'bcf_motd'
+chef_type:           role
+default_attributes:
+description:         Sets up the essential tools and users. Should be used by all nodes.
+env_run_lists:
+json_class:          Chef::Role
+name:                base
+override_attributes:
+run_list:
+  recipe[bcf_essentials]
+  recipe[bcf_users]
+  recipe[bcf_motd]
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife environment edit -F json staging
+Object unchanged, not saving
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife environment edit -F json staging
+Saved staging
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife ssh 'name:web-node1' 'sudo chef-client'
+FATAL: No nodes returned from search
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife ssh 'name:web-node1' 'cat /etc/motd'
+FATAL: No nodes returned from search
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#
+

@@ -1,0 +1,311 @@
+We’ve used our first few resources already, but in this lesson, we’ll dig deeper into how resources work and what we can accomplish with them.
+
+Documentation:-
+Chef recipe documentation (https://docs.chef.io/recipes.html)
+Chef resource documentation (https://docs.chef.io/resource.html)
+The package resource documentation (https://docs.chef.io/resource_package.html)
+The service resource documentation (https://docs.chef.io/resource_service.html)
+
+Default Resource Actions
+In our bcf_nginx default recipe we use the package resource without specifying the action, and this works because there is a default action. What is the default action of the package resource? If we look at the package’s “Actions” documentation we can see the options and that the default is :install. There are other options, let’s take a look at those now:
+
+:install - Default, installs the package.
+:nothing - Does nothing until the resource is notified.
+:purge - Debian specific, use :remove otherwise. Removes package and configuration.
+:reconfig - Reconfigure the package. Requires a response file.
+:remove - Removes the package.
+:upgrade - Install and/or ensure that the package is the latest version.
+
+A few things to note here are that the :enable and :start actions that we used with the service resource aren’t here. Each resource defines its own actions. Notice that they are all present tense verbs (except for :nothing, it’s a unique one). Lastly, the :nothing action is shared by all resource types to allow us to specify what to do when a resource is “notified”.
+
+Common Resource Characteristics:-
+All resources share some common characteristics and those can be found on a special page in the Chef documentation. We’ve already talked about the :nothing action that is shared, but there are other aspects that we’ll find that all resources have in common. Let’s discuss and demonstrate a few of these common characteristics now.
+
+In addition to the :nothing action, every resource has access to the “guards” not_if and only_if. These guards allow us to specify whether or not the resource should execute based on the result of a conditional action or command. Let’s use not_if to only create an index.html file is one doesn’t exist using the file resource.
+
+~/chef-repo/cookbooks/bcf_nginx/recipes/default.rb
+
+package "nginx"
+
+service "nginx" do
+  action [:enable, :start]
+end
+
+file "/usr/share/nginx/html/index.html" do
+  content "<h1>Hello, world!</h1>"
+  action :create
+  not_if { ::File.exists?("/usr/share/nginx/html/index.html") }
+end
+
+
+Let’s run this locally to see what happens (from ~/chef-repo):
+
+[workstation] $ sudo chef-client --local-mode cookbooks/bcf_nginx/recipes/default.rb
+...
+  * file[/usr/share/nginx/html/index.html] action create[2018-05-14T18:41:10+00:00] INFO: Processing file[/usr/share/nginx/html/index.html] action create (@recipe_files::/home/user/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 7)
+ (skipped due to not_if)
+[2018-05-14T18:41:10+00:00] INFO: Chef Run complete in 4.938577518 seconds
+
+
+This file already exists (because it was created by the nginx package), so nothing happened. Let’s delete this file and run it again.
+
+
+[workstation] $ sudo rm /usr/share/nginx/html/index.html
+[workstation] $ sudo chef-client --local-mode cookbooks/bcf_nginx/recipes/default.rb
+...
+    - create new file /usr/share/nginx/html/index.html[2018-05-14T18:46:01+00:00] INFO: file[/usr/share/nginx/html/index.html] updated file contents /usr/share/nginx/html/index.html
+
+    - update content in file /usr/share/nginx/html/index.html from none to 17d291
+    --- /usr/share/nginx/html/index.html        2018-05-14 18:46:01.183156913 +0000
+    +++ /usr/share/nginx/html/.chef-index20180514-32741-1y8c6a6.html    2018-05-14 18:46:01.168157010 +0000
+    @@ -1 +1,2 @@
+    +<h1>Hello, world!</h1>
+    - restore selinux security context
+[2018-05-14T18:46:01+00:00] INFO: Chef Run complete in 5.796235169 seconds
+====================================================================================================================================================================
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# vi cookbooks/bcf_nginx/recipes/default.rb
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo chef-client --local-mode cookbooks/bcf_nginx/recipes/default.rb
+[2019-12-19T06:05:20+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T06:05:20+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T06:05:20+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T06:05:20+00:00] INFO: Chef-client pid: 27093
+[2019-12-19T06:05:22+00:00] INFO: Run List is []
+[2019-12-19T06:05:22+00:00] INFO: Run List expands to []
+[2019-12-19T06:05:22+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T06:05:22+00:00] INFO: Running start handlers
+[2019-12-19T06:05:22+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: []
+[2019-12-19T06:05:22+00:00] INFO: Loading cookbooks []
+Synchronizing Cookbooks:
+Installing Cookbook Gems:
+Compiling Cookbooks...
+[2019-12-19T06:05:22+00:00] WARN: Node rgurnule has an empty run list.
+Converging 3 resources
+Recipe: @recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb
+  * apt_package[nginx] action install[2019-12-19T06:05:22+00:00] INFO: Processing apt_package[nginx] action install (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 6)
+ (up to date)
+  * service[nginx] action enable[2019-12-19T06:05:22+00:00] INFO: Processing service[nginx] action enable (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+ (up to date)
+  * service[nginx] action start[2019-12-19T06:05:22+00:00] INFO: Processing service[nginx] action start (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+
+
+    ================================================================================
+    Error executing action `start` on resource 'service[nginx]'
+    ================================================================================
+
+    Mixlib::ShellOut::ShellCommandFailed
+    ------------------------------------
+    Expected process to exit with [0], but received '1'
+    ---- Begin output of /bin/systemctl --system start nginx ----
+    STDOUT:
+    STDERR: Job for nginx.service failed because the control process exited with error code.
+    See "systemctl status nginx.service" and "journalctl -xe" for details.
+    ---- End output of /bin/systemctl --system start nginx ----
+    Ran /bin/systemctl --system start nginx returned 1
+
+    Resource Declaration:
+    ---------------------
+    # In /home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb
+
+      8: service "nginx" do
+      9:   action [:enable, :start]
+     10: end
+     11:
+
+    Compiled Resource:
+    ------------------
+    # Declared in /home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb:8:in `from_file'
+
+    service("nginx") do
+      action [:enable, :start]
+      default_guard_interpreter :default
+      declared_type :service
+      cookbook_name "@recipe_files"
+      recipe_name "/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb"
+      service_name "nginx"
+      running false
+      enabled true
+      masked false
+    end
+
+    System Info:
+    ------------
+    chef_version=15.5.17
+    platform=ubuntu
+    platform_version=18.04
+    ruby=ruby 2.6.5p114 (2019-10-01 revision 67812) [x86_64-linux]
+    program_name=/usr/bin/chef-client
+    executable=/opt/chefdk/bin/chef-client
+
+[2019-12-19T06:05:24+00:00] INFO: Running queued delayed notifications before re-raising exception
+
+Running handlers:
+[2019-12-19T06:05:24+00:00] ERROR: Running exception handlers
+Running handlers complete
+[2019-12-19T06:05:24+00:00] ERROR: Exception handlers complete
+Chef Infra Client failed. 0 resources updated in 04 seconds
+[2019-12-19T06:05:24+00:00] FATAL: Stacktrace dumped to /home/ubuntu/chef-repo/.chef/local-mode-cache/cache/chef-stacktrace.out
+[2019-12-19T06:05:24+00:00] FATAL: Please provide the contents of the stacktrace.out file if you file a bug report
+[2019-12-19T06:05:24+00:00] FATAL: Mixlib::ShellOut::ShellCommandFailed: service[nginx] (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8) had an error: Mixlib::ShellOut::ShellCommandFailed: Expected process to exit with [0], but received '1'
+---- Begin output of /bin/systemctl --system start nginx ----
+STDOUT:
+STDERR: Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xe" for details.
+---- End output of /bin/systemctl --system start nginx ----
+Ran /bin/systemctl --system start nginx returned 1
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# systemctl status nginx.service
+? nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: failed (Result: exit-code) since Thu 2019-12-19 06:05:24 UTC; 1min 39s ago
+     Docs: man:nginx(8)
+  Process: 27252 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=1/FAILURE)
+  Process: 27242 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+
+Dec 19 06:05:22 ip-172-31-6-143 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Dec 19 06:05:22 ip-172-31-6-143 nginx[27252]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:05:22 ip-172-31-6-143 nginx[27252]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:05:23 ip-172-31-6-143 nginx[27252]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:05:23 ip-172-31-6-143 nginx[27252]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:05:24 ip-172-31-6-143 nginx[27252]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:05:24 ip-172-31-6-143 nginx[27252]: nginx: [emerg] still could not bind()
+Dec 19 06:05:24 ip-172-31-6-143 systemd[1]: nginx.service: Control process exited, code=exited status=1
+Dec 19 06:05:24 ip-172-31-6-143 systemd[1]: nginx.service: Failed with result 'exit-code'.
+Dec 19 06:05:24 ip-172-31-6-143 systemd[1]: Failed to start A high performance web server and a reverse proxy server.
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# service nginx start
+Job for nginx.service failed because the control process exited with error code.
+See "systemctl status nginx.service" and "journalctl -xe" for details.
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# service nginx.service start
+Failed to start nginx.service.service: Unit nginx.service.service not found.
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo fuser -k 80/tcp
+80/tcp:               2550  2551
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# systemctl status nginx.service
+? nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: failed (Result: exit-code) since Thu 2019-12-19 06:07:42 UTC; 1min 33s ago
+     Docs: man:nginx(8)
+  Process: 27792 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=1/FAILURE)
+  Process: 27785 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+
+Dec 19 06:07:40 ip-172-31-6-143 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Dec 19 06:07:40 ip-172-31-6-143 nginx[27792]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:07:40 ip-172-31-6-143 nginx[27792]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:07:41 ip-172-31-6-143 nginx[27792]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:07:41 ip-172-31-6-143 nginx[27792]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:07:42 ip-172-31-6-143 nginx[27792]: nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)
+Dec 19 06:07:42 ip-172-31-6-143 nginx[27792]: nginx: [emerg] still could not bind()
+Dec 19 06:07:42 ip-172-31-6-143 systemd[1]: nginx.service: Control process exited, code=exited status=1
+Dec 19 06:07:42 ip-172-31-6-143 systemd[1]: nginx.service: Failed with result 'exit-code'.
+Dec 19 06:07:42 ip-172-31-6-143 systemd[1]: Failed to start A high performance web server and a reverse proxy server.
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# kill -9 27792
+-su: kill: (27792) - No such process
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# kill -9 2550
+-su: kill: (2550) - No such process
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# kill -9 2551
+-su: kill: (2551) - No such process
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo systemctl restart nginx
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# systemctl status nginx.service
+? nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2019-12-19 06:10:23 UTC; 10s ago
+     Docs: man:nginx(8)
+  Process: 28406 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+  Process: 28396 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+ Main PID: 28408 (nginx)
+    Tasks: 3 (limit: 4703)
+   CGroup: /system.slice/nginx.service
+           +-28408 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+           +-28412 nginx: worker process
+           +-28413 nginx: worker process
+
+Dec 19 06:10:23 ip-172-31-6-143 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Dec 19 06:10:23 ip-172-31-6-143 systemd[1]: Started A high performance web server and a reverse proxy server.
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo chef-client --local-mode cookbooks/bcf_nginx/recipes/default.rb
+[2019-12-19T06:10:48+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T06:10:48+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T06:10:48+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T06:10:48+00:00] INFO: Chef-client pid: 28473
+[2019-12-19T06:10:50+00:00] INFO: Run List is []
+[2019-12-19T06:10:50+00:00] INFO: Run List expands to []
+[2019-12-19T06:10:50+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T06:10:50+00:00] INFO: Running start handlers
+[2019-12-19T06:10:50+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: []
+[2019-12-19T06:10:50+00:00] INFO: Loading cookbooks []
+Synchronizing Cookbooks:
+Installing Cookbook Gems:
+Compiling Cookbooks...
+[2019-12-19T06:10:50+00:00] WARN: Node rgurnule has an empty run list.
+Converging 3 resources
+Recipe: @recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb
+  * apt_package[nginx] action install[2019-12-19T06:10:50+00:00] INFO: Processing apt_package[nginx] action install (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 6)
+ (up to date)
+  * service[nginx] action enable[2019-12-19T06:10:50+00:00] INFO: Processing service[nginx] action enable (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+ (up to date)
+  * service[nginx] action start[2019-12-19T06:10:50+00:00] INFO: Processing service[nginx] action start (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+ (up to date)
+  * file[/usr/share/nginx/html/index.html] action create[2019-12-19T06:10:50+00:00] INFO: Processing file[/usr/share/nginx/html/index.html] action create (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 12)
+ (skipped due to not_if)
+[2019-12-19T06:10:50+00:00] INFO: Chef Infra Client Run complete in 0.409263424 seconds
+
+Running handlers:
+[2019-12-19T06:10:50+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T06:10:50+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 0/4 resources updated in 02 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# ls -ltr /usr/share/nginx/html/index.html
+-rw-r--r-- 1 root root 612 Apr 17  2018 /usr/share/nginx/html/index.html
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo rm /usr/share/nginx/html/index.html
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# sudo chef-client --local-mode cookbooks/bcf_nginx/recipes/default.rb
+
+[2019-12-19T06:12:08+00:00] INFO: Started Chef Infra Zero at chefzero://localhost:1 with repository at /home/ubuntu/chef-repo
+  One version per cookbook
+
+Starting Chef Infra Client, version 15.5.17
+[2019-12-19T06:12:08+00:00] INFO: *** Chef Infra Client 15.5.17 ***
+[2019-12-19T06:12:08+00:00] INFO: Platform: x86_64-linux
+[2019-12-19T06:12:08+00:00] INFO: Chef-client pid: 28901
+[2019-12-19T06:12:09+00:00] INFO: Run List is []
+[2019-12-19T06:12:09+00:00] INFO: Run List expands to []
+[2019-12-19T06:12:09+00:00] INFO: Starting Chef Infra Client Run for rgurnule
+[2019-12-19T06:12:09+00:00] INFO: Running start handlers
+[2019-12-19T06:12:09+00:00] INFO: Start handlers complete.
+resolving cookbooks for run list: []
+[2019-12-19T06:12:09+00:00] INFO: Loading cookbooks []
+Synchronizing Cookbooks:
+Installing Cookbook Gems:
+Compiling Cookbooks...
+[2019-12-19T06:12:09+00:00] WARN: Node rgurnule has an empty run list.
+Converging 3 resources
+Recipe: @recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb
+  * apt_package[nginx] action install[2019-12-19T06:12:09+00:00] INFO: Processing apt_package[nginx] action install (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 6)
+ (up to date)
+  * service[nginx] action enable[2019-12-19T06:12:09+00:00] INFO: Processing service[nginx] action enable (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+ (up to date)
+  * service[nginx] action start[2019-12-19T06:12:10+00:00] INFO: Processing service[nginx] action start (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 8)
+ (up to date)
+  * file[/usr/share/nginx/html/index.html] action create[2019-12-19T06:12:10+00:00] INFO: Processing file[/usr/share/nginx/html/index.html] action create (@recipe_files::/home/ubuntu/chef-repo/cookbooks/bcf_nginx/recipes/default.rb line 12)
+[2019-12-19T06:12:10+00:00] INFO: file[/usr/share/nginx/html/index.html] created file /usr/share/nginx/html/index.html
+
+    - create new file /usr/share/nginx/html/index.html[2019-12-19T06:12:10+00:00] INFO: file[/usr/share/nginx/html/index.html] updated file contents /usr/share/nginx/html/index.html
+
+    - update content in file /usr/share/nginx/html/index.html from none to 17d291
+    --- /usr/share/nginx/html/index.html        2019-12-19 06:12:10.168591566 +0000
+    +++ /usr/share/nginx/html/.chef-index20191219-28901-89w9q.html      2019-12-19 06:12:10.168591566 +0000
+    @@ -1 +1,2 @@
+    +<h1>Hello, world!</h1>
+[2019-12-19T06:12:10+00:00] INFO: Chef Infra Client Run complete in 0.367756533 seconds
+
+Running handlers:
+[2019-12-19T06:12:10+00:00] INFO: Running report handlers
+Running handlers complete
+[2019-12-19T06:12:10+00:00] INFO: Report handlers complete
+Chef Infra Client finished, 1/4 resources updated in 02 seconds
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#
+

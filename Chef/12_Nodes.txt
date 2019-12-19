@@ -1,0 +1,224 @@
+Before we deploy our first cookbook we’re going to dig into what it means to be a “node” in the Chef Server.
+
+Documentation:-
+Chef node documentation (https://docs.chef.io/nodes.html)
+knife node documentation (https://docs.chef.io/knife_node.html)
+
+What is a Node?
+When we speak about a “node” in Chef there are two things that we can be talking about:
+
+The “node” object that is stored on the Chef Server
+The device (server, virtual machine, router, etc.) managed using chef-client
+
+The “node” object is a collection of all of the information about the node that was reported to the Chef Server. This object is rebuilt on the device when chef-client is run and then updated in the Chef Server. The presence of this object allows us to read the information about a server in our infrastructure without connecting to it by using knife.
+
+
+Interacting with Node Information:-
+The “node” object is the first of the data types that are indexed by the Chef Server, and with it, we get access to CRUD (Create, Read, Update, Delete) commands from knife. Here are the “node” commands that we have access to through knife:
+
+[workstation] chef-repo $ knife node
+FATAL: Cannot find subcommand for: 'node'
+Available node subcommands: (for details, knife SUB-COMMAND --help)
+
+** NODE COMMANDS **
+knife node bulk delete REGEX (options)
+knife node create NODE (options)
+knife node delete [NODE [NODE]] (options)
+knife node edit NODE (options)
+knife node environment set NODE ENVIRONMENT
+knife node from file FILE (options)
+knife node list (options)
+knife node run_list add [NODE] [ENTRY [ENTRY]] (options)
+knife node run_list remove [NODE] [ENTRY [ENTRY]] (options)
+knife node run_list set NODE ENTRIES (options)
+knife node show NODE (options)
+knife node status [<node> <node> ...]
+
+To read the information, we can use knife node show NODE using our node name (web-node1):
+
+[workstation] chef-repo $ knife node show web-node1
+Node Name:   web-node1
+Environment: _default
+FQDN:        satyensingh3.mylabserver.com
+IP:          54.187.81.221
+Run List:
+Roles:
+Recipes:
+Platform:    centos 7.5.1804
+Tags:
+
+
+This information is returned as YAML, but we do have the option to receive it as JSON, and we can also get all of the information using a few flags:
+
+Note: truncated results (there’s a lot of information here)
+
+[workstation] chef-repo $ knife node show -F json -l web-node1
+{
+  "name": "web-node1",
+  "chef_environment": "_default",
+  "run_list": [
+
+]
+,
+  "normal": {
+    "tags": [
+
+    ]
+  },
+  "default": {
+
+  },
+  "override": {
+
+  },
+  "automatic": {
+    "cpu": {
+      "0": {
+        "vendor_id": "GenuineIntel",
+        "family": "6",
+        "model": "63",
+        "model_name": "Intel(R) Xeon(R) CPU E5-2676 v3 @ 2.40GHz",
+        "stepping": "2",
+        "mhz": "2400.075",
+        "cache_size": "30720 KB",
+        "physical_id": "0",
+        "core_id": "0",
+        ...
+
+
+Updating the Node Object:-
+
+Using cloud servers, we’re in a good spot to see how the node object will be updated when chef-client has run. When a cloud server is stopped and started again, it will have a new public IP that upon running chef-client will be visible when we run knife node show NODE again.
+==========================================================================================================================================================
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node
+FATAL: Cannot find subcommand for: 'node'
+Available node subcommands: (for details, knife SUB-COMMAND --help)
+
+** NODE COMMANDS **
+knife node bulk delete REGEX (options)
+knife node create NODE (options)
+knife node delete [NODE [NODE]] (options)
+knife node edit NODE (options)
+knife node environment set NODE ENVIRONMENT
+knife node from file FILE (options)
+knife node list (options)
+knife node policy set NODE POLICY_GROUP POLICY_NAME (options)
+knife node run_list add [NODE] [ENTRY [ENTRY]] (options)
+knife node run_list remove [NODE] [ENTRY [ENTRY]] (options)
+knife node run_list set NODE ENTRIES (options)
+knife node show NODE (options)
+knife node status [<node> <node> ...]
+
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node show web-node1
+ERROR: The object you are looking for could not be found
+Response: node 'web-node1' not found
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cd nodes/
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/nodes# ls
+rgurnule.json
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/nodes# vi rgurnule.json
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/nodes# knife node show web-node1
+ERROR: The object you are looking for could not be found
+Response: node 'web-node1' not found
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/nodes# knife node show
+USAGE: knife node show NODE (options)
+    -a ATTR1 [--attribute ATTR2] ,   Show one or more attributes
+        --attribute
+    -s, --server-url URL             Chef Infra Server URL.
+        --chef-zero-host HOST        Host to start Chef Infra Zero on.
+        --chef-zero-port PORT        Port (or port range) to start Chef Infra Zero on. Port ranges like 1000,1010 or 8889-9999 will try all given ports until one works.
+    -k, --key KEY                    Chef Infra Server API client key.
+        --[no-]color                 Use colored output, defaults to enabled.
+    -c, --config CONFIG              The configuration file to use.
+        --config-option OPTION=VALUE Override a single configuration option.
+        --defaults                   Accept default values for all questions.
+    -d, --disable-editing            Do not open EDITOR, just accept the data as is.
+    -e, --editor EDITOR              Set the editor to use for interactive commands.
+    -E, --environment                Show only the Chef Infra Client environment.
+    -S, --field-separator SEPARATOR  Character separator used to delineate nesting in --attribute filters (default ".")
+        --[no-]fips                  Enable FIPS mode.
+    -F, --format FORMAT              Which format to use for output. (valid options: 'summary', 'text', 'json', 'yaml', or 'pp')
+        --[no-]listen                Whether a local mode (-z) server binds to a port.
+    -z, --local-mode                 Point knife commands at local repository instead of Chef Infra Server.
+    -l, --long                       Include all attributes in the output
+    -m, --medium                     Include normal attributes in the output
+    -u, --user USER                  Chef Infra Server API client username.
+        --print-after                Show the data after a destructive operation.
+        --profile PROFILE            The credentials profile to select.
+    -r, --run-list                   Show only the run list.
+    -V, --verbose                    More verbose output. Use twice for max verbosity.
+    -v, --version                    Show Chef Infra Client version.
+    -y, --yes                        Say yes to all prompts for confirmation.
+    -h, --help                       Show this help message.
+FATAL: You must specify a node name
+root@ip-172-31-6-143:/home/ubuntu/chef-repo/nodes# cd -
+/home/ubuntu/chef-repo
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node show web-node1
+ERROR: The object you are looking for could not be found
+Response: node 'web-node1' not found
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife bootstrap ec2-35-154-227-153.ap-south-1.compute.amazonaws.com -N web-node1 -x ubuntu -P 'p@ssw0rd' --sudo
+-x/--winrm-user: This flag is deprecated. Use -U/--connection-user instead.
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+The authenticity of host 'ec2-35-154-227-153.ap-south-1.compute.amazonaws.com (172.31.6.143)' can't be established.
+fingerprint is SHA256:us916CE+yqnfqngLrR8u9mvzgUj6xReDReL7B/+DVyo.
+
+Are you sure you want to continue connecting
+? (Y/N) y
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+WARN: [SSH] connection failed, terminating (#<Net::SSH::AuthenticationFailed: Authentication failed for user ubuntu@ec2-35-154-227-153.ap-south-1.compute.amazonaws.com>)
+ERROR: Train::Transports::SSHFailed: SSH session could not be established
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife bootstrap ec2-35-154-227-153.ap-south-1.compute.amazonaws.com -N web-node1 -x ubuntu -P '' --sudo
+-x/--winrm-user: This flag is deprecated. Use -U/--connection-user instead.
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+The authenticity of host 'ec2-35-154-227-153.ap-south-1.compute.amazonaws.com (172.31.6.143)' can't be established.
+fingerprint is SHA256:us916CE+yqnfqngLrR8u9mvzgUj6xReDReL7B/+DVyo.
+
+Are you sure you want to continue connecting
+? (Y/N) y
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+WARN: [SSH] connection failed, terminating (#<Net::SSH::AuthenticationFailed: Authentication failed for user ubuntu@ec2-35-154-227-153.ap-south-1.compute.amazonaws.com>)
+ERROR: Train::Transports::SSHFailed: SSH session could not be established
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node show web-node1
+ERROR: The object you are looking for could not be found
+Response: node 'web-node1' not found
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# ls -ltr
+total 16
+drwxr-xr-x 2 root root 4096 Dec 19 05:30 roles
+-rw-r--r-- 1 root root 2341 Dec 19 05:30 README.md
+drwxr-xr-x 4 root root 4096 Dec 19 05:41 cookbooks
+drwx------ 2 root root 4096 Dec 19 08:04 nodes
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# cd /root/.chef/trusted_certs/
+root@ip-172-31-6-143:~/.chef/trusted_certs# ls
+ip-172-31-6-143_ap-south-1_compute_internal.crt
+root@ip-172-31-6-143:~/.chef/trusted_certs# cd //
+root@ip-172-31-6-143://# pwd
+//
+root@ip-172-31-6-143://# cd -
+/root/.chef/trusted_certs
+root@ip-172-31-6-143:~/.chef/trusted_certs# cd ..
+root@ip-172-31-6-143:~/.chef# ls -ltr
+total 20
+-rw-r--r-- 1 root root   36 Dec 18 06:14 chef_guid
+-rw-r--r-- 1 root root  127 Dec 18 06:20 credentials
+-rw-r--r-- 1 root root 1674 Dec 18 06:23 rahul.pem
+-rw-r--r-- 1 root root 1674 Dec 18 06:24 rgurnule.pem
+drwxr-xr-x 2 root root 4096 Dec 18 06:25 trusted_certs
+root@ip-172-31-6-143:~/.chef# pwd
+/root/.chef
+root@ip-172-31-6-143:~/.chef# knife bootstrap ec2-35-154-227-153.ap-south-1.compute.amazonaws.com -N web-node1 -x ubuntu -P '/root/.chef/rgurnule.pem' --sudo
+^Croot@ip-172-31-6-143:~/.chef# cd /home/ubuntu/chef-repo/
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife bootstrap ec2-35-154-227-153.ap-south-1.compute.amazonaws.com -N web-node1 -x ubuntu -P '/root/.chef/rgurnule.pem' --sudo
+-x/--winrm-user: This flag is deprecated. Use -U/--connection-user instead.
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+The authenticity of host 'ec2-35-154-227-153.ap-south-1.compute.amazonaws.com (172.31.6.143)' can't be established.
+fingerprint is SHA256:us916CE+yqnfqngLrR8u9mvzgUj6xReDReL7B/+DVyo.
+
+Are you sure you want to continue connecting
+? (Y/N) y
+Connecting to ec2-35-154-227-153.ap-south-1.compute.amazonaws.com
+WARN: [SSH] connection failed, terminating (#<Net::SSH::AuthenticationFailed: Authentication failed for user ubuntu@ec2-35-154-227-153.ap-south-1.compute.amazonaws.com>)
+ERROR: Train::Transports::SSHFailed: SSH session could not be established
+root@ip-172-31-6-143:/home/ubuntu/chef-repo# knife node show -F json -l web-node1
+ERROR: The object you are looking for could not be found
+Response: node 'web-node1' not found
+root@ip-172-31-6-143:/home/ubuntu/chef-repo#
+
